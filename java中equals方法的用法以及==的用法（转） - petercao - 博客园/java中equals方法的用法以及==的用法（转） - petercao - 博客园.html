@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<!-- saved from url=(0064)http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>java中equals方法的用法以及==的用法（转） - petercao - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/bundle-iMetro_HD.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/bundle-iMetro_HD-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/bluestorm/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/bluestorm/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/bluestorm/wlwmanifest.xml">
+<script async="" src="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/analytics.js.下载"></script><script src="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/jquery.js.下载" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'bluestorm', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/bluestorm/"><img id="blogLogo" src="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/bluestorm/">Bluestorm's Space</a></h1>
+<h2>自由意志，自我否定，空杯心态，大道至简</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/bluestorm/">首页</a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/petercao">联系</a></li>
+<li><a id="blog_nav_rss" class="menu" href="http://www.cnblogs.com/bluestorm/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="http://www.cnblogs.com/bluestorm/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count">随笔 - 576&nbsp; </span>
+<span id="stats_article_count">文章 - 3&nbsp; </span>
+<span id="stats-comment_count">评论 - 133</span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html">java中equals方法的用法以及==的用法（转）</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><div><span style="font-size: 14px;"><span style="color: #ff0000;"><strong><a href="http://blog.csdn.net/zhu_apollo/article/details/1896391"><br></a></strong></span></span></div>
+<div>equals 方法是 java.lang.Object 类的方法。</div>
+<p><span style="font-size: 14px;">有两种用法说明：</span></p>
+<p><span style="font-size: 14px;">（1）对于字符串变量来说，使用“==”和“equals()”方法比较字符串时，其比较方法不同。</span></p>
+<p><span style="font-size: 14px;">“==”比较两个变量本身的值，即两个对象在内存中的首地址。</span></p>
+<p><span style="font-size: 14px;">“equals()”比较字符串中所包含的内容是否相同。</span></p>
+<p><span style="font-size: 14px;">比如：</span></p>
+<p><span style="font-size: 14px;">String s1,s2,s3 = "abc", s4 ="abc" ;</span></p>
+<p><span style="font-size: 14px;">s1 = new String("abc");</span></p>
+<p><span style="font-size: 14px;">s2 = new String("abc");</span></p>
+<p><span style="font-size: 14px;">&nbsp;那么：</span></p>
+<p><span style="font-size: 14px;">s1==s2&nbsp; &nbsp;是 false&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //两个变量的内存地址不一样，也就是说它们指向的对象不&nbsp;一样，<br><br>
+故不相等。<br><br></span></p>
+<p><span style="font-size: 14px;">s1.equals(s2) 是 true&nbsp;&nbsp;&nbsp;&nbsp;//两个变量的所包含的内容是abc，故相等。</span></p>
+<p>&nbsp;</p>
+<p><span style="font-size: 14px;">注意（1）：</span></p>
+<p><span style="font-size: 14px;">如果：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; StringBuffer s1 = new StringBuffer("a");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; StringBuffer s2 = new StringBuffer("a");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+<p><span style="font-size: 14px;">结果：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; s1.equals(s2)&nbsp; //是false</span></p>
+<p><span style="font-size: 14px;">解释：StringBuffer类中没有重新定义equals这个方法，因此这个方法就来自Object类，<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+<p><span style="font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 而Object类中的equals方法是用来比较“地址”的，所以等于false.</span></p>
+<p><span style="font-size: 14px;">注意（2）：</span></p>
+<p><span style="font-size: 14px;">对于s3和s4来说，有一点不一样要引起注意，由于s3和s4是<span style="color: #ff00ff;">两个字符</span></span></p>
+<p><span style="font-size: 14px;"><span style="color: #ff00ff;">串</span><span style="color: #ff00ff;">常量</span>所生成的变量，其中所存放的内存地址是相等的，</span></p>
+<p><span style="font-size: 14px;">所以s3==s4是true（即使没有s3=s4这样一个赋值语句）</span></p>
+<p><span style="font-size: 14px;"><br>（2）对于非字符串变量来说，"=="和"equals"方法的作用是相同的都是用来比较其</span></p>
+<p><span style="font-size: 14px;">对象在堆内存的首地址，即用来比较两个引用变量是否指向同一个对象。</span></p>
+<p><span style="font-size: 14px;">比如：</span></p>
+<p><span style="font-size: 14px;">class A</span></p>
+<p><span style="font-size: 14px;">{</span></p>
+<p><span style="font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A obj1&nbsp;&nbsp; =&nbsp;&nbsp;&nbsp;new&nbsp; A();</span></p>
+<p><span style="font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A obj2&nbsp;&nbsp; =&nbsp; &nbsp;new&nbsp; A();</span></p>
+<p><span style="font-size: 14px;">}</span></p>
+<p><span style="font-size: 14px;">那么：obj1==obj2是false</span></p>
+<p><span style="font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; obj1.equals(obj2)是false</span></p>
+<p><span style="font-size: 14px;">&nbsp;</span></p>
+<p><span style="font-size: 14px;">但是如加上这样一句：obj1=obj2;</span></p>
+<p><span style="font-size: 14px;">那么&nbsp; obj1==obj2&nbsp; 是true</span></p>
+<p><span style="font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; obj1.equals(obj2) 是true</span></p>
+<p><span style="font-size: 14px;">&nbsp;</span></p>
+<p><span style="font-size: 14px;">总之：equals方法对于字符串来说是比较内容的，而对于非字符串来说是比较</span></p>
+<p><span style="font-size: 14px;">其指向的对象是否相同的。</span></p>
+<p><span style="font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; == 比较符也是比较指向的对象是否相同的也就是对象在对内存中的的首地址。</span></p>
+<p><span style="font-size: 14px;">&nbsp;&nbsp;</span></p>
+<p>&nbsp;</p>
+<div><span style="font-size: 14px;">String类中重新定义了equals这个方法，而且比较的是值，而不是地址。所以是true。</span></div>
+<div><span style="font-size: 14px;"><br></span></div>
+<div><span style="font-size: 14px;">关于equals与==的区别从以下几个方面来说：&nbsp;<br><br>（1） 如果是基本类型比较，那么只能用==来比较，不能用equals&nbsp;<br><br>比如：&nbsp;<br>public class TestEquals {&nbsp;<br>public static void main(String[] args)&nbsp;<br>{&nbsp;<br>int a = 3;&nbsp;<br>int b = 4;&nbsp;<br>int c = 3;&nbsp;<br>System.out.println(a == b);//结果是false&nbsp;<br>System.out.println(a == c);//结果是true&nbsp;<br>System.out.println(a.equals(c));//错误，编译不能通过，equals方法&nbsp;<br>//不能运用与基本类型的比较&nbsp;<br>}&nbsp;<br>}</span></div>
+<div><span style="font-size: 14px;"><br></span></div>
+<div><span style="font-size: 14px;">（2） 对于基本类型的包装类型，比如Boolean、Character、Byte、Shot、Integer、Long、Float、Double等的引用变量，==是比较地址的，而equals是比较内容的。比如：&nbsp;<br>public class TestEquals {&nbsp;<br>public static void main(String[] args)&nbsp;<br>{ Integer n1 = new Integer(30);&nbsp;<br>Integer n2 = new Integer(30);&nbsp;<br>Integer n3 = new Integer(31);&nbsp;<br>System.out.println(n1 == n2);//结果是false 两个不同的Integer对象，故其地址不同，&nbsp;<br>System.out.println(n1 == n3);//那么不管是new Integer(30)还是new Integer(31) 结果都显示false&nbsp;<br>System.out.println(n1.equals(n2));//结果是true 根据jdk文档中的说明，n1与n2指向的对象中的内容是相等的，都是30，故equals比较后结果是true&nbsp;<br>System.out.println(n1.equals(n3));//结果是false 因对象内容不一样，一个是30一个是31&nbsp;<br>}&nbsp;<br>}&nbsp;<br>这是Integer的实例，如果是其他的比如Double、Character、Float等也一样。</span></div>
+<div><span style="font-size: 14px;"><br></span></div>
+<div><span style="font-size: 14px;"><br></span></div>
+<div><span style="font-size: 14px;">（3） 注意：对于String(字符串)、StringBuffer(线程安全的可变字符序列)、StringBuilder(可变字符序列)这三个类作进一步的说明。&nbsp;<br>（a）首先，介绍String的用法，请看下面的实例：&nbsp;<br>public class TestEquals {&nbsp;<br>public static void main(String[] args) {&nbsp;<br>String s1 = "123";&nbsp;<br>String s2 = "123";&nbsp;<br>String s3 = "abc";&nbsp;<br>String s4 = new String("123");&nbsp;<br>String s5 = new String("123");&nbsp;<br>String s6 = new String("abc");&nbsp;<br><br>System.out.println(s1 == s2);//（1）true&nbsp;<br>System.out.println(s1.equals(s2));//（2）true&nbsp;<br>System.out.println(s1 == s3);//（3）flase&nbsp;<br>System.out.println(s1.equals(s3));//（4）flase&nbsp;<br><br>System.out.println(s4 == s5);//（5）flase&nbsp;<br>System.out.println(s4.equals(s5));//（6）true&nbsp;<br>System.out.println(s4 == s6);//（7）flase&nbsp;<br>System.out.println(s4.equals(s6));//（8）flase&nbsp;<br><br>System.out.println(s1 == s4);//（9）false&nbsp;<br>System.out.println(s1.equals(s4));//（10）true&nbsp;<br>}&nbsp;<br>}&nbsp;<br>答案解释：s1与s2分别指向由字符串常量”123” 创建的对象，在常量池中，只有一个对象，内容为123，有两个引用s1和s2指向这个对象，故这两个引用变量所指向的地址是相同的，因而（1）处的运行结果为true，又因为s1.equals(s2)是比较s1和s2所指向的对象的内容是否相等，而我们知道这两个对象的内容都是字符串常量”123”，故标记（2）处的运行结果是true。</span></div>
+<div><span style="font-size: 14px;">&nbsp;<br>用同样的方法分析，s1和s3所指向的对象不一样，内容也不一样，故标记（3）和（4）处运行结果是false。&nbsp;</span></div>
+<div><span style="font-size: 14px;"><br>再看看s4和s5，这两个引用变量所指向的对象的内容都是一样的（内容都是123），但是这两个对象是用new操作符创建处类的，是在内存中分配两块空间给这两个对象的，因而这两个对象的内存地址不一样，故事两个不同的对象，标记（5）处的s4 == s5 运行结果为false，但是内容一样，故标记（6）处的s4.equals(s5)运行结果为true。同理，s4和s6所指向的对象地址不同，内容也不相同。故标记（7）（8）处运行结果为false。&nbsp;</span></div>
+<div><span style="font-size: 14px;"><br>s1和s4分别指向两个不同的对象（之所以这样称呼，是因为这两个对象在内存中的地址不相同，故而对象不相同），故标记为（9）处的s1 == s4运行结果为false，而标记为（10）处的s1.equals(s4)运行结果为true.</span></div>
+<div><span style="font-size: 14px;"><br></span></div>
+<div><span style="font-size: 14px;">（4） 再看一种情况，先看一个例子（该例子是Java编程思想第三章的例子）：&nbsp;<br>class Value&nbsp;<br>{&nbsp;<br>int i;&nbsp;<br>}&nbsp;<br>public class EqualsMethod2 {&nbsp;<br>public static void main(String[] args) {&nbsp;<br>Value v1 = new Value();&nbsp;<br>Value v2 = new Value();&nbsp;<br>v1.i = v2.i = 100;&nbsp;<br>System.out.println(v1.equals(v2));//（1）flase&nbsp;<br>System.out.println(v1 == v2);//（2）true&nbsp;<br>}&nbsp;<br>}&nbsp;<br>运行结果疑问：乍一看结果，有点惊讶，为什么不是true呢，不是说equals方法是比较内容的吗？&nbsp;</span></div>
+<div><span style="font-size: 14px;"><br>解释：不错，如果在新类中被覆盖了equals方法，就可以用来比较内容的。但是在上面的例子中类Value并没有覆盖Object中的equals方法，而是继承了该方法，因此它就是被用来比较地址的，又v1和v2的所指向的对象不相同，故标记（1）处的v1.equals(v2)运行结果为false，标记为（2）处的v1 == v2运行结果也为false。&nbsp;<br><br>总结：equals和==的介绍就到此处，如果有更好的或者更新的解释请大家多多指教，谢谢。</span></div></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/bluestorm/category/344571.html" target="_blank">Java / J2EE</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(2377615,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;fc666aa5-78c5-de11-ba8f-001cf0cd104b&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/bluestorm/" target="_blank"><img src="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/u96158.jpg" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/bluestorm/">petercao</a><br>
+            <a href="http://home.cnblogs.com/u/bluestorm/followees">关注 - 147</a><br>
+            <a href="http://home.cnblogs.com/u/bluestorm/followers">粉丝 - 396</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;fc666aa5-78c5-de11-ba8f-001cf0cd104b&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(2377615,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">12</span>
+    </div>
+    <div class="buryit" onclick="votePost(2377615,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377613.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377613.html" title="发布于2012-03-02 18:10">Java中访问权限修饰符public protected 缺省默认 private的用法总结（转）</a><br><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/03/2378544.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/bluestorm/archive/2012/03/03/2378544.html" title="发布于2012-03-03 18:27">程序员技术练级攻略</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2012-03-02 18:11</span> <a href="http://www.cnblogs.com/bluestorm/">petercao</a> 阅读(<span id="post_view_count">44005</span>) 评论(<span id="post_comment_count">7</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=2377615" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#" onclick="AddToWz(2377615);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=62438,cb_entryId=2377615,cb_blogApp=currentBlogApp,cb_blogUserGuid='fc666aa5-78c5-de11-ba8f-001cf0cd104b',cb_entryCreatedDate='2012/3/2 18:11:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<br>
+<div class="feedback_area_title">评论列表</div>
+<div class="feedbackNoItems"></div>	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#2345615" class="layer">#1楼</a><a name="2345615" id="comment_anchor_2345615"></a>  <span class="comment_date">2012-04-01 15:00</span> <a id="a_comment_author_2345615" href="http://home.cnblogs.com/u/394332/" target="_blank">null！</a> <a href="http://msg.cnblogs.com/send/null%EF%BC%81" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2345615" class="blog_comment_body">class Value <br>{ <br>int i; <br>} <br>public class EqualsMethod2 { <br>public static void main(String[] args) { <br>Value v1 = new Value(); <br>Value v2 = new Value(); <br>v1.i = v2.i = 100; <br>System.out.println(v1.equals(v2));//（1）flase <br>System.out.println(v1 == v2);//（2）true <br>} <br>} <br>（2）写错了楼主，楼主写的很详细，非常感谢楼主的分享！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2345615,&#39;Digg&#39;,this)">支持(4)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2345615,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#2755079" class="layer">#2楼</a><a name="2755079" id="comment_anchor_2755079"></a>  <span class="comment_date">2013-08-19 14:33</span> <a id="a_comment_author_2755079" href="http://home.cnblogs.com/u/549612/" target="_blank">无心流泪</a> <a href="http://msg.cnblogs.com/send/%E6%97%A0%E5%BF%83%E6%B5%81%E6%B3%AA" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2755079" class="blog_comment_body">赞一个！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2755079,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2755079,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#3046403" class="layer">#3楼</a><a name="3046403" id="comment_anchor_3046403"></a>  <span class="comment_date">2014-10-18 15:47</span> <a id="a_comment_author_3046403" href="http://home.cnblogs.com/u/682949/" target="_blank">远方的风2</a> <a href="http://msg.cnblogs.com/send/%E8%BF%9C%E6%96%B9%E7%9A%84%E9%A3%8E2" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3046403" class="blog_comment_body">是不是分清楚了比较的是内存地址的值还是内容的值就好分辨了？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3046403,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3046403,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#3178405" class="layer">#4楼</a><a name="3178405" id="comment_anchor_3178405"></a>  <span class="comment_date">2015-05-07 21:36</span> <a id="a_comment_author_3178405" href="http://home.cnblogs.com/u/754588/" target="_blank">dink</a> <a href="http://msg.cnblogs.com/send/dink" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3178405" class="blog_comment_body">╮(╯▽╰)╭，其实我想看的是equals方法的重写，不过还是谢谢楼主！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3178405,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3178405,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#3241301" class="layer">#5楼</a><a name="3241301" id="comment_anchor_3241301"></a>  <span class="comment_date">2015-08-04 21:54</span> <a id="a_comment_author_3241301" href="http://home.cnblogs.com/u/794269/" target="_blank">醉极弹歌一场</a> <a href="http://msg.cnblogs.com/send/%E9%86%89%E6%9E%81%E5%BC%B9%E6%AD%8C%E4%B8%80%E5%9C%BA" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3241301" class="blog_comment_body">帮了我大忙，谢谢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3241301,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3241301,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#3442591" class="layer">#6楼</a><a name="3442591" id="comment_anchor_3442591"></a>  <span class="comment_date">2016-05-31 10:12</span> <a id="a_comment_author_3442591" href="http://www.cnblogs.com/hxliang/" target="_blank">梁小涛</a> <a href="http://msg.cnblogs.com/send/%E6%A2%81%E5%B0%8F%E6%B6%9B" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3442591" class="blog_comment_body"><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#3241301" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3241301);">@</a>
+醉极弹歌一场<br>== 比较的结果为true，equals比较的结果为false，有没有这种可能呢？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3442591,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3442591,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3442591_avatar" style="display:none;">http://pic.cnblogs.com/face/621150/20150514220703.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#3606518" class="layer">#7楼</a><a name="3606518" id="comment_anchor_3606518"></a><span id="comment-maxId" style="display:none;">3606518</span><span id="comment-maxDate" style="display:none;">2017/1/19 9:39:02</span>  <span class="comment_date">2017-01-19 09:39</span> <a id="a_comment_author_3606518" href="http://home.cnblogs.com/u/1023264/" target="_blank">欣欣向荣w</a> <a href="http://msg.cnblogs.com/send/%E6%AC%A3%E6%AC%A3%E5%90%91%E8%8D%A3w" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3606518" class="blog_comment_body">最后一段代码，标记为（2）处的v1 == v2运行结果不是为false么？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3606518,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3606518,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://cloud.qy.com.cn/68?a=cnblog" target="_blank">【推荐】群英云服务器性价王，2核4G5M BGP带宽 68元首月！</a><br><a href="https://group.cnblogs.com/topic/76725.html" target="_blank">【福利】阿里云免费套餐升级，更多产品，更久时长</a><br></div>
+<div id="opt_under_post"></div>
+<div id="cnblogs_c1" class="c_ad_block"><a href="http://wijmo.gcpowertools.com.cn/angular2/?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=wijmo&amp;utm_campaign=community" target="_blank"><img width="300" height="250" src="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/24442-20170418140602931-555118785.gif" alt="Wijmo"></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/567785/" target="_blank">AlphaGo之父：AI能帮助人类在理解世界上取得巨大突破</a><br> ·  <a href="http://news.cnblogs.com/n/567784/" target="_blank">ID@Xbox发视频庆祝Win 10/Xbox One游戏数量已超500款</a><br> ·  <a href="http://news.cnblogs.com/n/567783/" target="_blank">天猫发布首本AR图书 让纸质书动起来</a><br> ·  <a href="http://news.cnblogs.com/n/567781/" target="_blank">新版诺基亚3310下周在欧洲上市</a><br> ·  <a href="http://news.cnblogs.com/n/567780/" target="_blank">地球日AppleWatch的挑战奖章你拿到了吗？</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="cnblogs_c2" class="c_ad_block"><a href="http://click.aliyun.com/m/15483/" target="_blank"><img width="468" height="60" src="./java中equals方法的用法以及==的用法（转） - petercao - 博客园_files/24442-20170331150421570-489464769.jpg" alt="阿里云C2"></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/565901/" target="_blank">唱吧DevOps的落地，微服务CI/CD的范本技术解读</a><br> ·  <a href="http://kb.cnblogs.com/page/566523/" target="_blank">程序员，如何从平庸走向理想？</a><br> ·  <a href="http://kb.cnblogs.com/page/566318/" target="_blank">我为什么鼓励工程师写blog</a><br> ·  <a href="http://kb.cnblogs.com/page/566528/" target="_blank">怎么轻松学习JavaScript</a><br> ·  <a href="http://kb.cnblogs.com/page/509431/" target="_blank">如何打好前端游击战</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/bluestorm/">petercao</a><br>园龄：<a href="http://home.cnblogs.com/u/bluestorm/" title="入园时间：2009-10-31">7年5个月</a><br>粉丝：<a href="http://home.cnblogs.com/u/bluestorm/followers/">396</a><br>关注：<a href="http://home.cnblogs.com/u/bluestorm/followees/">147</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;fc666aa5-78c5-de11-ba8f-001cf0cd104b&#39;)">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2012/02/01&#39;);return false;">&lt;</a></td><td align="center">2012年3月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2012/04/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">26</td><td class="CalOtherMonthDay" align="center">27</td><td class="CalOtherMonthDay" align="center">28</td><td class="CalOtherMonthDay" align="center">29</td><td align="center"><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/01.html"><u>1</u></a></td><td align="center"><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02.html"><u>2</u></a></td><td class="CalWeekendDay" align="center"><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/03.html"><u>3</u></a></td></tr><tr><td class="CalWeekendDay" align="center"><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/04.html"><u>4</u></a></td><td align="center">5</td><td align="center">6</td><td align="center">7</td><td align="center">8</td><td align="center">9</td><td class="CalWeekendDay" align="center">10</td></tr><tr><td class="CalWeekendDay" align="center">11</td><td align="center">12</td><td align="center">13</td><td align="center">14</td><td align="center">15</td><td align="center">16</td><td class="CalWeekendDay" align="center">17</td></tr><tr><td class="CalWeekendDay" align="center">18</td><td align="center">19</td><td align="center">20</td><td align="center">21</td><td align="center">22</td><td align="center"><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/23.html"><u>23</u></a></td><td class="CalWeekendDay" align="center">24</td></tr><tr><td class="CalWeekendDay" align="center">25</td><td align="center">26</td><td align="center">27</td><td align="center">28</td><td align="center">29</td><td align="center">30</td><td class="CalWeekendDay" align="center">31</td></tr><tr><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/bluestorm/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/bluestorm/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/bluestorm/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/bluestorm/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/bluestorm/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block"></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle">随笔分类</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/bluestorm/category/729145.html">AI(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/bluestorm/category/344568.html">Android(265)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/bluestorm/category/886183.html">AR&amp;VR(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/bluestorm/category/504330.html">C# &amp; .NET(60)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/bluestorm/category/344569.html">C/C++(41)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/bluestorm/category/729143.html">Editor/IDE(9)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/bluestorm/category/344581.html">HTML5/WEB(19)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="http://www.cnblogs.com/bluestorm/category/359448.html">iOS(5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="http://www.cnblogs.com/bluestorm/category/344571.html">Java / J2EE(114)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_9" href="http://www.cnblogs.com/bluestorm/category/344572.html">Linux(53)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_10" href="http://www.cnblogs.com/bluestorm/category/417651.html">Misc(38)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_11" href="http://www.cnblogs.com/bluestorm/category/514189.html">OS/操作系统(6)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_12" href="http://www.cnblogs.com/bluestorm/category/344573.html">Python(5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_13" href="http://www.cnblogs.com/bluestorm/category/344580.html">版本控制(16)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_14" href="http://www.cnblogs.com/bluestorm/category/408936.html">编译原理/编程语言(7)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_15" href="http://www.cnblogs.com/bluestorm/category/344576.html">嵌入式(7)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_16" href="http://www.cnblogs.com/bluestorm/category/344579.html">软件工程 / UML建模(12)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_17" href="http://www.cnblogs.com/bluestorm/category/729146.html">软件项目管理(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_18" href="http://www.cnblogs.com/bluestorm/category/344578.html">设计模式(3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_19" href="http://www.cnblogs.com/bluestorm/category/344582.html">数据库(12)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_20" href="http://www.cnblogs.com/bluestorm/category/344570.html">算法 / 数据结构(10)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_21" href="http://www.cnblogs.com/bluestorm/category/974381.html">网络&amp;软件架构(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_22" href="http://www.cnblogs.com/bluestorm/category/432344.html">网络协议(10)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_23" href="http://www.cnblogs.com/bluestorm/category/344574.html">云计算(4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_24" href="http://www.cnblogs.com/bluestorm/category/975003.html">职业生涯规划(9)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle">随笔档案</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/bluestorm/archive/2017/04.html">2017年4月 (17)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="http://www.cnblogs.com/bluestorm/archive/2017/03.html">2017年3月 (15)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="http://www.cnblogs.com/bluestorm/archive/2017/02.html">2017年2月 (11)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="http://www.cnblogs.com/bluestorm/archive/2017/01.html">2017年1月 (15)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="http://www.cnblogs.com/bluestorm/archive/2016/12.html">2016年12月 (12)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="http://www.cnblogs.com/bluestorm/archive/2016/11.html">2016年11月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="http://www.cnblogs.com/bluestorm/archive/2016/10.html">2016年10月 (13)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_7" href="http://www.cnblogs.com/bluestorm/archive/2016/09.html">2016年9月 (27)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_8" href="http://www.cnblogs.com/bluestorm/archive/2016/08.html">2016年8月 (20)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_9" href="http://www.cnblogs.com/bluestorm/archive/2016/07.html">2016年7月 (13)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_10" href="http://www.cnblogs.com/bluestorm/archive/2016/05.html">2016年5月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_11" href="http://www.cnblogs.com/bluestorm/archive/2016/04.html">2016年4月 (9)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_12" href="http://www.cnblogs.com/bluestorm/archive/2016/03.html">2016年3月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_13" href="http://www.cnblogs.com/bluestorm/archive/2015/11.html">2015年11月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_14" href="http://www.cnblogs.com/bluestorm/archive/2015/10.html">2015年10月 (10)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_15" href="http://www.cnblogs.com/bluestorm/archive/2015/09.html">2015年9月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_16" href="http://www.cnblogs.com/bluestorm/archive/2015/08.html">2015年8月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_17" href="http://www.cnblogs.com/bluestorm/archive/2015/06.html">2015年6月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_18" href="http://www.cnblogs.com/bluestorm/archive/2015/05.html">2015年5月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_19" href="http://www.cnblogs.com/bluestorm/archive/2015/04.html">2015年4月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_20" href="http://www.cnblogs.com/bluestorm/archive/2015/03.html">2015年3月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_21" href="http://www.cnblogs.com/bluestorm/archive/2015/02.html">2015年2月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_22" href="http://www.cnblogs.com/bluestorm/archive/2015/01.html">2015年1月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_23" href="http://www.cnblogs.com/bluestorm/archive/2014/12.html">2014年12月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_24" href="http://www.cnblogs.com/bluestorm/archive/2014/10.html">2014年10月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_25" href="http://www.cnblogs.com/bluestorm/archive/2014/09.html">2014年9月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_26" href="http://www.cnblogs.com/bluestorm/archive/2014/07.html">2014年7月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_27" href="http://www.cnblogs.com/bluestorm/archive/2014/06.html">2014年6月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_28" href="http://www.cnblogs.com/bluestorm/archive/2014/05.html">2014年5月 (30)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_29" href="http://www.cnblogs.com/bluestorm/archive/2014/04.html">2014年4月 (47)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_30" href="http://www.cnblogs.com/bluestorm/archive/2014/03.html">2014年3月 (10)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_31" href="http://www.cnblogs.com/bluestorm/archive/2014/02.html">2014年2月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_32" href="http://www.cnblogs.com/bluestorm/archive/2014/01.html">2014年1月 (11)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_33" href="http://www.cnblogs.com/bluestorm/archive/2013/12.html">2013年12月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_34" href="http://www.cnblogs.com/bluestorm/archive/2013/11.html">2013年11月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_35" href="http://www.cnblogs.com/bluestorm/archive/2013/10.html">2013年10月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_36" href="http://www.cnblogs.com/bluestorm/archive/2013/09.html">2013年9月 (33)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_37" href="http://www.cnblogs.com/bluestorm/archive/2013/08.html">2013年8月 (16)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_38" href="http://www.cnblogs.com/bluestorm/archive/2013/07.html">2013年7月 (17)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_39" href="http://www.cnblogs.com/bluestorm/archive/2013/06.html">2013年6月 (6)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_40" href="http://www.cnblogs.com/bluestorm/archive/2013/05.html">2013年5月 (21)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_41" href="http://www.cnblogs.com/bluestorm/archive/2013/04.html">2013年4月 (12)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_42" href="http://www.cnblogs.com/bluestorm/archive/2013/03.html">2013年3月 (15)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_43" href="http://www.cnblogs.com/bluestorm/archive/2013/01.html">2013年1月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_44" href="http://www.cnblogs.com/bluestorm/archive/2012/12.html">2012年12月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_45" href="http://www.cnblogs.com/bluestorm/archive/2012/11.html">2012年11月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_46" href="http://www.cnblogs.com/bluestorm/archive/2012/10.html">2012年10月 (13)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_47" href="http://www.cnblogs.com/bluestorm/archive/2012/09.html">2012年9月 (20)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_48" href="http://www.cnblogs.com/bluestorm/archive/2012/08.html">2012年8月 (14)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_49" href="http://www.cnblogs.com/bluestorm/archive/2012/07.html">2012年7月 (8)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_50" href="http://www.cnblogs.com/bluestorm/archive/2012/06.html">2012年6月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_51" href="http://www.cnblogs.com/bluestorm/archive/2012/05.html">2012年5月 (14)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_52" href="http://www.cnblogs.com/bluestorm/archive/2012/04.html">2012年4月 (10)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_53" href="http://www.cnblogs.com/bluestorm/archive/2012/03.html">2012年3月 (8)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_54" href="http://www.cnblogs.com/bluestorm/archive/2012/01.html">2012年1月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_55" href="http://www.cnblogs.com/bluestorm/archive/2011/12.html">2011年12月 (7)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_56" href="http://www.cnblogs.com/bluestorm/archive/2011/11.html">2011年11月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_57" href="http://www.cnblogs.com/bluestorm/archive/2011/10.html">2011年10月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_58" href="http://www.cnblogs.com/bluestorm/archive/2011/09.html">2011年9月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_59" href="http://www.cnblogs.com/bluestorm/archive/2011/08.html">2011年8月 (15)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_60" href="http://www.cnblogs.com/bluestorm/archive/2011/07.html">2011年7月 (11)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_61" href="http://www.cnblogs.com/bluestorm/archive/2011/06.html">2011年6月 (9)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_articlecategory" class="catListArticleCategory sidebar-block">
+<h3 class="catListTitle">文章分类</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_2_Link_0" href="http://www.cnblogs.com/bluestorm/category/345242.html">C/C++(1)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_imagecategory" class="catListImageCategory sidebar-block">
+<h3 class="catListTitle">相册</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_3_Link_0" href="http://www.cnblogs.com/bluestorm/gallery/344583.html" rel="nofollow">MyPhoto</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/bluestorm/p/6744140.html#3674085">1. Re:Android Studio 导入系统 jar包</a></li>
+        <li class="recent_comment_body">.Module.iml   ---就是当前模块目录下的.im了文件</li>
+        <li class="recent_comment_author">--petercao</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/bluestorm/p/6688410.html#3664123">2. Re:as 插件GsonFormat用法（json字符串快速生成javabean）</a></li>
+        <li class="recent_comment_body">IDEA插件安装IDEA的插件安装非常简单，对于很多插件来说，只要你知道插件的名字就可以在IDEA里面直接安装。File-&gt;Settings-&gt;Plugins—&gt;查找所需插件—&gt;Install或者Fi......</li>
+        <li class="recent_comment_author">--petercao</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/bluestorm/p/3640786.html#3659777">3. Re:px 与 dp, sp换算公式？</a></li>
+        <li class="recent_comment_body">我想问1dp×320PPi/160怎么就等于2px了？？？？？？</li>
+        <li class="recent_comment_author">--小安安的棉花糖</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/bluestorm/p/6503663.html#3649469">4. Re:程序员如何优雅的挣零花钱？</a></li>
+        <li class="recent_comment_body">mark</li>
+        <li class="recent_comment_author">--Bellen</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/bluestorm/archive/2012/10/28/2743792.html#3648589">5. Re:Source Insight 常用设置和快捷键大全</a></li>
+        <li class="recent_comment_body">好 顶 赞</li>
+        <li class="recent_comment_author">--ridox</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/01/2376236.html">1. java中重载与重写的区别(215832)</a></li><li><a href="http://www.cnblogs.com/bluestorm/p/3640786.html">2. px 与 dp, sp换算公式？(135746)</a></li><li><a href="http://www.cnblogs.com/bluestorm/archive/2013/05/20/3087889.html">3. IntelliJ IDEA 快捷键和设置(130246)</a></li><li><a href="http://www.cnblogs.com/bluestorm/p/3757402.html">4. 导入Eclipse工程 到 Android Studio(89709)</a></li><li><a href="http://www.cnblogs.com/bluestorm/p/3168719.html">5. C语言itoa()函数和atoi()函数详解(整数转字符C实现)(84397)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/01/2376236.html">1. java中重载与重写的区别(17)</a></li><li><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html">2. java中equals方法的用法以及==的用法（转）(7)</a></li><li><a href="http://www.cnblogs.com/bluestorm/archive/2012/08/06/2625578.html">3. 大数据量分页查询方法（转）(7)</a></li><li><a href="http://www.cnblogs.com/bluestorm/p/4419135.html">4. Ubuntu 下载 &amp; 编译 Android5.1 源码(7)</a></li><li><a href="http://www.cnblogs.com/bluestorm/p/3510398.html">5. C# 编写Windows Service（windows服务程序）(6)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/01/2376236.html">1. java中重载与重写的区别(26)</a></li><li><a href="http://www.cnblogs.com/bluestorm/archive/2013/05/20/3087889.html">2. IntelliJ IDEA 快捷键和设置(13)</a></li><li><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377615.html">3. java中equals方法的用法以及==的用法（转）(12)</a></li><li><a href="http://www.cnblogs.com/bluestorm/archive/2012/03/02/2377326.html">4. Java中abstract class 和 interface 的解释和他们的异同点（转）(9)</a></li><li><a href="http://www.cnblogs.com/bluestorm/p/3510398.html">5. C# 编写Windows Service（windows服务程序）(8)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2017 petercao
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+</body></html>

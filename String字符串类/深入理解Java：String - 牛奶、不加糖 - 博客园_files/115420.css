@@ -1,0 +1,19 @@
+#tony_body h2 {
+background-color: #1f7b9b;
+color: white;
+padding: 10px 10px;
+border-radius: 3px 3px 3px 3px;
+font-size: 21px;
+font-weight: bold;
+}
+
+.note {
+margin: 10px 0;
+padding: 15px 40px 15px 40px;
+background: #FCFAA9;
+background: #FCFAA9 url('http://images.cnblogs.com/cnblogs_com/libaoheng/305804/o_yellow-pin.png') no-repeat 20px 0;
+font-size: 15px;
+font-family: 'Microsoft Yahei';
+box-shadow: 0 0 8px #aaa;
+clear: both;
+}

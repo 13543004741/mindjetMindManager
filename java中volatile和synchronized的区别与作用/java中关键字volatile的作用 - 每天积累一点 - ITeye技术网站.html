@@ -1,0 +1,939 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0036)http://sakyone.iteye.com/blog/668091 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站</title>
+    <meta name="description" content="用在多线程，同步变量。 线程为了提高效率，将某成员变量(如A)拷贝了一份（如B），线程中对A的访问其实访问的是B。只在某些动作时才进行A和B的同步。因此存在A和B不一致的情况。volatile就是用来避免这种情况的。volatile告诉jvm， 它所修饰的变量不保留拷贝，直接访问主内存中的（也就是上面说的A) =========================分割线1================ ...">
+    <meta name="keywords" content="Java, 多线程, thread, JVM, IBM java中关键字volatile的作用">
+    <link rel="shortcut icon" href="http://sakyone.iteye.com/images/favicon.ico" type="image/x-icon">
+    <link rel="search" type="application/opensearchdescription+xml" href="http://sakyone.iteye.com/open_search.xml" title="ITeye">
+    <link href="http://sakyone.iteye.com/rss" rel="alternate" title="每天积累一点" type="application/rss+xml">
+    <link href="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/blog.css" media="screen" rel="stylesheet" type="text/css">
+<link href="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/green.css" media="screen" rel="stylesheet" type="text/css">
+    <script type="text/javascript" async="" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/ycqm"></script><script type="text/javascript" async="" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/ycqm(1)"></script><script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/ca-pub-8990951720398508.js.下载"></script><script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/hm.js.下载"></script><script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/application.js.下载" type="text/javascript"></script>    
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "//hm.baidu.com/hm.js?e19a8b00cf63f716d774540875007664";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+      <link href="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/SyntaxHighlighter.css" media="screen" rel="stylesheet" type="text/css">
+  <script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/shCoreCommon.js.下载" type="text/javascript"></script>
+<script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/hotkey.js.下载" type="text/javascript"></script>
+  <script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/code_favorites.js.下载" type="text/javascript"></script>
+<script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/weiboshare.js.下载" type="text/javascript"></script>
+
+    
+  <style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/get_ads.php" type="text/javascript"></script></head>
+  <body><div id="BAIDU_DUP_fp_wrapper" style="position: absolute; left: -1px; bottom: -1px; z-index: 0; width: 0px; height: 0px; overflow: hidden; visibility: hidden; display: none;"><iframe id="BAIDU_DUP_fp_iframe" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/o.html" style="width: 0px; height: 0px; visibility: hidden; display: none;"></iframe></div>
+    <div id="header">
+	      <div id="blog_site_nav">
+  <a href="http://www.iteye.com/" class="homepage">首页</a>
+  <a href="http://www.iteye.com/news">资讯</a>
+  <a href="http://www.iteye.com/magazines">精华</a>
+  <a href="http://www.iteye.com/forums">论坛</a>
+  <a href="http://www.iteye.com/ask">问答</a>
+  <a href="http://www.iteye.com/blogs">博客</a>
+  <a href="http://www.iteye.com/blogs/subjects">专栏</a>
+  <a href="http://www.iteye.com/groups">群组</a>
+  <a href="http://sakyone.iteye.com/blog/668091#" onclick="return false;" id="msna"><u>更多</u> <small>▼</small></a>
+  <div class="quick_menu" style="display:none;">
+    <a target="_blank" href="http://job.iteye.com/iteye">知识库</a>
+    <a href="http://www.iteye.com/search">搜索</a>
+  </div>
+</div>
+
+	      <div id="user_nav">
+      <a href="http://sakyone.iteye.com/login" class="welcome" title="登录">您还未登录 !</a>
+    <a href="http://sakyone.iteye.com/login">登录</a>
+    <a href="http://sakyone.iteye.com/signup" class="nobg">注册</a>
+  </div>
+
+	    
+    </div>
+
+    <div id="page">
+        <div id="branding" class="clearfix" style="overflow: hidden;background: none;padding:0 0 2px;">
+        	<div class="J_adv" data-view="true" data-mod="ad_popu_184" data-mtp="34" data-order="92" data-con="ad_content_1127" style="width: 960px; height: 90px;"><!-- 广告占位容器 --><div id="cpro_u2720131"><iframe id="iframeu2720131_0" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/ycqm.html" width="960" height="90" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0;vertical-align:bottom;margin:0;width:960px;height:90px" allowtransparency="true"></iframe></div><!-- 投放代码 --><script type="text/javascript">   /*服务器频道首页置顶Banner960*90，创建于2014-7-3*/    (window.cproArray = window.cproArray || []).push({        id: 'u2720131'      });  </script>  <script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/c.js.下载" type="text/javascript"></script></div>
+        </div>
+      <div id="branding" class="clearfix">
+        <div id="blog_name">
+          <h1><a href="http://sakyone.iteye.com/">每天积累一点</a></h1>
+        </div>
+        <div id="fd"></div>
+        <div id="blog_navbar">
+          <ul>
+            <li class="blog_navbar_for"><a href="http://sakyone.iteye.com/"><strong>博客</strong></a></li>
+            <li><a href="http://sakyone.iteye.com/weibo">微博</a></li>
+            <li><a href="http://sakyone.iteye.com/album">相册</a></li>
+            <li><a href="http://sakyone.iteye.com/link">收藏</a></li>
+            <li><a href="http://sakyone.iteye.com/blog/guest_book">留言</a></li>
+            <li><a href="http://sakyone.iteye.com/blog/profile">关于我</a></li>
+          </ul>
+    
+          <div class="search">
+            <form action="http://sakyone.iteye.com/blog/search" method="get">
+              <input class="search_text" id="query" name="query" style="margin-left: 10px;width: 110px;" type="text" value="">
+              <input class="submit_search" type="submit" value="">
+            </form>
+          </div> 
+          <div id="fd"></div>         
+        </div>
+      </div>
+      
+      <div id="content" class="clearfix">
+        <div id="main">
+          
+
+
+
+          
+
+
+<div class="h-entry" style="display:none">
+  <a href="http://sakyone.iteye.com/" class="p-author" target="_blank">sakyone</a>
+</div>
+
+
+<div class="blog_main">
+  <div class="blog_title">
+    <h3>
+      <a href="http://sakyone.iteye.com/blog/668091">java中关键字volatile的作用</a>
+      <em class="actions">      </em>
+    </h3>
+    
+        <div class="news_tag"><a href="http://www.iteye.com/blogs/tag/Java">Java</a><a href="http://www.iteye.com/blogs/tag/%E5%A4%9A%E7%BA%BF%E7%A8%8B">多线程</a><a href="http://www.iteye.com/blogs/tag/thread">thread</a><a href="http://www.iteye.com/blogs/tag/JVM">JVM</a><a href="http://www.iteye.com/blogs/tag/IBM">IBM</a>&nbsp;</div>
+    	  
+    	
+    	
+  		
+      </div>
+
+  <div id="blog_content" class="blog_content">
+     用在多线程，同步变量。 线程为了提高效率，将某成员变量(如A)拷贝了一份（如B），线程中对A的访问其实访问的是B。只在某些动作时才进行A和B的同步。因此存在A和B不一致的情况。volatile就是用来避免这种情况的。volatile告诉jvm， 它所修饰的变量不保留拷贝，直接访问主内存中的（也就是上面说的A)
+<br>
+<br>=========================分割线1=================================
+<br>
+<br>版权声明 ：转载时请以超链接形式标明文章原始出处和作者信息及本声明 
+<br>http://aleung.blogbus.com/logs/32090434.html 
+<br>
+<br>在Java内存模型中，有main memory，每个线程也有自己的memory (例如寄存器)。为了性能，一个线程会在自己的memory中保持要访问的变量的副本。这样就会出现同一个变量在某个瞬间，在一个线程的memory中的值可能与另外一个线程memory中的值，或者main memory中的值不一致的情况。
+<br> 
+<br>一个变量声明为volatile，就意味着这个变量是随时会被其他线程修改的，因此不能将它cache在线程memory中。以下例子展现了volatile的作用：
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=public%20class%20StoppableTask%20extends%20Thread%20%7B%0A%0A%20%20private%20volatile%20boolean%20pleaseStop%3B%0A%0A%0A%20%20public%20void%20run()%20%7B%0A%0A%20%20%20%20while%20(!pleaseStop)%20%7B%0A%0A%20%20%20%20%20%2F%2F%20do%20some%20stuff...%0A%0A%20%20%20%20%7D%0A%0A%20%7D%0A%0A%0A%20%20public%20void%20tellMeToStop()%20%7B%0A%0A%20%20%20pleaseStop%20%3D%20true%3B%0A%0A%20%20%7D%0A%0A%7D" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">public</span><span>&nbsp;</span><span class="keyword">class</span><span>&nbsp;StoppableTask&nbsp;</span><span class="keyword">extends</span><span>&nbsp;Thread&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;<span class="keyword">private</span><span>&nbsp;</span><span class="keyword">volatile</span><span>&nbsp;</span><span class="keyword">boolean</span><span>&nbsp;pleaseStop;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;run()&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">while</span><span>&nbsp;(!pleaseStop)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//&nbsp;do&nbsp;some&nbsp;stuff...</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;tellMeToStop()&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;pleaseStop&nbsp;=&nbsp;<span class="keyword">true</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li></ol></div><pre class="java" name="code" codeable_id="" codeable_type="BlogComment" source_url="http://sakyone.iteye.com/blog/668091#" pre_index="0" title="java中关键字volatile的作用" style="display: none;">public class StoppableTask extends Thread {
+
+  private volatile boolean pleaseStop;
+
+
+  public void run() {
+
+    while (!pleaseStop) {
+
+     // do some stuff...
+
+    }
+
+ }
+
+
+  public void tellMeToStop() {
+
+   pleaseStop = true;
+
+  }
+
+}</pre>
+<br>假如pleaseStop没有被声明为volatile，线程执行run的时候检查的是自己的副本，就不能及时得知其他线程已经调用tellMeToStop()修改了pleaseStop的值。
+<br> 
+<br>Volatile一般情况下不能代替sychronized，因为volatile不能保证操作的原子性，即使只是i++，实际上也是由多个原子操作组成：read i; inc; write i，假如多个线程同时执行i++，volatile只能保证他们操作的i是同一块内存，但依然可能出现写入脏数据的情况。如果配合Java 5增加的atomic wrapper classes，对它们的increase之类的操作就不需要sychronized。
+<br> 
+<br>Reference：
+<br>http://www.javamex.com/tutorials/synchronization_volatile.shtml 
+<br>http://www.javamex.com/tutorials/synchronization_volatile_java_5.shtml 
+<br>http://www.ibm.com/developerworks/cn/java/j-jtp06197.html 
+<br>=========================分割线2=================================
+<br>
+<br>&nbsp; 恐怕比较一下volatile和synchronized的不同是最容易解释清楚的。volatile是变量修饰符，而synchronized则作用于一段代码或方法；看如下三句get代码：
+<br>
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=int%20i1%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%0Aint%20geti1()%20%7Breturn%20i1%3B%7D%20%0Avolatile%20int%20i2%3B%20%0Aint%20geti2()%0A%7Breturn%20i2%3B%7D%20%0Aint%20i3%3B%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0Asynchronized%20int%20geti3()%20%7Breturn%20i3%3B%7D%20%0A%E3%80%80%E3%80%80geti1()" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">int</span><span>&nbsp;i1;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span><span class="keyword">int</span><span>&nbsp;geti1()&nbsp;{</span><span class="keyword">return</span><span>&nbsp;i1;}&nbsp;&nbsp;&nbsp;</span></span></li><li><span><span class="keyword">volatile</span><span>&nbsp;</span><span class="keyword">int</span><span>&nbsp;i2;&nbsp;&nbsp;&nbsp;</span></span></li><li><span><span class="keyword">int</span><span>&nbsp;geti2()&nbsp;&nbsp;</span></span></li><li><span>{<span class="keyword">return</span><span>&nbsp;i2;}&nbsp;&nbsp;&nbsp;</span></span></li><li><span><span class="keyword">int</span><span>&nbsp;i3;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span><span class="keyword">synchronized</span><span>&nbsp;</span><span class="keyword">int</span><span>&nbsp;geti3()&nbsp;{</span><span class="keyword">return</span><span>&nbsp;i3;}&nbsp;&nbsp;&nbsp;</span></span></li><li><span>　　geti1()&nbsp;&nbsp;</span></li></ol></div><pre class="java" name="code" codeable_id="" codeable_type="BlogComment" source_url="http://sakyone.iteye.com/blog/668091#" pre_index="1" title="java中关键字volatile的作用" style="display: none;">int i1;             
+int geti1() {return i1;} 
+volatile int i2; 
+int geti2()
+{return i2;} 
+int i3;              
+synchronized int geti3() {return i3;} 
+　　geti1()</pre>
+<br>得到存储在当前线程中i1的数值。多个线程有多个i1变量拷贝，而且这些i1之间可以互不相同。换句话说，另一个线程可能已经改变了它线程内的i1值，而这个值可以和当前线程中的i1值不相同。事实上，Java有个思想叫“主”内存区域，这里存放了变量目前的“准确值”。每个线程可以有它自己的变量拷贝，而这个变量拷贝值可以和“主”内存区域里存放的不同。因此实际上存在一种可能：“主”内存区域里的i1值是1，线程1里的i1值是2，线程2里的i1值是3——这在线程1和线程2都改变了它们各自的i1值，而且这个改变还没来得及传递给“主”内存区域或其他线程时就会发生。
+<br>　　而 geti2()得到的是“主”内存区域的i2数值。用volatile修饰后的变量不允许有不同于“主”内存区域的变量拷贝。换句话说，一个变量经 volatile修饰后在所有线程中必须是同步的；任何线程中改变了它的值，所有其他线程立即获取到了相同的值。理所当然的，volatile修饰的变量存取时比一般变量消耗的资源要多一点，因为线程有它自己的变量拷贝更为高效。
+<br>　　既然volatile关键字已经实现了线程间数据同步，又要 synchronized干什么呢？呵呵，它们之间有两点不同。首先，synchronized获得并释放监视器——如果两个线程使用了同一个对象锁，监视器能强制保证代码块同时只被一个线程所执行——这是众所周知的事实。但是，synchronized也同步内存：事实上，synchronized在“ 主”内存区域同步整个线程的内存。因此，执行geti3()方法做了如下几步：
+<br>1. 线程请求获得监视this对象的对象锁（假设未被锁，否则线程等待直到锁释放）
+<br>2. 线程内存的数据被消除，从“主”内存区域中读入（Java虚拟机能优化此步。。。[后面的不知道怎么表达,汗]）
+<br>3. 代码块被执行
+<br>4. 对于变量的任何改变现在可以安全地写到“主”内存区域中（不过geti3()方法不会改变变量值）
+<br>5. 线程释放监视this对象的对象锁
+<br>　　因此volatile只是在线程内存和“主”内存间同步某个变量的值，而synchronized通过锁定和解锁某个监视器同步所有变量的值。显然synchronized要比volatile消耗更多资源。
+<br>
+<br>=========================分割线3=================================
+<br>
+<br>volatile关键字相信了解Java多线程的读者都很清楚它的作用。volatile关键字用于声明简单类型变量，如int、float、 boolean等数据类型。如果这些简单数据类型声明为volatile，对它们的操作就会变成原子级别的。但这有一定的限制。例如，下面的例子中的n就不是原子级别的：
+<br>
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=package%20%20mythread%3B%0A%0Apublic%20%20%20class%20%20JoinThread%20%20extends%20%20Thread%0A%7B%0A%20%20%20%20%20public%20%20%20static%20volatile%20int%20%20n%20%20%3D%20%20%200%20%3B%0A%20%20%20%20public%20%20%20void%20%20run()%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20for%20%20(%20int%20%20i%20%20%3D%20%20%200%20%3B%20i%20%20%3C%20%20%2010%20%3B%20i%20%2B%2B%20)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20try%20%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20n%20%20%3D%20%20n%20%20%2B%20%20%201%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sleep(%203%20)%3B%20%20%2F%2F%20%20%E4%B8%BA%E4%BA%86%E4%BD%BF%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C%E6%9B%B4%E9%9A%8F%E6%9C%BA%EF%BC%8C%E5%BB%B6%E8%BF%9F3%E6%AF%AB%E7%A7%92%20%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20catch%20%20(Exception%20e)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%0A%20%20%20%20%20public%20%20%20static%20%20%20void%20%20main(String%5B%5D%20args)%20%20throws%20%20Exception%0A%20%20%20%20%7B%0A%0A%20%20%20%20%20%20%20%20Thread%20threads%5B%5D%20%20%3D%20%20%20new%20%20Thread%5B%20100%20%5D%3B%0A%20%20%20%20%20%20%20%20%20for%20%20(%20int%20%20i%20%20%3D%20%20%200%20%3B%20i%20%20%3C%20%20threads.length%3B%20i%20%2B%2B%20)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%20%E5%BB%BA%E7%AB%8B100%E4%B8%AA%E7%BA%BF%E7%A8%8B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20threads%5Bi%5D%20%20%3D%20%20%20new%20%20JoinThread()%3B%0A%20%20%20%20%20%20%20%20%20for%20%20(%20int%20%20i%20%20%3D%20%20%200%20%3B%20i%20%20%3C%20%20threads.length%3B%20i%20%2B%2B%20)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%20%E8%BF%90%E8%A1%8C%E5%88%9A%E6%89%8D%E5%BB%BA%E7%AB%8B%E7%9A%84100%E4%B8%AA%E7%BA%BF%E7%A8%8B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20threads%5Bi%5D.start()%3B%0A%20%20%20%20%20%20%20%20%20for%20%20(%20int%20%20i%20%20%3D%20%20%200%20%3B%20i%20%20%3C%20%20threads.length%3B%20i%20%2B%2B%20)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%20100%E4%B8%AA%E7%BA%BF%E7%A8%8B%E9%83%BD%E6%89%A7%E8%A1%8C%E5%AE%8C%E5%90%8E%E7%BB%A7%E7%BB%AD%20%0A%20%20%20%20%20%20%20%20%20%20%20%20threads%5Bi%5D.join()%3B%0A%20%20%20%20%20%20%20%20System.out.println(%20%22%20n%3D%20%22%20%20%20%2B%20%20JoinThread.n)%3B%0A%20%20%20%20%7D%0A%7D%20" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">package</span><span>&nbsp;&nbsp;mythread;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span><span class="keyword">public</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">class</span><span>&nbsp;&nbsp;JoinThread&nbsp;&nbsp;</span><span class="keyword">extends</span><span>&nbsp;&nbsp;Thread&nbsp;&nbsp;</span></span></li><li><span>{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">static</span><span>&nbsp;</span><span class="keyword">volatile</span><span>&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;n&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">void</span><span>&nbsp;&nbsp;run()&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>&nbsp;&nbsp;(&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;i&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;i&nbsp;&nbsp;&lt;&nbsp;&nbsp;&nbsp;</span><span class="number">10</span><span>&nbsp;;&nbsp;i&nbsp;++&nbsp;)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span><span>&nbsp;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;&nbsp;=&nbsp;&nbsp;n&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;<span class="number">1</span><span>&nbsp;;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(&nbsp;<span class="number">3</span><span>&nbsp;);&nbsp;&nbsp;</span><span class="comment">//&nbsp;&nbsp;为了使运行结果更随机，延迟3毫秒&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">catch</span><span>&nbsp;&nbsp;(Exception&nbsp;e)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">static</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">void</span><span>&nbsp;&nbsp;main(String[]&nbsp;args)&nbsp;&nbsp;</span><span class="keyword">throws</span><span>&nbsp;&nbsp;Exception&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thread&nbsp;threads[]&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;<span class="keyword">new</span><span>&nbsp;&nbsp;Thread[&nbsp;</span><span class="number">100</span><span>&nbsp;];&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>&nbsp;&nbsp;(&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;i&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;i&nbsp;&nbsp;&lt;&nbsp;&nbsp;threads.length;&nbsp;i&nbsp;++&nbsp;)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//&nbsp;&nbsp;建立100个线程&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;threads[i]&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;<span class="keyword">new</span><span>&nbsp;&nbsp;JoinThread();&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>&nbsp;&nbsp;(&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;i&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;i&nbsp;&nbsp;&lt;&nbsp;&nbsp;threads.length;&nbsp;i&nbsp;++&nbsp;)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//&nbsp;&nbsp;运行刚才建立的100个线程&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;threads[i].start();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>&nbsp;&nbsp;(&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;i&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;i&nbsp;&nbsp;&lt;&nbsp;&nbsp;threads.length;&nbsp;i&nbsp;++&nbsp;)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//&nbsp;&nbsp;100个线程都执行完后继续&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;threads[i].join();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(&nbsp;<span class="string">"&nbsp;n=&nbsp;"</span><span>&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;JoinThread.n);&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;&nbsp;</span></li></ol></div><pre class="java" name="code" codeable_id="" codeable_type="BlogComment" source_url="http://sakyone.iteye.com/blog/668091#" pre_index="2" title="java中关键字volatile的作用" style="display: none;">package  mythread;
+
+public   class  JoinThread  extends  Thread
+{
+     public   static volatile int  n  =   0 ;
+    public   void  run()
+    {
+         for  ( int  i  =   0 ; i  &lt;   10 ; i ++ )
+             try 
+        {
+                n  =  n  +   1 ;
+                sleep( 3 );  //  为了使运行结果更随机，延迟3毫秒 
+
+            }
+             catch  (Exception e)
+            {
+            }
+    }
+
+     public   static   void  main(String[] args)  throws  Exception
+    {
+
+        Thread threads[]  =   new  Thread[ 100 ];
+         for  ( int  i  =   0 ; i  &lt;  threads.length; i ++ )
+             //  建立100个线程 
+            threads[i]  =   new  JoinThread();
+         for  ( int  i  =   0 ; i  &lt;  threads.length; i ++ )
+             //  运行刚才建立的100个线程 
+            threads[i].start();
+         for  ( int  i  =   0 ; i  &lt;  threads.length; i ++ )
+             //  100个线程都执行完后继续 
+            threads[i].join();
+        System.out.println( " n= "   +  JoinThread.n);
+    }
+} </pre>&nbsp;&nbsp;&nbsp; 
+<br> 如果对n的操作是原子级别的，最后输出的结果应该为n=1000，而在执行上面积代码时，很多时侯输出的n都小于1000，这说明n=n+1不是原子级别的操作。原因是声明为volatile的简单变量如果当前值由该变量以前的值相关，那么volatile关键字不起作用，也就是说如下的表达式都不是原子操作：
+<br>
+<br>n&nbsp; =&nbsp; n&nbsp; +&nbsp;&nbsp; 1 ;
+<br>n ++ ; 
+<br>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 如果要想使这种情况变成原子操作，需要使用synchronized关键字，如上的代码可以改成如下的形式：
+<br>
+<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=package%20%20mythread%3B%0A%0Apublic%20%20%20class%20%20JoinThread%20%20extends%20%20Thread%0A%7B%0A%20%20%20%20%20public%20%20%20static%20int%20%20n%20%20%3D%20%20%200%20%3B%0A%0A%20%20%20%20%20public%20static%20%20%20synchronized%20%20%20void%20%20inc()%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20n%20%2B%2B%20%3B%0A%20%20%20%20%7D%0A%20%20%20%20%20public%20%20%20void%20%20run()%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20for%20%20(%20int%20%20i%20%20%3D%20%20%200%20%3B%20i%20%20%3C%20%20%2010%20%3B%20i%20%2B%2B%20)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20try%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20inc()%3B%20%20%2F%2F%20%20n%20%3D%20n%20%2B%201%20%E6%94%B9%E6%88%90%E4%BA%86%20inc()%3B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sleep(%203%20)%3B%20%20%2F%2F%20%20%E4%B8%BA%E4%BA%86%E4%BD%BF%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C%E6%9B%B4%E9%9A%8F%E6%9C%BA%EF%BC%8C%E5%BB%B6%E8%BF%9F3%E6%AF%AB%E7%A7%92%20%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20catch%20%20(Exception%20e)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%0A%20%20%20%20%20public%20%20%20static%20%20%20void%20%20main(String%5B%5D%20args)%20%20throws%20%20Exception%0A%20%20%20%20%7B%0A%0A%20%20%20%20%20%20%20%20Thread%20threads%5B%5D%20%20%3D%20%20%20new%20%20Thread%5B%20100%20%5D%3B%0A%20%20%20%20%20%20%20%20%20for%20%20(%20int%20%20i%20%20%3D%20%20%200%20%3B%20i%20%20%3C%20%20threads.length%3B%20i%20%2B%2B%20)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%20%E5%BB%BA%E7%AB%8B100%E4%B8%AA%E7%BA%BF%E7%A8%8B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20threads%5Bi%5D%20%20%3D%20%20%20new%20%20JoinThread()%3B%0A%20%20%20%20%20%20%20%20%20for%20%20(%20int%20%20i%20%20%3D%20%20%200%20%3B%20i%20%20%3C%20%20threads.length%3B%20i%20%2B%2B%20)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%20%E8%BF%90%E8%A1%8C%E5%88%9A%E6%89%8D%E5%BB%BA%E7%AB%8B%E7%9A%84100%E4%B8%AA%E7%BA%BF%E7%A8%8B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20threads%5Bi%5D.start()%3B%0A%20%20%20%20%20%20%20%20%20for%20%20(%20int%20%20i%20%20%3D%20%20%200%20%3B%20i%20%20%3C%20%20threads.length%3B%20i%20%2B%2B%20)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%20100%E4%B8%AA%E7%BA%BF%E7%A8%8B%E9%83%BD%E6%89%A7%E8%A1%8C%E5%AE%8C%E5%90%8E%E7%BB%A7%E7%BB%AD%20%0A%20%20%20%20%20%20%20%20%20%20%20%20threads%5Bi%5D.join()%3B%0A%20%20%20%20%20%20%20%20System.out.println(%20%22%20n%3D%20%22%20%20%20%2B%20%20JoinThread.n)%3B%0A%20%20%20%20%7D%0A%7D%20" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">package</span><span>&nbsp;&nbsp;mythread;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span><span class="keyword">public</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">class</span><span>&nbsp;&nbsp;JoinThread&nbsp;&nbsp;</span><span class="keyword">extends</span><span>&nbsp;&nbsp;Thread&nbsp;&nbsp;</span></span></li><li><span>{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">static</span><span>&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;n&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;</span><span class="keyword">static</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">synchronized</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">void</span><span>&nbsp;&nbsp;inc()&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n&nbsp;++&nbsp;;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">void</span><span>&nbsp;&nbsp;run()&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>&nbsp;&nbsp;(&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;i&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;i&nbsp;&nbsp;&lt;&nbsp;&nbsp;&nbsp;</span><span class="number">10</span><span>&nbsp;;&nbsp;i&nbsp;++&nbsp;)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span><span>&nbsp;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inc();&nbsp;&nbsp;<span class="comment">//&nbsp;&nbsp;n&nbsp;=&nbsp;n&nbsp;+&nbsp;1&nbsp;改成了&nbsp;inc();&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(&nbsp;<span class="number">3</span><span>&nbsp;);&nbsp;&nbsp;</span><span class="comment">//&nbsp;&nbsp;为了使运行结果更随机，延迟3毫秒&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">catch</span><span>&nbsp;&nbsp;(Exception&nbsp;e)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">static</span><span>&nbsp;&nbsp;&nbsp;</span><span class="keyword">void</span><span>&nbsp;&nbsp;main(String[]&nbsp;args)&nbsp;&nbsp;</span><span class="keyword">throws</span><span>&nbsp;&nbsp;Exception&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thread&nbsp;threads[]&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;<span class="keyword">new</span><span>&nbsp;&nbsp;Thread[&nbsp;</span><span class="number">100</span><span>&nbsp;];&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>&nbsp;&nbsp;(&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;i&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;i&nbsp;&nbsp;&lt;&nbsp;&nbsp;threads.length;&nbsp;i&nbsp;++&nbsp;)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//&nbsp;&nbsp;建立100个线程&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;threads[i]&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;<span class="keyword">new</span><span>&nbsp;&nbsp;JoinThread();&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>&nbsp;&nbsp;(&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;i&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;i&nbsp;&nbsp;&lt;&nbsp;&nbsp;threads.length;&nbsp;i&nbsp;++&nbsp;)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//&nbsp;&nbsp;运行刚才建立的100个线程&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;threads[i].start();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span><span>&nbsp;&nbsp;(&nbsp;</span><span class="keyword">int</span><span>&nbsp;&nbsp;i&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;;&nbsp;i&nbsp;&nbsp;&lt;&nbsp;&nbsp;threads.length;&nbsp;i&nbsp;++&nbsp;)&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//&nbsp;&nbsp;100个线程都执行完后继续&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;threads[i].join();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(&nbsp;<span class="string">"&nbsp;n=&nbsp;"</span><span>&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;JoinThread.n);&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;&nbsp;</span></li></ol></div><pre class="java" name="code" codeable_id="" codeable_type="BlogComment" source_url="http://sakyone.iteye.com/blog/668091#" pre_index="3" title="java中关键字volatile的作用" style="display: none;">package  mythread;
+
+public   class  JoinThread  extends  Thread
+{
+     public   static int  n  =   0 ;
+
+     public static   synchronized   void  inc()
+    {
+        n ++ ;
+    }
+     public   void  run()
+    {
+         for  ( int  i  =   0 ; i  &lt;   10 ; i ++ )
+             try 
+            {
+                inc();  //  n = n + 1 改成了 inc(); 
+                sleep( 3 );  //  为了使运行结果更随机，延迟3毫秒 
+
+            }
+             catch  (Exception e)
+            {
+            }
+    }
+
+     public   static   void  main(String[] args)  throws  Exception
+    {
+
+        Thread threads[]  =   new  Thread[ 100 ];
+         for  ( int  i  =   0 ; i  &lt;  threads.length; i ++ )
+             //  建立100个线程 
+            threads[i]  =   new  JoinThread();
+         for  ( int  i  =   0 ; i  &lt;  threads.length; i ++ )
+             //  运行刚才建立的100个线程 
+            threads[i].start();
+         for  ( int  i  =   0 ; i  &lt;  threads.length; i ++ )
+             //  100个线程都执行完后继续 
+            threads[i].join();
+        System.out.println( " n= "   +  JoinThread.n);
+    }
+} </pre>
+<br>&nbsp;&nbsp;&nbsp; 上面的代码将n=n+1改成了inc()，其中inc方法使用了synchronized关键字进行方法同步。因此，在使用volatile关键字时要慎重，并不是只要简单类型变量使用volatile修饰，对这个变量的所有操作都是原来操作，当变量的值由自身的上一个决定时，如n=n+1、n++ 等，volatile关键字将失效，只有当变量的值和自身上一个值无关时对该变量的操作才是原子级别的，如n = m + 1，这个就是原级别的。所以在使用volatile关键时一定要谨慎，如果自己没有把握，可以使用synchronized来代替volatile。
+<br>
+<br>
+<br>
+<br>本文来自CSDN博客，转载请标明出处：http://blog.csdn.net/orzorz/archive/2009/07/03/4319055.aspx
+<br>
+  </div>
+
+  
+
+  
+  <div class="J_adv" data-view="true" data-mod="ad_popu_201" data-mtp="43" data-order="93" data-con="ad_content_1811" style="width: 728px; height: 90px;"><script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/adsbygoogle.js.下载"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-8990951720398508" data-ad-slot="8267689356/1918544322" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><iframe width="728" height="90" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/saved_resource.html"></iframe></ins></ins></ins><script>(adsbygoogle=window.adsbygoogle || []).push({});</script></div>
+  
+
+  <div id="bottoms" class="clearfix">
+    
+    <div id="share_weibo">分享到：
+      <a data-type="sina" href="javascript:;" title="分享到新浪微博"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/sina.jpg"></a>
+      <a data-type="qq" href="javascript:;" title="分享到腾讯微博"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/tec.jpg"></a>
+    </div>
+  </div>
+
+  <div class="blog_nav">
+    <div class="pre_next">
+      <a href="http://sakyone.iteye.com/blog/668275" class="next" title="不formmater 注释">不formmater 注释</a>
+      |
+      <a href="http://sakyone.iteye.com/blog/667893" class="pre" title="MOD函数">MOD函数</a>
+    </div>
+  </div>
+  <div class="blog_bottom">
+    <ul>
+      <li>2010-05-17 14:48</li>
+      <li>浏览 105922</li>
+      <li><a href="http://sakyone.iteye.com/blog/668091#comments">评论(16)</a></li>
+      
+      
+      <li>分类:<a href="http://www.iteye.com/blogs/category/language">编程语言</a></li>      
+      <li class="last"><a href="http://www.iteye.com/wiki/blog/668091" target="_blank" class="more">相关推荐</a></li>
+    </ul>    
+  </div>
+  
+		    
+		
+<div class="boutique-curr-box blog_comment">
+	  <div class="boutique-curr clearfix">
+	    <h5 class="h3titles">参考知识库</h5>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/javase"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/1453169124297_297.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/javase" classs="title">Java SE知识库</a>
+              <span>
+                 <em>25597</em>&nbsp;&nbsp;关注 <i>|</i> <em>479</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/java"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/1453701371636_636.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/java" classs="title">Java 知识库</a>
+              <span>
+                 <em>25581</em>&nbsp;&nbsp;关注 <i>|</i> <em>1456</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/javaee"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/1456818035722_722.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/javaee" classs="title">Java EE知识库</a>
+              <span>
+                 <em>17538</em>&nbsp;&nbsp;关注 <i>|</i> <em>1301</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/javascript"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/1458106113412_412.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/javascript" classs="title">JavaScript知识库</a>
+              <span>
+                 <em>14401</em>&nbsp;&nbsp;关注 <i>|</i> <em>1514</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/jquery"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/1459143634568_568.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/jquery" classs="title">jQuery知识库</a>
+              <span>
+                 <em>8716</em>&nbsp;&nbsp;关注 <i>|</i> <em>948</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/angularjs"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/1458526868366_366.jpg" width="58" height="58" alt=""></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/angularjs" classs="title">AngularJS知识库</a>
+              <span>
+                 <em>4708</em>&nbsp;&nbsp;关注 <i>|</i> <em>569</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	  </div>
+</div>
+ 		
+      
+  <div class="blog_comment">
+    <h5>评论</h5>
+    <a id="comments" name="comments"></a>
+    <div id="bc2394651">
+  <div class="comment_title">
+    16 楼
+    <a href="http://saiarmuluo.iteye.com/" target="_blank" title="saiarmuluo">saiarmuluo</a>
+    2016-11-07&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">不错，最近在看并发的知识一直没弄懂这块，谢谢！<img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_idea.gif"> </div>
+</div>
+
+<div id="bc2390959">
+  <div class="comment_title">
+    15 楼
+    <a href="http://maosiyu.iteye.com/" target="_blank" title="mao_siyu">mao_siyu</a>
+    2016-07-04&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_idea.gif"> 多谢楼主 讲的很明白~~</div>
+</div>
+
+<div id="bc2389783">
+  <div class="comment_title">
+    14 楼
+    <a href="http://qiangcz.iteye.com/" target="_blank" title="qiangcz">qiangcz</a>
+    2016-05-23&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">angole 写道</div><div class="quote_div"><div class="quote_title">jgroups 写道</div><div class="quote_div"><strong>volatile告诉jvm， 它所修饰的变量不保留拷贝，直接访问主内存中的（也就是上面说的A) </strong><br><br><span style="color: red;">这里volatile到底是不用拷贝的B，直接访问A，还是保证访问B时B的值是最新的A？？？？？<br>一直没有一个明确的答案？有没有人知道，忘回复！！！</span></div><br><br>同问！</div><br>不拷贝，直接访问</div>
+</div>
+
+<div id="bc2375995">
+  <div class="comment_title">
+    13 楼
+    <a href="http://2793788826.iteye.com/" target="_blank" title="springdata_springmvc">springdata_springmvc</a>
+    2015-08-03&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><a rel="nofollow" target="_blank" href="http://www.zuidaima.com/">java程序语言学习教程</a> 地址<a rel="nofollow" target="_blank" href="http://www.zuidaima.com/">http://www.zuidaima.com/</a></div>
+</div>
+
+<div id="bc2367070">
+  <div class="comment_title">
+    12 楼
+    <a href="http://angole.iteye.com/" target="_blank" title="angole">angole</a>
+    2015-01-27&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">jgroups 写道</div><div class="quote_div"><strong>volatile告诉jvm， 它所修饰的变量不保留拷贝，直接访问主内存中的（也就是上面说的A) </strong><br><br><span style="color: red;">这里volatile到底是不用拷贝的B，直接访问A，还是保证访问B时B的值是最新的A？？？？？<br>一直没有一个明确的答案？有没有人知道，忘回复！！！</span></div><br><br>同问！</div>
+</div>
+
+<div id="bc2358876">
+  <div class="comment_title">
+    11 楼
+    <a href="http://jgroups.iteye.com/" target="_blank" title="jgroups">jgroups</a>
+    2014-09-19&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">josico 写道</div><div class="quote_div">楼主，问一下，看是我理解的有问题，还是说我代码写错了。<br>我没加volatile，线程也仍然停了，我模拟不出反应加和不加volatile具体区别的实例出来<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=public%20class%20Client%20%7B%0A%0A%09public%20static%20void%20main(String%5B%5D%20args)%20%7B%0A%09%09Thread1%20t1%20%3D%20new%20Thread1()%3B%0A%09%09t1.start()%3B%0A%09%09t1.plzStop()%3B%0A%09%7D%0A%0A%7D%0A%0Aclass%20Thread1%20extends%20Thread%20%7B%0A%09%0A%09private%20boolean%20flag%20%3D%20true%3B%0A%0A%09%40Override%0A%09public%20void%20run()%20%7B%0A%09%09int%20i%20%3D%200%3B%0A%09%09while%20(flag)%20%7B%0A%09%09%09i%2B%2B%3B%0A%09%09%09try%20%7B%0A%09%09%09%09Thread.sleep(500)%3B%0A%09%09%09%7D%20catch%20(InterruptedException%20e)%20%7B%0A%09%09%09%09e.printStackTrace()%3B%0A%09%09%09%7D%0A%09%09%09if%20(i%20%3E%209)%20%7B%0A%09%09%09%09flag%20%3D%20false%3B%0A%09%09%09%7D%0A%09%09%7D%0A%09%7D%0A%09%0A%09public%20void%20plzStop()%7B%0A%09%09flag%20%3D%20false%3B%0A%09%7D%0A%7D%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">public</span><span>&nbsp;</span><span class="keyword">class</span><span>&nbsp;Client&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;</span><span class="keyword">static</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;main(String[]&nbsp;args)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thread1&nbsp;t1&nbsp;=&nbsp;<span class="keyword">new</span><span>&nbsp;Thread1();&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t1.start();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t1.plzStop();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span><span class="keyword">class</span><span>&nbsp;Thread1&nbsp;</span><span class="keyword">extends</span><span>&nbsp;Thread&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span><span>&nbsp;</span><span class="keyword">boolean</span><span>&nbsp;flag&nbsp;=&nbsp;</span><span class="keyword">true</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Override</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;run()&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">int</span><span>&nbsp;i&nbsp;=&nbsp;</span><span class="number">0</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">while</span><span>&nbsp;(flag)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i++;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span><span>&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thread.sleep(<span class="number">500</span><span>);&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<span class="keyword">catch</span><span>&nbsp;(InterruptedException&nbsp;e)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span><span>&nbsp;(i&nbsp;&gt;&nbsp;</span><span class="number">9</span><span>)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flag&nbsp;=&nbsp;<span class="keyword">false</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;plzStop(){&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flag&nbsp;=&nbsp;<span class="keyword">false</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li></ol></div><pre class="java" name="code" codeable_id="2358876" codeable_type="BlogComment" source_url="http://sakyone.iteye.com/blog/668091#bc2358876" pre_index="0" title="java中关键字volatile的作用" style="display: none;">public class Client {
+
+	public static void main(String[] args) {
+		Thread1 t1 = new Thread1();
+		t1.start();
+		t1.plzStop();
+	}
+
+}
+
+class Thread1 extends Thread {
+	
+	private boolean flag = true;
+
+	@Override
+	public void run() {
+		int i = 0;
+		while (flag) {
+			i++;
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (i &gt; 9) {
+				flag = false;
+			}
+		}
+	}
+	
+	public void plzStop(){
+		flag = false;
+	}
+}
+</pre></div><br>是不是欣慰start方法还没有执行完，plzStop就已经执行了</div>
+</div>
+
+<div id="bc2358873">
+  <div class="comment_title">
+    10 楼
+    <a href="http://jgroups.iteye.com/" target="_blank" title="jgroups">jgroups</a>
+    2014-09-19&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><strong>volatile告诉jvm， 它所修饰的变量不保留拷贝，直接访问主内存中的（也就是上面说的A) </strong><br><br><span style="color: red;">这里volatile到底是不用拷贝的B，直接访问A，还是保证访问B时B的值是最新的A？？？？？<br>一直没有一个明确的答案？有没有人知道，忘回复！！！</span></div>
+</div>
+
+<div id="bc2356733">
+  <div class="comment_title">
+    9 楼
+    <a href="http://sy888goodboy.iteye.com/" target="_blank" title="sy888goodboy">sy888goodboy</a>
+    2014-08-21&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_biggrin.gif"> 不错，学习了！</div>
+</div>
+
+<div id="bc2346465">
+  <div class="comment_title">
+    8 楼
+    <a href="http://josico.iteye.com/" target="_blank" title="josico">josico</a>
+    2014-04-28&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">楼主，问一下，看是我理解的有问题，还是说我代码写错了。<br>我没加volatile，线程也仍然停了，我模拟不出反应加和不加volatile具体区别的实例出来<br><div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=public%20class%20Client%20%7B%0A%0A%09public%20static%20void%20main(String%5B%5D%20args)%20%7B%0A%09%09Thread1%20t1%20%3D%20new%20Thread1()%3B%0A%09%09t1.start()%3B%0A%09%09t1.plzStop()%3B%0A%09%7D%0A%0A%7D%0A%0Aclass%20Thread1%20extends%20Thread%20%7B%0A%09%0A%09private%20boolean%20flag%20%3D%20true%3B%0A%0A%09%40Override%0A%09public%20void%20run()%20%7B%0A%09%09int%20i%20%3D%200%3B%0A%09%09while%20(flag)%20%7B%0A%09%09%09i%2B%2B%3B%0A%09%09%09try%20%7B%0A%09%09%09%09Thread.sleep(500)%3B%0A%09%09%09%7D%20catch%20(InterruptedException%20e)%20%7B%0A%09%09%09%09e.printStackTrace()%3B%0A%09%09%09%7D%0A%09%09%09if%20(i%20%3E%209)%20%7B%0A%09%09%09%09flag%20%3D%20false%3B%0A%09%09%09%7D%0A%09%09%7D%0A%09%7D%0A%09%0A%09public%20void%20plzStop()%7B%0A%09%09flag%20%3D%20false%3B%0A%09%7D%0A%7D%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span class="keyword">public</span><span>&nbsp;</span><span class="keyword">class</span><span>&nbsp;Client&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;</span><span class="keyword">static</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;main(String[]&nbsp;args)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thread1&nbsp;t1&nbsp;=&nbsp;<span class="keyword">new</span><span>&nbsp;Thread1();&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t1.start();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t1.plzStop();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span><span class="keyword">class</span><span>&nbsp;Thread1&nbsp;</span><span class="keyword">extends</span><span>&nbsp;Thread&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span><span>&nbsp;</span><span class="keyword">boolean</span><span>&nbsp;flag&nbsp;=&nbsp;</span><span class="keyword">true</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Override</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;run()&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">int</span><span>&nbsp;i&nbsp;=&nbsp;</span><span class="number">0</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">while</span><span>&nbsp;(flag)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i++;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span><span>&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thread.sleep(<span class="number">500</span><span>);&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<span class="keyword">catch</span><span>&nbsp;(InterruptedException&nbsp;e)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span><span>&nbsp;(i&nbsp;&gt;&nbsp;</span><span class="number">9</span><span>)&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flag&nbsp;=&nbsp;<span class="keyword">false</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span><span>&nbsp;</span><span class="keyword">void</span><span>&nbsp;plzStop(){&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flag&nbsp;=&nbsp;<span class="keyword">false</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li></ol></div><pre class="java" name="code" codeable_id="2346465" codeable_type="BlogComment" source_url="http://sakyone.iteye.com/blog/668091#bc2346465" pre_index="0" title="java中关键字volatile的作用" style="display: none;">public class Client {
+
+	public static void main(String[] args) {
+		Thread1 t1 = new Thread1();
+		t1.start();
+		t1.plzStop();
+	}
+
+}
+
+class Thread1 extends Thread {
+	
+	private boolean flag = true;
+
+	@Override
+	public void run() {
+		int i = 0;
+		while (flag) {
+			i++;
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (i &gt; 9) {
+				flag = false;
+			}
+		}
+	}
+	
+	public void plzStop(){
+		flag = false;
+	}
+}
+</pre></div>
+</div>
+
+<div id="bc2335396">
+  <div class="comment_title">
+    7 楼
+    <a href="http://wankunde.iteye.com/" target="_blank" title="wankunde">wankunde</a>
+    2013-12-24&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">seashoreliu 写道</div><div class="quote_div">楼主，如果我main里面这样写public static void main(String[] args) throws Exception {<br><br>		Thread threads[] = new Thread[100];<br>		for (int i = 0; i &lt; threads.length; i++)<br>			// 建立100个线程<br>			threads[i] = new JoinThread();<br>		for (int i = 0; i &lt; threads.length; i++)<br>			// 运行刚才建立的100个线程<br>			<span style="color: red;">new JoinThread()</span>.start();<br>		for (int i = 0; i &lt; threads.length; i++)<br>			// 100个线程都执行完后继续<br>			<span style="color: red;">new JoinThread()</span>.join();<br>		System.out.println(" n= " + JoinThread.n);<br>	}运行结果就不对了，即时加上synchrozied也不行，能解释一下么</div><br><br><br>测试发现，楼主的理论是对的，就是操作一定要是原子级的，但是代码解释不对！<br><br>inc方法必须要加static synchronized 两个关键字，才可以保证操作的原子级。<br>区别：<br>非static方法直接由线程调用：<br>&nbsp; 1. 操作的数据先由class field 拷贝到instance field<br>&nbsp; 2. 调用inc函数累加<br>&nbsp; 3. 复制n副本到class field<br>那么在操作inc的时候，其他线程可能也已经完成1操作，导致数据不一致。虽然加了volatile，数据拷贝的时候是一致的，但是inc后就不一致了。<br>static方法直接由线程调用：<br>&nbsp; 1. 线程直接寻址到class method处执行原子函数 inc<br>加入synchronized保证函数的顺序执行。<br><br>这是我的理解，但是楼主说synchronized可以自动拷贝数据副本，这个按道理来说应该可以解决非static方法的问题才对，搞不懂。。。</div>
+</div>
+
+<div id="bc2335286">
+  <div class="comment_title">
+    6 楼
+    <a href="http://haanya168.iteye.com/" target="_blank" title="haanya168">haanya168</a>
+    2013-12-23&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">讲得很好，谢谢，通俗易懂！</div>
+</div>
+
+<div id="bc2332977">
+  <div class="comment_title">
+    5 楼
+    <a href="http://seashoreliu.iteye.com/" target="_blank" title="seashoreliu">seashoreliu</a>
+    2013-11-29&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">楼主，如果我main里面这样写public static void main(String[] args) throws Exception {<br><br>		Thread threads[] = new Thread[100];<br>		for (int i = 0; i &lt; threads.length; i++)<br>			// 建立100个线程<br>			threads[i] = new JoinThread();<br>		for (int i = 0; i &lt; threads.length; i++)<br>			// 运行刚才建立的100个线程<br>			<span style="color: red;">new JoinThread()</span>.start();<br>		for (int i = 0; i &lt; threads.length; i++)<br>			// 100个线程都执行完后继续<br>			<span style="color: red;">new JoinThread()</span>.join();<br>		System.out.println(" n= " + JoinThread.n);<br>	}运行结果就不对了，即时加上synchrozied也不行，能解释一下么</div>
+</div>
+
+<div id="bc2331269">
+  <div class="comment_title">
+    4 楼
+    <a href="http://shinkait.iteye.com/" target="_blank" title="jateide">jateide</a>
+    2013-11-14&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">引用</div><div class="quote_div">在使用volatile关键字时要慎重，并不是只要简单类型变量使用volatile修饰，对这个变量的所有操作都是原来操作，当变量的值由自身的上一个决定时，如n=n+1、n++ 等，volatile关键字将失效，只有当变量的值和自身上一个值无关时对该变量的操作才是原子级别的，如n = m + 1，这个就是原级别的。</div><br>这个讲解的很清楚，需要认清对变量的操作是否是原子操作。</div>
+</div>
+
+<div id="bc2327356">
+  <div class="comment_title">
+    3 楼
+    <a href="http://akka.iteye.com/" target="_blank" title="AKka">AKka</a>
+    2013-10-08&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">说得很清楚，受教了！3Q</div>
+</div>
+
+<div id="bc2310849">
+  <div class="comment_title">
+    2 楼
+    <a href="http://flora3000.iteye.com/" target="_blank" title="flora3000">flora3000</a>
+    2013-05-10&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">讲的很明白~</div>
+</div>
+
+<div id="bc1795903">
+  <div class="comment_title">
+    1 楼
+    <a href="http://yzhw.iteye.com/" target="_blank" title="yzhw">yzhw</a>
+    2010-12-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">正需要，刚好遇到一个多线程定时任务的问题</div>
+</div>
+
+
+    
+    
+  </div>
+
+  <div class="blog_comment">
+    <h5>发表评论</h5>
+            <p style="text-align:center; margin-top:30px;margin-bottom:0px;"><a href="http://sakyone.iteye.com/login" style="background-color:white;"> <img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/login_icon.png" style="vertical-align:middle; margin-right: 10px;"></a><a href="http://sakyone.iteye.com/login">  您还没有登录,请您登录后再发表评论 </a></p>
+      </div>
+</div>
+
+
+<script type="text/javascript">
+  dp.SyntaxHighlighter.HighlightAll('code', true, true);
+
+  $$('#main .blog_content pre[name=code]').each(function(pre, index){ // blog content
+    var post_id = 668091;
+    var location = window.location;
+    source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+    pre.writeAttribute('codeable_id', post_id);
+    pre.writeAttribute('codeable_type', "Blog");
+    pre.writeAttribute('source_url', source_url);
+    pre.writeAttribute('pre_index', index);
+    pre.writeAttribute('title', 'java中关键字volatile的作用');
+  });
+
+  fix_image_size($$('div.blog_content img'), 700);
+
+  function processComment() {
+    $$('#main .blog_comment > div').each(function(comment){// comment
+      var post_id = comment.id.substr(2);
+      $$("#"+comment.id+" pre[name=code]").each(function(pre, index){
+        var location = window.location;
+        source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+        source_url += "#" + comment.id;
+        pre.writeAttribute('codeable_id', post_id);
+        pre.writeAttribute('codeable_type', "BlogComment");
+        pre.writeAttribute('source_url', source_url);
+        pre.writeAttribute('pre_index', index);
+        pre.writeAttribute('title', 'java中关键字volatile的作用');
+      });
+    });
+  }
+
+  function quote_comment(id) {
+    new Ajax.Request('/editor/quote', {
+      parameters: {'id':id, 'type':'BlogComment'},
+      onSuccess:function(response){editor.bbcode_editor.textarea.insertAfterSelection(response.responseText);
+        Element.scrollTo(editor.bbcode_editor.textarea.element);}
+    });
+  }
+
+  code_favorites_init();
+  processComment();
+  new WeiboShare({share_buttons: $('share_weibo'), img_scope: $('blog_content')});
+</script>
+
+
+
+
+        </div>
+
+        <div id="local">
+          <div class="local_top"></div>
+          <div id="blog_owner">
+  <div id="blog_owner_logo"><a href="http://sakyone.iteye.com/"><img alt="sakyone的博客" class="logo" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/e17f9713-c944-3383-9a26-e9c25ffc56fe.jpg" title="sakyone的博客: 每天积累一点" width=""></a></div>
+  <div id="blog_owner_name">sakyone</div>
+</div>
+
+          <div id="blog_actions">
+            <ul>
+              <li>浏览: 527156 次</li>
+              <li>性别: <img alt="Icon_minigender_1" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/icon_minigender_1.gif" title="男"></li>
+              <li>来自: 广州</li>
+              <li><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/offline.gif"></li>
+              
+            </ul>
+          </div>
+          <div id="user_visits" class="clearfix">
+            <h5>最近访客 <span style="font-weight:normal;font-size:12px;padding-left:30px;"><a href="http://sakyone.iteye.com/blog/user_visits">更多访客&gt;&gt;</a></span></h5>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://halikes23.iteye.com/" target="_blank"><img alt="halikes23的博客" class="logo" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/94beb0e7-298b-36c5-aa60-4f731e25bef6-thumb.jpg" title="halikes23的博客: hl技术之家" width="48px"></a></div>
+                <div class="left"><a href="http://halikes23.iteye.com/" target="_blank" title="halikes23">halikes23</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://buchengde001.iteye.com/" target="_blank"><img alt="buchengde001的博客" class="logo" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/68294854-104d-3cb8-9c7c-4df95d2bf110-thumb.jpg" title="buchengde001的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://buchengde001.iteye.com/" target="_blank" title="buchengde001">buchengde001</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://bert82503.iteye.com/" target="_blank"><img alt="bert82503的博客" class="logo" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/c849b8a5-1cea-3007-91e9-de2e360c0410-thumb.jpg" title="bert82503的博客: Bert的蓝天 —— 记录自己成长过程的点点滴滴，做一名有专业素养的手艺人" width="48px"></a></div>
+                <div class="left"><a href="http://bert82503.iteye.com/" target="_blank" title="bert82503">bert82503</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://skynail.iteye.com/" target="_blank"><img alt="skynail的博客" class="logo" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/user-logo-thumb.gif" title="skynail的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://skynail.iteye.com/" target="_blank" title="skynail">skynail</a></div>
+              </div>
+            
+          </div>
+
+          
+
+                      <div id="blog_menu">
+              <h5>文章分类</h5>
+              <ul>
+                <li><a href="http://sakyone.iteye.com/">全部博客 (198)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52428">struts 相关 (8)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52429">hibernate相关 (5)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52430">JSP相关 (3)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52431">javascript相关 (9)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52432">spring相关 (0)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52433">J2SE相关 (25)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52434">MSSQL (6)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52435">web服务器相关 (3)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52436">html相关 (8)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/52437">Ajax相关 (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/56621">VS2008 (2)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/56858">ArcGIS Web server (2)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/59349">WebService (5)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/59931">ANT (4)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/60456">Ajax (5)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/60999">IDE (2)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/61786">网络相关知识点 (3)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/61834">算法相关 (3)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/61930"> 数据库相关 (8)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/64524">JUnit (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/65006">搜索引擎 (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/65494">JAVA模式 (11)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/67884">Dorado   (4)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/68519">JXL (2)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/68520">ACCESS (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/71492">PHP (3)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/71675">Mysql 数据库 (2)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/73059">J2EE (11)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/76462">Tomcat (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/76464">Oracle (15)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/76463">WebLogic (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/76465">Eclipse (4)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/79078">Flex (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/81604">java 路上 (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/82086">IIS服务器 (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/82477">Pushlet (2)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/82982">Log 4j (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/83181">XML (2)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/83182">JDOM (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/84613">RMI (0)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/86104">常用 bat 命令 (1)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/87175">velocity (2)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/89324">Linux (5)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/99253">PL/SQL (2)</a></li>
+                
+                  <li><a href="http://sakyone.iteye.com/category/99293">SQL (5)</a></li>
+                
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>社区版块</h5>
+              <ul>
+                <li><a href="http://sakyone.iteye.com/blog/news">我的资讯</a> (0)</li>
+                <li>
+                  <a href="http://sakyone.iteye.com/blog/post">我的论坛</a> (0)
+                </li>
+                <li><a href="http://sakyone.iteye.com/blog/answered_problems">我的问答</a> (0)</li>
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>存档分类</h5>
+              <ul>
+                
+                  <li><a href="http://sakyone.iteye.com/blog/monthblog/2010-11">2010-11</a> (1)</li>
+                
+                  <li><a href="http://sakyone.iteye.com/blog/monthblog/2010-07">2010-07</a> (1)</li>
+                
+                  <li><a href="http://sakyone.iteye.com/blog/monthblog/2010-06">2010-06</a> (4)</li>
+                
+                <li><a href="http://sakyone.iteye.com/blog/monthblog_more">更多存档...</a></li>
+              </ul>
+            </div>
+            
+            
+
+            <div id="guest_books">
+              <h5>最新评论</h5>
+              <ul>
+                
+                <li>
+                  <a href="http://saiarmuluo.iteye.com/" target="_blank" title="saiarmuluo">saiarmuluo</a>： 
+                  不错，最近在看并发的知识一直没弄懂这块，谢谢！<br>
+                  <a href="http://sakyone.iteye.com/blog/668091#bc2394651">java中关键字volatile的作用</a>
+                </li>
+                
+                <li>
+                  <a href="http://750930459.iteye.com/" target="_blank" title="java大神dxg">java大神dxg</a>： 
+                  &nbsp;<br>
+                  <a href="http://sakyone.iteye.com/blog/471093#bc2391472">Servlet、Filter和Listener</a>
+                </li>
+                
+                <li>
+                  <a href="http://maosiyu.iteye.com/" target="_blank" title="mao_siyu">mao_siyu</a>： 
+                   多谢楼主 讲的很明白~~<br>
+                  <a href="http://sakyone.iteye.com/blog/668091#bc2390959">java中关键字volatile的作用</a>
+                </li>
+                
+                <li>
+                  <a href="http://qiangcz.iteye.com/" target="_blank" title="qiangcz">qiangcz</a>： 
+                  angole 写道jgroups 写道volatile告诉jv ...<br>
+                  <a href="http://sakyone.iteye.com/blog/668091#bc2389783">java中关键字volatile的作用</a>
+                </li>
+                
+                <li>
+                  <a href="http://qiannianhua.iteye.com/" target="_blank" title="qiannianhua">qiannianhua</a>： 
+                   ...<br>
+                  <a href="http://sakyone.iteye.com/blog/365147#bc2384341">SQL语句(增删改查)</a>
+                </li>
+                
+              </ul>
+            </div>
+
+            <div class="local_bottom"></div>
+          
+        </div>
+        <div style="margin-top: 10px;float: left;clear: left;">
+					<div class="J_adv" data-view="true" data-mod="ad_popu_185" data-mtp="63" data-order="92" data-con="ad_content_1129" style="width: 200px; height: 200px;"><div id="nav_show_top_stop" style="width: 200px; height: 200px; z-index: 1000; position: fixed; top: 1150.48px;"><div id="cpro_u2720202"><iframe id="iframeu2720202_0" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/ycqm(2).html" width="200" height="200" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0;vertical-align:bottom;margin:0;width:200px;height:200px" allowtransparency="true"></iframe></div></div><script> var naviga_offsetTop = 0; function naviga_stay_top(){ var scrollTop = jQuery(document).scrollTop(); if( scrollTop > naviga_offsetTop ){jQuery('#nav_show_top_stop').css({'position': 'fixed'});jQuery('#nav_show_top_stop').css({'top': '0px'}); } else {jQuery('#nav_show_top_stop').css({'position': 'fixed'});jQuery('#nav_show_top_stop').css({'top': naviga_offsetTop - scrollTop + 'px'}); } }function onload_function(){naviga_offsetTop = jQuery('#nav_show_top_stop').position().top; jQuery(window).bind('scroll', naviga_stay_top); jQuery(window).bind('mousewheel',naviga_stay_top); jQuery(document).bind('scroll', naviga_stay_top); jQuery(document).bind('mousewheel',naviga_stay_top); }jQuery(document).ready( onload_function ); </script><script type="text/javascript">    (window.cproArray = window.cproArray || []).push({        id: 'u2720202'      });  </script>  <script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/c.js.下载" type="text/javascript"></script></div>
+				</div>
+      </div>    
+
+      <div id="footer" class="clearfix">
+        <div id="copyright">
+          <hr>
+          声明：ITeye文章版权属于作者，受法律保护。没有作者书面许可不得转载。若作者同意转载，必须以超链接形式标明文章原始出处和作者。<br>
+          © 2003-2017 ITeye.com.   All rights reserved.  [ 京ICP证110151号  京公网安备110105010620 ]
+        </div>
+        <div class="J_adv" data-view="true" data-mod="ad_popu_186" data-mtp="61" data-order="93" data-con="ad_content_1933"><script id="popuLayer_js_q" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/popuLayer.js.下载" defer="" type="text/javascript"></script><div id="location_parent_google"></div><script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/adsbygoogle.js.下载"></script><div id="layerd_google" style="position: fixed;bottom:0px;right:0px;line-height:0px;z-index:1000"><div class="J_close layer_close" style="display:;background-color:#efefef;padding:0px;color:#333;font:12px/24px Helvetica,Tahoma,Arial,sans-serif;text-align:right;">关闭</div><ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px;" data-ad-client="ca-pub-8990951720398508" data-ad-slot="8267689356/5752063962" data-adsbygoogle-status="done"><ins id="aswift_1_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><ins id="aswift_1_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><iframe width="300" height="250" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_1" name="aswift_1" style="left:0;position:absolute;top:0;" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/saved_resource(1).html"></iframe></ins></ins></ins></div><script>(adsbygoogle=window.adsbygoogle || []).push({});</script><script>  document.getElementById('popuLayer_js_q').onload=function(){      var styObjd=styObj={width:'302px',height:'275px'};window.CSDN.Layer.PopuLayer('#layerd_google',{storageName:'layerd',styleObj:styObjd,total:50,expoire:1000*60});  }</script></div>
+      </div>
+    </div>
+    <script type="text/javascript">
+  document.write("<img src='http://stat.iteye.com/?url="+ encodeURIComponent(document.location.href) + "&referrer=" + encodeURIComponent(document.referrer) + "&user_id=' width='0' height='0' />");
+</script><img src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/saved_resource" width="0" height="0">
+
+<script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/tracking.js.下载" type="text/javascript"></script>
+
+    
+    
+    <script language="javascript" type="text/javascript" src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/async_new.js.下载"></script>
+<script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/jquery-1.11.1.min.js.下载" type="text/javascript"></script>
+<script type="text/javascript">var $csdn_iteye_jq = jQuery.noConflict();// 解决jq与prototype.js命名空间冲突的问题</script>
+<script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/tracking.js(1).下载" type="text/javascript"></script>
+    
+	    
+	    <script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/web-storage-cache.min.js.下载" type="text/javascript"></script>
+	    <script src="./java中关键字volatile的作用 - 每天积累一点 - ITeye技术网站_files/replace.min.js.下载" type="text/javascript"></script>
+    
+    
+  
+
+</body></html>

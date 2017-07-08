@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<!-- saved from url=(0064)http://www.cnblogs.com/freeabyss/archive/2013/05/15/3187057.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java 字符串常用操作（String类） - 薛遗山 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/bundle-SimpleGamboge.css">
+<link type="text/css" rel="stylesheet" href="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/147864.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/bundle-SimpleGamboge-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/freeabyss/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/freeabyss/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/freeabyss/wlwmanifest.xml">
+<script async="" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/analytics.js.下载"></script><script type="text/javascript" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/encoder.js.下载"></script><script src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/jquery.js.下载" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'freeabyss', cb_enable_mathjax=false;var isLogined=true;</script>
+<script src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/freeabyss/"><img id="blogLogo" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/freeabyss/">李子衿</a></h1>
+<h2></h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/freeabyss/">首页</a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/%E8%96%9B%E9%81%97%E5%B1%B1">联系</a></li>
+<li><a id="blog_nav_rss" class="menu" href="http://www.cnblogs.com/freeabyss/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="http://www.cnblogs.com/freeabyss/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count">随笔 - 61&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 0</span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/freeabyss/archive/2013/05/15/3187057.html">Java 字符串常用操作（String类）</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><h2>字符串查找</h2>
+<p>String提供了两种查找字符串的方法，即indexOf与lastIndexOf方法。</p>
+<p>&nbsp;1、indexOf（String s） <br>
+</p>
+<p>&nbsp;&nbsp;&nbsp; 该方法用于返回参数字符串s在指定字符串中首次出现的索引位置，当调用字符串的indexOf()方法时，会从当前字符串的开始位置搜索s的位置；如果没有检索到字符串s，该方法返回-1</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008080;">1</span> String str ="We are students"<span style="color: #000000;">;
+</span><span style="color: #008080;">2</span> <span style="color: #0000ff;">int</span> size = str.indexOf("a"); <span style="color: #008000;">//</span><span style="color: #008000;"> 变量size的值是3</span></pre>
+</div>
+<p>&nbsp; 2、lastIndexOf(String str)</p>
+<p>&nbsp;&nbsp;&nbsp; 该方法用于返回字符串最后一次出现的索引位置。当调用字符串的lastIndexOf()方法时，会从当前字符串的开始位置检索参数字符串str，并将最后一次出现str的索引位置返回。如果没有检索到字符串str，该方法返回-1.</p>
+<p>&nbsp;&nbsp;&nbsp; 如果lastIndexOf方法中的参数是空字符串"" ，，则返回的结果与length方法的返回结果相同。</p>
+<h2>获取指定索引位置的字符</h2>
+<p>&nbsp;&nbsp;&nbsp; 使用charAt()方法可将指定索引处的字符返回。</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008080;">1</span> String str = "hello word"<span style="color: #000000;">;
+</span><span style="color: #008080;">2</span> <span style="color: #0000ff;">char</span> mychar =  str.charAt(5);  <span style="color: #008000;">//</span><span style="color: #008000;"> mychar的结果是w</span></pre>
+</div>
+<h2>获取子字符串</h2>
+<p>&nbsp;&nbsp; 通过String类的substring()方法可对字符串进行截取。这些方法的共同点就是都利用字符串的下标进行截取，且应明确字符串下标是从0开始的。在字符串中空格占用一个索引位置。</p>
+<p>1、substring(int beginIndex)</p>
+<p>&nbsp;&nbsp;&nbsp; 该方法返回的是从指定的索引位置开始截取知道该字符串结尾的子串。</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008080;">1</span> String str = "Hello word"<span style="color: #000000;">;
+</span><span style="color: #008080;">2</span> String substr = str.substring(3); <span style="color: #008000;">//</span><span style="color: #008000;">获取字符串，此时substr值为lo word</span></pre>
+</div>
+<p>2、substring(int beginIndex,&nbsp; int endIndex)</p>
+<p>&nbsp;&nbsp;&nbsp; beginIndex : 开始截取子字符串的索引位置</p>
+<p>&nbsp;&nbsp;&nbsp; endIndex：子字符串在整个字符串中的结束位置</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008080;">1</span> String str = "Hello word"<span style="color: #000000;">;
+</span><span style="color: #008080;">2</span> String substr = str.substring(0,3); <span style="color: #008000;">//</span><span style="color: #008000;">substr的值为hel</span></pre>
+</div>
+<h2>去除空格</h2>
+<p>&nbsp;&nbsp;&nbsp; trim()方法返回字符串的副本，忽略前导空格和尾部空格。</p>
+<h2>字符串替换</h2>
+<p>&nbsp;&nbsp;&nbsp; replace()方法可实现将指定的字符或字符串替换成新的字符或字符串</p>
+<p>&nbsp;&nbsp; oldChar：要替换的字符或字符串</p>
+<p>&nbsp; newChar：用于替换原来字符串的内容</p>
+<p>如果要替换的字符oldChar在字符串中重复出现多次，replace()方法会将所有oldChar全部替换成newChar。需要注意的是，要替换的字符oldChar的大小写要与原字符串中字符的大小写保持一致。</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008080;">1</span> String str= "address"<span style="color: #000000;">;
+</span><span style="color: #008080;">2</span> String newstr = str.replace("a", "A");<span style="color: #008000;">//</span><span style="color: #008000;"> newstr的值为Address</span></pre>
+</div>
+<h2>判断字符串的开始与结尾</h2>
+<p>&nbsp;&nbsp;&nbsp; startsWith()方法与endsWith()方法分别用于判断字符串是否以指定的内容开始或结束。这两个方法的返回值都为boolean类型。</p>
+<p>&nbsp;&nbsp; 1、startsWith(String prefix) <br>
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 该方法用于判断当前字符串对象的前缀是否是参数指定的字符串。</p>
+<p>&nbsp;&nbsp; 2、endsWith(String suffix) <br>
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 该方法用于判断当前字符串是否以给定的子字符串结束</p>
+<h2>判断字符串是否相等</h2>
+<p>&nbsp;&nbsp;&nbsp; 1、equals(String otherstr)</p>
+<p>&nbsp;&nbsp;&nbsp; 如果两个字符串具有相同的字符和长度，则使用equals()方法比较时，返回true。同时equals()方法比较时区分大小写。</p>
+<p>&nbsp;&nbsp; 2、equalsIgnoreCase(String otherstr)</p>
+<p>&nbsp;&nbsp;&nbsp; equalsIgnoreCase()方法与equals()类型，不过在比较时忽略了大小写。</p>
+<h2>按字典顺序比较两个字符串</h2>
+<p>compareTo()方法为按字典顺序比较两个字符串，该比较基于字符串中各个字符的Unicode值，按字典顺序将此String对象表示的字符序列与参数字符串所表示的字符序列进行比较。如果按字典顺序此String对象位于参数字符串之前，则比较结果为一个负整数；如果按字典顺序此String对象位于参数字符串之后，则比较结果为一个正整数；如果这两个字符串相等，则结果为0.</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008080;">1</span> str.compareTo(String otherstr);</pre>
+</div>
+<h2>字母大小写转换</h2>
+<p>&nbsp;&nbsp;&nbsp; 字符串的toLowerCase()方法可将字符串中的所有字符从大写字母改写为小写字母，而tuUpperCase()方法可将字符串中的小写字母改写为大写字母。</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008080;">1</span> <span style="color: #000000;">str.toLowerCase();
+</span><span style="color: #008080;">2</span> str.toUpperCase();</pre>
+</div>
+<h2>字符串分割</h2>
+<p>&nbsp;&nbsp;&nbsp; 使用split()方法可以使字符串按指定的分隔字符或字符串对内容进行分割，并将分割后的结果存放在字符数组中。</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008080;">1</span> str.split(String sign);</pre>
+</div>
+<p>sign为分割字符串的分割符，也可以使用正则表达式。</p>
+<p>没有统一的对字符串进行分割的符号，如果想定义多个分割符，可使用符号“|”。例如，“,|=”表示分割符分别为“，”和“=”。</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008080;">1</span> str.split(String sign, in limit)；</pre>
+</div>
+<p>该方法可根据给定的分割符对字符串进行拆分，并限定拆分的次数。</p>
+<p><br>
+</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/freeabyss/category/497131.html" target="_blank">Java</a></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/freeabyss/tag/Java/">Java</a>, <a href="http://www.cnblogs.com/freeabyss/tag/String/">String</a></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(3187057,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;875eef7e-0da4-e211-83e8-90b11c0b17d6&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/freeabyss/" target="_blank"><img src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/20130713100903.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/freeabyss/">薛遗山</a><br>
+            <a href="http://home.cnblogs.com/u/freeabyss/followees">关注 - 2</a><br>
+            <a href="http://home.cnblogs.com/u/freeabyss/followers">粉丝 - 13</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;875eef7e-0da4-e211-83e8-90b11c0b17d6&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(3187057,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">2</span>
+    </div>
+    <div class="buryit" onclick="votePost(3187057,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/14/3187058.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/freeabyss/archive/2013/05/14/3187058.html" title="发布于2013-05-14 16:46">dom4j初识</a><br><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/15/3187056.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/freeabyss/archive/2013/05/15/3187056.html" title="发布于2013-05-15 16:30">Java下拉列表的简单应用（JComboBox）</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2013-05-15 14:27</span> <a href="http://www.cnblogs.com/freeabyss/">薛遗山</a> 阅读(<span id="post_view_count">17867</span>) 评论(<span id="post_comment_count">0</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=3187057" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/freeabyss/archive/2013/05/15/3187057.html#" onclick="AddToWz(3187057);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=147864,cb_entryId=3187057,cb_blogApp=currentBlogApp,cb_blogUserGuid='875eef7e-0da4-e211-83e8-90b11c0b17d6',cb_entryCreatedDate='2013/5/15 14:27:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/15/3187057.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/15/3187057.html#top">返回顶部</a></div>
+<div id="comment_form_container">
+<div id="commentform_title">发表评论</div>
+<span id="tip_comment" style="color:Red"></span>
+<p>
+昵称：<input type="text" id="tbCommentAuthor" class="author" disabled="disabled" size="50" value="_xuanwang">
+</p>
+<div class="commentbox_main">
+<div class="commentbox_title">
+<div class="commentbox_title_left">评论内容：</div>
+<div class="commentbox_title_right">
+<img id="ubb_quote" class="comment_icon" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/quote.gif" alt="引用" title="添加引用" onclick="insertUBB(&#39;tbCommentBody&#39;,&#39;quote&#39;)">
+<img id="ubb_bold" class="comment_icon" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/b.png" alt="粗体" title="添加粗体" onclick="insertUBB(&#39;tbCommentBody&#39;,&#39;b&#39;)">
+<img id="ubb_url" class="comment_icon" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/lk.png" alt="链接" title="添加链接" onclick="insertUbbUrl(&#39;tbCommentBody&#39;)">
+<img id="ubb_indent" class="comment_icon" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/indent.png" alt="缩进" title="添加首行缩进" onclick="insertIndent(&#39;tbCommentBody&#39;)">
+<img id="ubb_code" class="comment_icon" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/InsertCode.gif" alt="代码" title="添加代码" onclick="insertUbbCode()">
+<img id="ubb_img" class="comment_icon" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/img.gif" alt="图片" title="上传图片" onclick="OpenImageUploadWindow();">
+</div>
+</div>
+<div class="clear"></div>
+<textarea id="tbCommentBody" class="comment_textarea"></textarea>
+</div>
+<p id="commentbox_opt">
+<input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论">
+<span id="span_comment_canceledit" style="display:none"><a href="javascript:void(0);" onclick="return CancelCommentEdit()">不改了</a></span>
+<a href="javascript:void(0);" onclick="return logout();">退出</a>
+        <a id="commentbox_opt_sub" href="javascript:void(0);" title="订阅后有新评论时会邮件通知您" onclick="commentManager.Subscribe()">订阅评论</a>
+</p>
+<div id="tip_comment2" style="color:Red"></div>
+<p>
+[Ctrl+Enter快捷键提交]
+</p>
+<div style="display:none">
+<span id="comment_edit_id"></span><span id="span_parentcomment_id"></span>
+<span id="span_parent_id"></span>
+<span id="span_comment_replyto"></span>
+<span id="span_comment_posted"></span>
+</div>
+</div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://cn.udacity.com/android/?utm_source=cnblogs&amp;utm_medium=referral&amp;utm_campaign=AND02" target="_blank">【推荐】Google+滴滴联手打造Android开发工程师课程</a><br><a href="http://cloud.qy.com.cn/68?a=cnblog" target="_blank">【推荐】群英云服务器性价王，2核4G5M BGP带宽 68元首月！</a><br></div>
+<div id="opt_under_post"></div>
+<div id="cnblogs_c1" class="c_ad_block"><a href="http://wijmo.gcpowertools.com.cn/angular2/?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=wijmo&amp;utm_campaign=community" target="_blank"><img width="300" height="250" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/24442-20170418140602931-555118785.gif" alt="Wijmo"></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/567363/" target="_blank">“收割”100万便利店？采访后发现，京东一厢情愿的算盘打错了！</a><br> ·  <a href="http://news.cnblogs.com/n/567391/" target="_blank">跌宕起伏的东芝芯片业务争夺战</a><br> ·  <a href="http://news.cnblogs.com/n/567387/" target="_blank">bilibili代理VR手游《妃十三学园》，二次元或成VR游戏突破口</a><br> ·  <a href="http://news.cnblogs.com/n/567378/" target="_blank">华为回应P10闪存速度差异：流畅体验不是单一部件决定</a><br> ·  <a href="http://news.cnblogs.com/n/567325/" target="_blank">不耗油墨可反复擦写 惠普推出IonTouch印刷技术</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="cnblogs_c2" class="c_ad_block"><a href="http://click.aliyun.com/m/15483/" target="_blank"><img width="468" height="60" src="./Java 字符串常用操作（String类） - 薛遗山 - 博客园_files/24442-20170331150421570-489464769.jpg" alt="阿里云C2"></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/566523/" target="_blank">程序员，如何从平庸走向理想？</a><br> ·  <a href="http://kb.cnblogs.com/page/566318/" target="_blank">我为什么鼓励工程师写blog</a><br> ·  <a href="http://kb.cnblogs.com/page/566528/" target="_blank">怎么轻松学习JavaScript</a><br> ·  <a href="http://kb.cnblogs.com/page/509431/" target="_blank">如何打好前端游击战</a><br> ·  <a href="http://kb.cnblogs.com/page/564590/" target="_blank">技术文章的阅读姿势</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/freeabyss/">薛遗山</a><br>园龄：<a href="http://home.cnblogs.com/u/freeabyss/" title="入园时间：2013-04-13">4年</a><br>粉丝：<a href="http://home.cnblogs.com/u/freeabyss/followers/">13</a><br>关注：<a href="http://home.cnblogs.com/u/freeabyss/followees/">2</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;875eef7e-0da4-e211-83e8-90b11c0b17d6&#39;)">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2013/04/01&#39;);return false;">&lt;</a></td><td align="center">2013年5月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2013/06/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">28</td><td class="CalOtherMonthDay" align="center">29</td><td class="CalOtherMonthDay" align="center">30</td><td align="center">1</td><td align="center">2</td><td align="center">3</td><td class="CalWeekendDay" align="center">4</td></tr><tr><td class="CalWeekendDay" align="center">5</td><td align="center">6</td><td align="center">7</td><td align="center">8</td><td align="center"><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/09.html"><u>9</u></a></td><td align="center">10</td><td class="CalWeekendDay" align="center"><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/11.html"><u>11</u></a></td></tr><tr><td class="CalWeekendDay" align="center"><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/12.html"><u>12</u></a></td><td align="center">13</td><td align="center"><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/14.html"><u>14</u></a></td><td align="center"><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/15.html"><u>15</u></a></td><td align="center">16</td><td align="center">17</td><td class="CalWeekendDay" align="center">18</td></tr><tr><td class="CalWeekendDay" align="center">19</td><td align="center">20</td><td align="center">21</td><td align="center">22</td><td align="center">23</td><td align="center">24</td><td class="CalWeekendDay" align="center">25</td></tr><tr><td class="CalWeekendDay" align="center">26</td><td align="center">27</td><td align="center">28</td><td align="center">29</td><td align="center">30</td><td align="center"><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/31.html"><u>31</u></a></td><td class="CalOtherMonthDay" align="center">1</td></tr><tr><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td><td class="CalOtherMonthDay" align="center">8</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/freeabyss/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/freeabyss/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/freeabyss/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/freeabyss/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/freeabyss/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle">随笔分类<span style="font-size:11px;font-weight:normal">(52)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/freeabyss/category/497132.html">C/C++(7)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/freeabyss/category/497131.html">Java(19)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/freeabyss/category/497135.html">Java Web(19)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/freeabyss/category/517908.html">Java 错误总结(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/freeabyss/category/497134.html">Web技术(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/freeabyss/category/497216.html">Windows(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/freeabyss/category/497133.html">数据库(3)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(60)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/freeabyss/archive/2014/12.html">2014年12月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="http://www.cnblogs.com/freeabyss/archive/2014/11.html">2014年11月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="http://www.cnblogs.com/freeabyss/archive/2014/07.html">2014年7月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="http://www.cnblogs.com/freeabyss/archive/2014/04.html">2014年4月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="http://www.cnblogs.com/freeabyss/archive/2013/12.html">2013年12月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="http://www.cnblogs.com/freeabyss/archive/2013/11.html">2013年11月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="http://www.cnblogs.com/freeabyss/archive/2013/09.html">2013年9月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_7" href="http://www.cnblogs.com/freeabyss/archive/2013/08.html">2013年8月 (13)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_8" href="http://www.cnblogs.com/freeabyss/archive/2013/07.html">2013年7月 (10)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_9" href="http://www.cnblogs.com/freeabyss/archive/2013/06.html">2013年6月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_10" href="http://www.cnblogs.com/freeabyss/archive/2013/05.html">2013年5月 (10)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_11" href="http://www.cnblogs.com/freeabyss/archive/2013/04.html">2013年4月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_12" href="http://www.cnblogs.com/freeabyss/archive/2013/03.html">2013年3月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_13" href="http://www.cnblogs.com/freeabyss/archive/2013/01.html">2013年1月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_14" href="http://www.cnblogs.com/freeabyss/archive/2012/12.html">2012年12月 (3)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_articlecategory" class="catListArticleCategory sidebar-block">
+<h3 class="catListTitle">文章分类</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_2_Link_0" href="http://www.cnblogs.com/freeabyss/category/497117.html">C/C++</a> </li>
+
+<li><a id="CatList_LinkList_2_Link_1" href="http://www.cnblogs.com/freeabyss/category/497118.html">Java</a> </li>
+
+<li><a id="CatList_LinkList_2_Link_2" href="http://www.cnblogs.com/freeabyss/category/497120.html">Web相关</a> </li>
+
+<li><a id="CatList_LinkList_2_Link_3" href="http://www.cnblogs.com/freeabyss/category/497121.html">Windows</a> </li>
+
+<li><a id="CatList_LinkList_2_Link_4" href="http://www.cnblogs.com/freeabyss/category/497119.html">数据库</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_links497090" class="catList sidebar-block">
+<h3 class="catListTitle">精彩博文</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_3_Link_0" href="http://blog.jobbole.com/53694/" rel="nofollow">59 条搞笑但真实的编程语录</a> </li>
+
+<li><a id="CatList_LinkList_3_Link_1" href="http://boytnt.blog.51cto.com/966121/796884" rel="nofollow">WCF简单教程</a> </li>
+
+<li><a id="CatList_LinkList_3_Link_2" href="http://www.bootcss.com/p/metro-ui-css/" rel="nofollow">Window 8 UI样式</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_links498009" class="catList sidebar-block">
+<h3 class="catListTitle">学习资料</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_4_Link_0" href="http://www.importnew.com/5207.html" rel="nofollow">Ecplipse 插件</a> </li>
+
+<li><a id="CatList_LinkList_4_Link_1" href="http://www.importnew.com/5006.html" rel="nofollow">JDBC为什么要使用PreparedStatement而不是Statement </a> </li>
+
+<li><a id="CatList_LinkList_4_Link_2" href="http://learn.akae.cn/media/index.html" rel="nofollow">Linux C编程一站式学习</a> </li>
+
+<li><a id="CatList_LinkList_4_Link_3" href="http://net.pku.edu.cn/~yhf/linux_c/" rel="nofollow">Linux C函数库</a> </li>
+
+<li><a id="CatList_LinkList_4_Link_4" href="http://www.ilovematlab.cn/thread-17768-1-1.html" rel="nofollow">Matlab入门</a> </li>
+
+<li><a id="CatList_LinkList_4_Link_5" href="http://www.codesoso.net/default.aspx" rel="nofollow">代码库</a> </li>
+
+<li><a id="CatList_LinkList_4_Link_6" href="http://www.youku.com/playlist_show/id_19465801.html" rel="nofollow">计算机中的数学</a> </li>
+
+<li><a id="CatList_LinkList_4_Link_7" href="http://www.ostools.net/" rel="nofollow">开源中国在线工具</a> </li>
+
+<li><a id="CatList_LinkList_4_Link_8" href="http://huangwen200301930.blog.163.com/blog/static/484849812011111142257943/" rel="nofollow">学习资料</a> </li>
+
+<li><a id="CatList_LinkList_4_Link_9" href="http://51isunshine.github.io/chineseandpinyin/" rel="nofollow">中文转拼音</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_scorerank" class="sidebar-block">
+<div class="catListBlogRank">
+<h3 class="catListTitle">积分与排名</h3>
+<ul>
+	<li class="liScore">
+		积分 -	24446
+	</li>
+	<li class="liRank">
+		排名 -	11174
+	</li>
+</ul>
+</div>
+
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap" style="display: none;">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"></div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/15/3187057.html">1. Java 字符串常用操作（String类）(17868)</a></li><li><a href="http://www.cnblogs.com/freeabyss/archive/2013/04/15/3187065.html">2. java连接SQL Server数据库(3583)</a></li><li><a href="http://www.cnblogs.com/freeabyss/p/3325252.html">3. 【错误总结】java.lang.NoClassDefFoundError: org/objectweb/asm/ClassVisitor(2075)</a></li><li><a href="http://www.cnblogs.com/freeabyss/p/3251839.html">4. JSP内置对象之request对象【学习笔记】(1889)</a></li><li><a href="http://www.cnblogs.com/freeabyss/p/3290297.html">5. 【学习笔记】Struts2之一个Action包含多个控制处理逻辑(1493)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap" style="display: none;">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/freeabyss/archive/2013/04/15/3187065.html">1. java连接SQL Server数据库(3)</a></li><li><a href="http://www.cnblogs.com/freeabyss/archive/2013/05/15/3187057.html">2. Java 字符串常用操作（String类）(2)</a></li><li><a href="http://www.cnblogs.com/freeabyss/archive/2012/12/26/3187075.html">3. MFC TeeChart 用法整理一(1)</a></li><li><a href="http://www.cnblogs.com/freeabyss/p/3280777.html">4. 【学习笔记】Struts2 应用开发步骤(1)</a></li><li><a href="http://www.cnblogs.com/freeabyss/archive/2013/01/01/3187070.html">5. CFileFind类的详解以及应用实例(1)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2017 薛遗山
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+</body></html>

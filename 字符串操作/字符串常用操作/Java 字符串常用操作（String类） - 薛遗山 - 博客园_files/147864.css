@@ -1,0 +1,27 @@
+#cnblogs_post_body ol 
+ { 
+     border: 1px dotted #000066; 
+     line-height: 150%; 
+     word-break: break-word; 
+     font-family: Consolas, Verdana !important; 
+     border-radius: 5px; 
+     width: 90%; 
+     background-color: #E3E3FF; 
+     list-style-position: outside; 
+     margin-left: 0px; 
+ } 
+ #cnblogs_post_body ol font 
+ {
+     font-size: 12px !important; 
+ } 
+ #cnblogs_post_body ol li 
+ { 
+     background-color: #fff; 
+     padding-left: 5px; 
+     border-left: 1px solid #8A8AFF; 
+     margin-left: 5px !important; 
+ } 
+ #cnblogs_post_body ol li:nth-child(even) 
+ { 
+     background-color: #f5f5f5; 
+ }

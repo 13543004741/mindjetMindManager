@@ -1,0 +1,4184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0065)http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html -->
+<html xmlns="http://www.w3.org/1999/xhtml" id="sixapart-standard"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+<meta name="generator" content="Movable Type  5.2.2">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/styles.css" type="text/css">
+<link rel="start" href="http://www.ruanyifeng.com/blog/" title="Home">
+<link rel="alternate" type="application/atom+xml" title="Recent Entries" href="http://feeds.feedburner.com/ruanyifeng">
+<script async="" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/analytics.js.下载"></script><script type="text/javascript" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/mt.js.下载"></script>
+<!--
+<rdf:RDF xmlns="http://web.resource.org/cc/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<Work rdf:about="http://www.ruanyifeng.com/blog/2017/03/pointfree.html">
+<dc:title>Pointfree 编程风格指南</dc:title>
+<dc:description>本文要回答一个很重要的问题：函数式编程有什么用？...</dc:description>
+<dc:creator>阮一峰</dc:creator>
+<dc:date>2017-03-13T06:56:10+08:00</dc:date>
+<license rdf:resource="http://creativecommons.org/licenses/by-nc-nd/3.0/" />
+</Work>
+<License rdf:about="http://creativecommons.org/licenses/by-nc-nd/3.0/">
+</License>
+</rdf:RDF>
+-->
+
+
+    
+    <link rel="prev" href="http://www.ruanyifeng.com/blog/2013/04/entropy.html" title="熵的社会学意义">
+    <link rel="next" href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html" title="字符串匹配的KMP算法">
+    
+    <title>进程与线程的一个简单解释 - 阮一峰的网络日志</title>
+<script src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bsStatic.js.下载" type="text/javascript" charset="utf-8"></script><script src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/fingerprint2.min.js.下载" type="text/javascript" charset="utf-8"></script><script src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bs-engine.js.下载" type="text/javascript" charset="utf-8"></script><style type="text/css">a.bshareDiv,#bsPanel,#bsMorePanel,#bshareF{border:none;background:none;padding:0;margin:0;font:12px Helvetica,Calibri,Tahoma,Arial,宋体,sans-serif;line-height:14px;}#bsPanel div,#bsMorePanel div,#bshareF div{display:block;}.bsRlogo .bsPopupAwd,.bsRlogoSel .bsPopupAwd,.bsLogo .bsPopupAwd,.bsLogoSel .bsPopupAwd{line-height:16px !important;}a.bshareDiv div,#bsFloatTab div{*display:inline;zoom:1;display:inline-block;}a.bshareDiv img,a.bshareDiv div,a.bshareDiv span,a.bshareDiv a,#bshareF table,#bshareF tr,#bshareF td{text-decoration:none;background:none;margin:0;padding:0;border:none;line-height:1.2}a.bshareDiv span{display:inline;float:none;}div.buzzButton{cursor:pointer;font-weight:bold;}.buzzButton .shareCount a{color:#333}.bsStyle1 .shareCount a{color:#fff}span.bshareText{white-space:nowrap;}span.bshareText:hover{text-decoration:underline;}a.bshareDiv .bsPromo,div.bshare-custom .bsPromo{display:none;position:absolute;z-index:100;}a.bshareDiv .bsPromo.bsPromo1,div.bshare-custom .bsPromo.bsPromo1{width:51px;height:18px;top:-18px;left:0;line-height:16px;font-size:12px !important;font-weight:normal !important;color:#fff;text-align:center;background:url(http://static.bshare.cn/frame/images/bshare_box_sprite2.gif) no-repeat 0 -606px;}div.bshare-custom .bsPromo.bsPromo2{background:url(http://static.bshare.cn/frame/images/bshare_promo_sprite.gif) no-repeat;cursor:pointer;}</style><style type="text/css">.bsBox{display:none;z-index:100000001;font-size:12px;background:url(http://static.bshare.cn/frame/images//background-opaque-dark.gif) !important;padding:6px !important;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;}.bsClose{_overflow:hidden;cursor:pointer;position:absolute;z-index:10000000;color:#666;font-weight:bold;font-family:Helvetica,Arial;font-size:14px;line-height:20px;}.bsTop{color:#666;background:#f2f2f2;height:24px;line-height:24px;border-bottom:1px solid #e8e8e8;}.bsTop span{float:left;}.bsFrameDiv,#bsMorePanel{border:none;background:#fff;}.bsReturn{float:right;*margin-right:20px;margin-right:36px;text-align:right;cursor:pointer;line-height:24px;color:#666;opacity:0.5;}#bsReturn:hover{text-decoration:underline;opacity:1;}</style><script src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bsMore.js.下载" type="text/javascript" charset="utf-8"></script><script src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bshareS1.js.下载" type="text/javascript" charset="utf-8"></script><style type="text/css">div.bsClear{clear:both;height:0;line-height:0;overflow:hidden;font-size:0;}.bsSearchDiv{padding:5px 15px;background-color:#fafafa;}.bFind-wrapper-top{background:#fff;border-color:#ccc #aaa #aaa #ccc;border-style:solid;border-width:1px;height:16px;padding:4px;margin:0;}.bFind-wrapper-top input{padding:0 !important;border:none !important;box-shadow:none !important;line-height:16px !important;}.bFind-placeholder{background:url("http://static.bshare.cn/css/images/search-icon.gif") no-repeat;display:block;float:left;height:16px;width:16px;}.bFind{background:none;border:none;float:left;font-size:11px !important;height:16px !important;margin-left:3px;outline:none;padding:0;width:400px;}.bsPlatDiv{height:322px;background:#fff;overflow:auto;padding:0 15px;}#bsLogoList{display:block;list-style:none;overflow:hidden;margin:0;padding:0;}#bsLogoList li{float:left;display:inline-block;width:71px;text-align:center;font-size:12px;height:80px;margin:0 !important;}#bsLogoList .bsPlatIcon{cursor:pointer;display:block !important;text-align:center;}#bsLogoList .bsPlatImg{width:32px;height:32px;border:none !important;display:inline-block;}#bsLogoList .bsPlatImg:hover{-moz-border-radius:7px;-webkit-border-radius:7px;border-radius:7px;box-shadow:0 0 15px #a7a8ac;}#bsLogoList .bsPlatName{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:center;color:#333 !important;margin-top:2px;line-height:140%;*width:70px;}#bsLogoList .bsPromoM{text-align:center;}.bsFooterDiv{height:24px;line-height:24px;padding:0 15px;border-top:1px solid #e8e8e8;background:#f2f2f2;text-align:right;}a.bsLogoLink{color:#666;}.bsLogoLink:hover{text-decoration:underline;}.bsPromoM{background:url(http://static.bshare.cn/frame/images//bshare_box_sprite2.gif) no-repeat top left;}.bsNew,.bsHot,.bsRec,.bsAwd{background-position:0 -552px;width:19px;margin:5px auto 1px;line-height:16px;height:18px;font-size:12px;color:#fff;overflow:hidden;}.bsNew{background-position:0 -570px;}.bsRec{width:30px;background-position:0 -588px;}.bsAwd{background:url(http://static.bshare.cn/frame/images//promot/promote.gif) no-repeat;}</style><style type="text/css">a.bsSiteLink{text-decoration:none;color:#666;}a.bsSiteLink:hover{text-decoration:underline;}a.bshareDiv{overflow:hidden;height:16px;line-height:18px;font-size:14px;color:#333;padding-left:0;}a.bshareDiv:hover{text-decoration:none;}div.bsTitle{padding:0 8px;border-bottom:1px solid #e8e8e8;color:#666;background:#f2f2f2;text-align:left;}div.buzzButton{cursor:pointer;}div.bsRlogo,div.bsRlogoSel{width:68px;float:left;margin:0;padding:2px 0;}div.bsRlogo a,div.bsRlogoSel a{float:left;}div.bsLogo,div.bsLogoSel{float:left;width:111px;text-align:left;height:auto;padding:2px 4px;margin:2px 0;white-space:nowrap;overflow:hidden;}div.bsLogoSel,div.bsRlogoSel{border:1px solid #ddd;background:#f1f1f1;}div.bsLogo,div.bsRlogo{border:1px solid #fff;background:#fff;}div.bsLogo a,div.bsLogoSel a{display:block;height:16px;line-height:16px;padding:0 0 0 24px;text-decoration:none;float:left;overflow:hidden;}div.bsLogoSel a,div.bsRlogoSel a{color:#000;border:none;}div.bsLogo a,div.bsRlogo a{color:#666;border:none;}div.bsLogoLink{width:121px;overflow:hidden;background:#FFF;float:left;margin:3px 0;}#bsLogin{float:right;text-align:right;overflow:hidden;height:100%;}#bsPanel{position:absolute;z-index:100000000;font-size:12px;width:258px;background:url(http://static.bshare.cn/frame/images/background-opaque-dark.png) !important;padding:6px !important;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;}div.bsClear{clear:both;height:0;line-height:0;font-size:0;overflow:hidden;}div.bsPopupAwd{background:url(http://static.bshare.cn/frame/images//bshare_box_sprite2.gif) no-repeat top left;background-position:0 -624px;width:18px;padding-left:3px;text-align:center;float:left;margin-left: 2px;height:15px;font-size:12px;color:#fff;overflow:hidden;}div.bsRlogo .bsPopupAwd,div.bsRlogoSel .bsPopupAwd{float:left;margin:5px 0 0 -14px;}</style><script src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bshare_view" type="text/javascript" charset="utf-8"></script><style type="text/css">a.bsSiteLink{text-decoration:none;color:#666;}a.bsSiteLink:hover{text-decoration:underline;}a.bshareDiv{overflow:hidden;height:16px;line-height:18px;font-size:14px;color:#333;padding-left:0;}a.bshareDiv:hover{text-decoration:none;}div.bsTitle{padding:0 8px;border-bottom:1px solid #e8e8e8;color:#666;background:#f2f2f2;text-align:left;}div.buzzButton{cursor:pointer;}div.bsRlogo,div.bsRlogoSel{width:68px;float:left;margin:0;padding:2px 0;}div.bsRlogo a,div.bsRlogoSel a{float:left;}div.bsLogo,div.bsLogoSel{float:left;width:111px;text-align:left;height:auto;padding:2px 4px;margin:2px 0;white-space:nowrap;overflow:hidden;}div.bsLogoSel,div.bsRlogoSel{border:1px solid #ddd;background:#f1f1f1;}div.bsLogo,div.bsRlogo{border:1px solid #fff;background:#fff;}div.bsLogo a,div.bsLogoSel a{display:block;height:16px;line-height:16px;padding:0 0 0 24px;text-decoration:none;float:left;overflow:hidden;}div.bsLogoSel a,div.bsRlogoSel a{color:#000;border:none;}div.bsLogo a,div.bsRlogo a{color:#666;border:none;}div.bsLogoLink{width:121px;overflow:hidden;background:#FFF;float:left;margin:3px 0;}#bsLogin{float:right;text-align:right;overflow:hidden;height:100%;}#bsPanel{position:absolute;z-index:100000000;font-size:12px;width:258px;background:url(http://static.bshare.cn/frame/images/background-opaque-dark.png) !important;padding:6px !important;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;}div.bsClear{clear:both;height:0;line-height:0;font-size:0;overflow:hidden;}div.bsPopupAwd{background:url(http://static.bshare.cn/frame/images//bshare_box_sprite2.gif) no-repeat top left;background-position:0 -624px;width:18px;padding-left:3px;text-align:center;float:left;margin-left: 2px;height:15px;font-size:12px;color:#fff;overflow:hidden;}div.bsRlogo .bsPopupAwd,div.bsRlogoSel .bsPopupAwd{float:left;margin:5px 0 0 -14px;}</style></head>
+<body id="scrapbook" class="mt-entry-archive one-column">
+<script>
+if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) document.body.classList.add('mobile');
+
+window.addEventListener('load', function(event) {
+  setTimeout(function () {
+    hab('#sup-post-2');
+    hab('#gd1-inner');
+  }, 1000);
+});
+</script>
+    <div id="container">
+        <div id="container-inner">
+
+            <div id="header">
+    <div id="header-inner">
+        <div id="header-content">
+
+
+            <div id="header-name">阮一峰的网络日志 <span id="site_location"> » <a href="http://www.ruanyifeng.com/blog/" accesskey="1">首页</a></span><span id="site_archive"> » <a href="http://www.ruanyifeng.com/blog/archives.html">档案</a></span>
+</div>
+
+<div id="google_search">
+<!-- SiteSearch Google -->
+<form action="http://www.ruanyifeng.com/blog/search.html" id="cse-search-box">
+      <div>
+        <input type="hidden" name="cx" value="016304377626642577906:b_e9skaywzq">
+    <input type="hidden" name="cof" value="FORID:11">
+    <input type="hidden" name="ie" value="UTF-8">
+        <input type="text" name="q" size="20" class="searchbox" id="sbi" value="">
+        <input type="image" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/top_search_submit.gif" class="searchbox_submit" value="" alt="搜索" name="sa">
+      </div>
+    </form>
+<!-- SiteSearch Google -->
+</div>
+<div id="feed_icon">
+<a href="http://www.ruanyifeng.com/feed.html" title="订阅Feed">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAUzSURBVHjavFdbbFRVFF3nPjoz7dTWTittaW0jUDRAUqaNojyqREnEQKgfUj9MqqAmhqRt/OCD4CuY+Kckoh+aiGKC+gMJbdHoRysJ8dkhhmJLNdDKtJU+6GMK87j3Hs85d2Z6HzNtMYWb3Dn3NWftvfba+5xNYDl+e6Fkj6yqb/oDRbWq14vlPBLRKCITkxf0ROLt+hNjp1PPSRK4kA3vF1dXNRcWlyA2OQU9eos9opAkAiKxD+XkKO6t15aRWO7J/MgmAZU8MEgexgZHMX518Dh72sYMmVKShnxWuWHdHtxKIDIYTgMuDzgfmSOIQkYMpdUF8OY92Hytt4/jvkg47czzU16iQovM3QFwmNck+Yyduu7D6NA0Z6JR4THntFs9V4tWQg6Ui3s6MwKDncsFTnXKLJhDSeUK3AgPtyhccDzmVs999buRt/1Vm4i0od+hX7+MRG87jPGB/w1u8FPj9xEw7McVrnYuOCvtpjTth3J/nTg99c8LRhKhr6D3dTB5R24bXFwbMXBsyZzeoXaycEpJ95TB09AGX/NpqLVNtw8urnVzLvHjFNxiFqRy2OOHuqUVnue+ACkoWzo4O6lGzTmuHq6nPvY2m9rVqjrIK2rMEKxqyG5NPAKt+wjo0LklgfNxJkZMA3KJvqRUk3z5UFY3QH14P0h+WUY79HPvgv7VuSg4ZRGY1YgZgqXmORccF17sy2ehnf9AeO085K2HQFbtXBScj0LcpgF2cN+WV+DZ/LJQu6gD4R7oV7pBJwbSgtMvfiPoVp56DySwxm7EtkMs1WdAB7qzggsDJKQYsHucSkOudrkiCPWR/fA2nYCn8SNIK4NptSMyAu3sAdDRkIsJdfth0LzSrODUoPNZ4KI9SxJI5UHk7D4GdQfz2us31c7CoHMjRkKuDPHseCMrONVhNcDJwMJpKFVvg9L4OaTiNWm1x789KCqkrXhVBiEz0WYCT2nAzQAD1/vaETv1GrRfP4Vx5cfMNcDPwvP0h0DhanPym7OIf/+O67vcJ1/PCJ4KgdzaUP6Wz+dU+5yIL6fV+PsHGAOdwlPpvvUOyeeAVGyCdqkDNB6DPjsBSrnndfOGevOh3RhGItxvA+fX1CtbGFhgYUFkFMZPR6F1HnClHq8HyubWtJexX06CRmdt33hrd7nA7SFY4qoGpnYuOKcRykPPgDCBcsHx9Iv+fNL2PueBehCWUfYQIIMGLOCcOmXDXsh1+yCt35tUPfvzGFuSvzvoinXOxqa02qOhM6733nVP2MAdaej2XN11DPKjLZCD+yBvahGCo7JfTKAN9UD7s8Oe9zUNIhz8fWI8DG2k38WCFdxugANcXrvTVd1IEbuv3Jour7Hzn7jLMBNfKs7R3i67gRVrbeCOEDhinmWhAatsqdquM2XzHZINhK2cqTjHr/XZdVJUbgN3MWAVXKbSyg9jesRW2xP9di+lwrL5ojM3m2H/kG9hwcIA37c71W6wJdW2J2S5nrjYbq/t1AHAhJsKQeyfPvf6IMJgghPJhFZ4x0KlfLFvt22du45Au/A1SOlGc0P672XXwhLtOcM0kTTEMMd0qkVmMNXxMd/tsedUjInr4SQDgOfeXMSiN0FCL5WHah4L1qqYXPJOJlttd+a5M+YpcG5poLYKQ5f+6JJ4r8bbJYP47hq4r7QAs9PjYNhHJd4o8l5taiwuOpa7AS4XKqI/5NjJbTnaWK92nLdLuhQAJayRNMiygXPBeQN+Qbvu0zDc3y+aUzhbkGR73sI7ljvUnndx2q3t+X8CDAD66FtrIL864AAAAABJRU5ErkJggg==" alt="" style="border: 0pt none;">
+</a></div>
+
+        </div>
+    </div>
+</div>
+
+
+
+            <div id="content">
+                <div id="content-inner">
+
+
+                    <div id="alpha">
+                        <div id="alpha-inner">
+
+
+                            <div id="entry-1774" class="entry-asset asset hentry">
+                                <div class="asset-header">
+<div class="asset-nav entry-nav">
+
+<div class="entry-location">
+<ul>
+<li>上一篇：<a href="http://www.ruanyifeng.com/blog/2013/04/entropy.html" title="熵的社会学意义">熵的社会学意义&nbsp;&nbsp;&nbsp;&nbsp;</a></li>
+<li>下一篇：<a href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html" title="字符串匹配的KMP算法">字符串匹配的KMP算法</a></li>
+</ul>
+</div>
+
+
+    
+                                    <div class="entry-categories">
+                                        <p>分类<span class="delimiter">：</span></p>
+                                        <ul>
+                                            <li><a href="http://www.ruanyifeng.com/blog/computer/" rel="tag">理解计算机</a></li>
+                                        </ul>
+                                    </div>
+    
+
+
+                                            
+</div>
+                                </div>
+<article class="hentry">
+                                    <h1 id="page-title" class="asset-name entry-title">进程与线程的一个简单解释</h1>
+                                            <div id="share_button" style="float:right;padding-right:2em;padding-top:1em;">
+<a class="bshareDiv" href="http://www.bshare.cn/share" style="display: block; text-decoration: none; padding: 0px; margin: 0px; font-size: 12px; height: 21px; width: 51px;"><div class="bsPromo bsPromo1"></div><div class="buzzButton bsStyle10" style="height:21px;color:#333;;background:transparent url(http://static.bshare.cn/frame/images/button_custom10-zh-Orange.gif) no-repeat;text-align:center;width:51px;"></div><div style="clear:both;"></div></a>
+
+
+
+<script type="text/javascript" charset="utf-8" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/buttonLite.js.下载"></script>
+<script type="text/javascript" charset="utf-8">
+bShare.addEntry({
+    title: document.getElementById("page-title").innerHTML,
+url:window.location.href
+});
+</script>
+</div>
+                                    <div class="asset-meta">
+                                        
+
+                                            <p class="vcard author">作者： <a class="fn url" href="http://www.ruanyifeng.com/">阮一峰</a></p>
+                                    <p>日期： <a href="http://www.ruanyifeng.com/blog/2013/04/"><abbr class="published" title="2013-04-24T10:46:01+08:00">2013年4月24日</abbr></a></p>
+
+
+                                    </div>
+                                
+                                <div class="asset-content entry-content" id="main-content">
+
+                                    <!-- div class="asset-body" -->
+                                        <p><a href="https://zh.wikipedia.org/zh-cn/%E8%BF%9B%E7%A8%8B" target="_blank">进程</a>（process）和<a href="https://zh.wikipedia.org/zh-cn/%E7%BA%BF%E7%A8%8B" target="_blank">线程</a>（thread）是操作系统的基本概念，但是它们比较抽象，不容易掌握。</p>
+                                    <!-- /div -->
+
+
+                                    <!-- div id="more" class="asset-more" -->
+                                        <p>最近，我读到一篇<a href="http://www.qnx.com/developers/docs/6.4.1/neutrino/getting_started/s1_procs.html" target="_blank">材料</a>，发现有一个很好的类比，可以把它们解释地清晰易懂。</p>
+
+<p>1.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042401.jpg"></p>
+
+<p>计算机的核心是CPU，它承担了所有的计算任务。它就像一座工厂，时刻在运行。</p>
+
+<p>2.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042402.png"></p>
+
+<p>假定工厂的电力有限，一次只能供给一个车间使用。也就是说，一个车间开工的时候，其他车间都必须停工。背后的含义就是，单个CPU一次只能运行一个任务。</p>
+
+<p>3.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042403.jpg"></p>
+
+<p>进程就好比工厂的车间，它代表CPU所能处理的单个任务。任一时刻，CPU总是运行一个进程，其他进程处于非运行状态。</p>
+
+<p>4.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042404.jpg"></p>
+
+<p>一个车间里，可以有很多工人。他们协同完成一个任务。</p>
+
+<p>5.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042405.jpg"></p>
+
+<p>线程就好比车间里的工人。一个进程可以包括多个线程。</p>
+
+<p>6.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042406.png"></p>
+
+<p>车间的空间是工人们共享的，比如许多房间是每个工人都可以进出的。这象征一个进程的内存空间是共享的，每个线程都可以使用这些共享内存。</p>
+
+<p>7.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042407.jpg"></p>
+
+<p>可是，每间房间的大小不同，有些房间最多只能容纳一个人，比如厕所。里面有人的时候，其他人就不能进去了。这代表一个线程使用某些共享内存时，其他线程必须等它结束，才能使用这一块内存。</p>
+
+<p>8.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042408.jpg"></p>
+
+<p>一个防止他人进入的简单方法，就是门口加一把锁。先到的人锁上门，后到的人看到上锁，就在门口排队，等锁打开再进去。这就叫<a href="http://zh.wikipedia.org/wiki/%E4%BA%92%E6%96%A5%E9%94%81" target="_blank">"互斥锁"</a>（Mutual exclusion，缩写 Mutex），防止多个线程同时读写某一块内存区域。</p>
+
+<p>9.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042409.jpg"></p>
+
+<p>还有些房间，可以同时容纳n个人，比如厨房。也就是说，如果人数大于n，多出来的人只能在外面等着。这好比某些内存区域，只能供给固定数目的线程使用。</p>
+
+<p>10.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042410.jpg"></p>
+
+<p>这时的解决方法，就是在门口挂n把钥匙。进去的人就取一把钥匙，出来时再把钥匙挂回原处。后到的人发现钥匙架空了，就知道必须在门口排队等着了。这种做法叫做<a href="http://en.wikipedia.org/wiki/Semaphore_(programming)" target="_blank">"信号量"</a>（Semaphore），用来保证多个线程不会互相冲突。</p>
+
+<p>不难看出，mutex是semaphore的一种特殊情况（n=1时）。也就是说，完全可以用后者替代前者。但是，因为mutex较为简单，且效率高，所以在必须保证资源独占的情况下，还是采用这种设计。</p>
+
+<p>11.</p>
+
+<p><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/bg2013042411.png"></p>
+
+<p>操作系统的设计，因此可以归结为三点：</p>
+
+<p>（1）以多进程形式，允许多个任务同时运行；</p>
+
+<p>（2）以多线程形式，允许单个任务分成不同的部分运行；</p>
+
+<p>（3）提供协调机制，一方面防止进程之间和线程之间产生冲突，另一方面允许进程之间和线程之间共享资源。</p>
+
+<p>（完）<br>
+</p>
+                                    <!-- /div -->
+
+                                </div>
+    <script type="text/javascript" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/newwindow.js.下载"></script>
+                                <div class="asset-footer">
+
+<h3>文档信息</h3>
+<ul>
+<li>版权声明：自由转载-非商用-非衍生-保持署名（<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh">创意共享3.0许可证</a>）</li>
+<li>发表日期： <abbr class="published" title="2013-04-24T10:46:01+08:00">2013年4月24日</abbr></li>
+<li>更多内容： <a href="http://www.ruanyifeng.com/blog/archives.html" target="_blank"> 档案</a>  » 
+<a href="http://www.ruanyifeng.com/blog/computer/"> 理解计算机</a> 
+</li>
+<li>博客文集：<a href="http://road.ruanyifeng.com/" target="_blank">《寻找思想之路》</a>，<a href="https://ruanyf.github.io/survivor" target="_blank">《未来世界的幸存者》</a></li>
+<li>社交媒体：<a href="https://twitter.com/ruanyf" target="_blank"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAk1JREFUeNqsVc9rE0EU/mZ3dhPNJl2bVIk/Km09aFBE8GLvnrwJXvwLxIsgCP4Fnit6E8Gb0IMHwUsL9SSNgiAoooJIpE1Joo1h82uT7IxvxmRN3Q32kAdvdrI773vfe+/bDTu9WioDcDAda3Ja8piepQ1avCkCeny0Y+R9KenKwOmHHLvPaKn7AtVOoO8dOWDCMpg+41gMQv5FNEJACgoE8MsPNLDBhgfoutMOsJDmWLmU037C4TApciljwQ/kHoohQxV06+wMXNvE7WINuaSpvdYVKLgWnl3O4zAxU3Z1IYVGT+B5qYWV9z2kbQaT/cOwTsxOUUYF+mB5Dkmi8HG3h2q9hxsFNwRTdvQgxxnXRrMvIdkEhllis/qtiWuLDm4WZnBlPoWnXz28LHdw0uGR7m9Wu3j0qYGEubfn4UlBfXO4gTZltRNMg9w9f0i7kNFxllsBlS0x75gYfxyWTBUjT2W5CSMSPBrQuG21+hiMDS8CeCzF8eSLp13uQ3Ab1IqMFZN8tFHPmgOBF99bYP8Be1Xp6t7OJszJgKpPSiZvaj7uf2hguz2IBQuozDvFH6RDBjuK9wdQDvt0nMpW+8efGyh5UcAeZb2+UcHbnz5Jx4wdlp4yJYU3kLiQtfBwOYeLc8nIwfXtNu69q2Oz4mMxbemYOOOjKarhvq51KUjg3GwiFPIuvcNF6pnSnWK0lOEabNLgQh1aJFAhlGB9rG110B2+oyRNPc0sZbRNFltmLKDKqj4Qrm1ojzOxDz2pyPQ0P7CK4c40/wJ+CzAAGYrXsvfFXR4AAAAASUVORK5CYII=" style="border:0;"> twitter</a>，<a href="http://weibo.com/ruanyf" target="_blank"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSoghodkVUcERRUUEG8igiAOOjoCMFVEsDIoK2AfkIaKOg6OIisr74Xuja9a89+bN/rXXPues852zzwfACAyWSDNRNYAMqUIeEeCDx8TG4eQuQIEKJHAAEAizZCFz/SMBAPh+PDwrIsAHvgABeNMLCADATZvAMByH/w/qQplcAYCEAcB0kThLCIAUAEB6jkKmAEBGAYCdmCZTAKAEAGDLY2LjAFAtAGAnf+bTAICd+Jl7AQBblCEVAaCRACATZYhEAGg7AKzPVopFAFgwABRmS8Q5ANgtADBJV2ZIALC3AMDOEAuyAAgMADBRiIUpAAR7AGDIIyN4AISZABRG8lc88SuuEOcqAAB4mbI8uSQ5RYFbCC1xB1dXLh4ozkkXKxQ2YQJhmkAuwnmZGTKBNA/g88wAAKCRFRHgg/P9eM4Ors7ONo62Dl8t6r8G/yJiYuP+5c+rcEAAAOF0ftH+LC+zGoA7BoBt/qIl7gRoXgugdfeLZrIPQLUAoOnaV/Nw+H48PEWhkLnZ2eXk5NhKxEJbYcpXff5nwl/AV/1s+X48/Pf14L7iJIEyXYFHBPjgwsz0TKUcz5IJhGLc5o9H/LcL//wd0yLESWK5WCoU41EScY5EmozzMqUiiUKSKcUl0v9k4t8s+wM+3zUAsGo+AXuRLahdYwP2SycQWHTA4vcAAPK7b8HUKAgDgGiD4c93/+8//UegJQCAZkmScQAAXkQkLlTKsz/HCAAARKCBKrBBG/TBGCzABhzBBdzBC/xgNoRCJMTCQhBCCmSAHHJgKayCQiiGzbAdKmAv1EAdNMBRaIaTcA4uwlW4Dj1wD/phCJ7BKLyBCQRByAgTYSHaiAFiilgjjggXmYX4IcFIBBKLJCDJiBRRIkuRNUgxUopUIFVIHfI9cgI5h1xGupE7yAAygvyGvEcxlIGyUT3UDLVDuag3GoRGogvQZHQxmo8WoJvQcrQaPYw2oefQq2gP2o8+Q8cwwOgYBzPEbDAuxsNCsTgsCZNjy7EirAyrxhqwVqwDu4n1Y8+xdwQSgUXACTYEd0IgYR5BSFhMWE7YSKggHCQ0EdoJNwkDhFHCJyKTqEu0JroR+cQYYjIxh1hILCPWEo8TLxB7iEPENyQSiUMyJ7mQAkmxpFTSEtJG0m5SI+ksqZs0SBojk8naZGuyBzmULCAryIXkneTD5DPkG+Qh8lsKnWJAcaT4U+IoUspqShnlEOU05QZlmDJBVaOaUt2ooVQRNY9aQq2htlKvUYeoEzR1mjnNgxZJS6WtopXTGmgXaPdpr+h0uhHdlR5Ol9BX0svpR+iX6AP0dwwNhhWDx4hnKBmbGAcYZxl3GK+YTKYZ04sZx1QwNzHrmOeZD5lvVVgqtip8FZHKCpVKlSaVGyovVKmqpqreqgtV81XLVI+pXlN9rkZVM1PjqQnUlqtVqp1Q61MbU2epO6iHqmeob1Q/pH5Z/YkGWcNMw09DpFGgsV/jvMYgC2MZs3gsIWsNq4Z1gTXEJrHN2Xx2KruY/R27iz2qqaE5QzNKM1ezUvOUZj8H45hx+Jx0TgnnKKeX836K3hTvKeIpG6Y0TLkxZVxrqpaXllirSKtRq0frvTau7aedpr1Fu1n7gQ5Bx0onXCdHZ4/OBZ3nU9lT3acKpxZNPTr1ri6qa6UbobtEd79up+6Ynr5egJ5Mb6feeb3n+hx9L/1U/W36p/VHDFgGswwkBtsMzhg8xTVxbzwdL8fb8VFDXcNAQ6VhlWGX4YSRudE8o9VGjUYPjGnGXOMk423GbcajJgYmISZLTepN7ppSTbmmKaY7TDtMx83MzaLN1pk1mz0x1zLnm+eb15vft2BaeFostqi2uGVJsuRaplnutrxuhVo5WaVYVVpds0atna0l1rutu6cRp7lOk06rntZnw7Dxtsm2qbcZsOXYBtuutm22fWFnYhdnt8Wuw+6TvZN9un2N/T0HDYfZDqsdWh1+c7RyFDpWOt6azpzuP33F9JbpL2dYzxDP2DPjthPLKcRpnVOb00dnF2e5c4PziIuJS4LLLpc+Lpsbxt3IveRKdPVxXeF60vWdm7Obwu2o26/uNu5p7ofcn8w0nymeWTNz0MPIQ+BR5dE/C5+VMGvfrH5PQ0+BZ7XnIy9jL5FXrdewt6V3qvdh7xc+9j5yn+M+4zw33jLeWV/MN8C3yLfLT8Nvnl+F30N/I/9k/3r/0QCngCUBZwOJgUGBWwL7+Hp8Ib+OPzrbZfay2e1BjKC5QRVBj4KtguXBrSFoyOyQrSH355jOkc5pDoVQfujW0Adh5mGLw34MJ4WHhVeGP45wiFga0TGXNXfR3ENz30T6RJZE3ptnMU85ry1KNSo+qi5qPNo3ujS6P8YuZlnM1VidWElsSxw5LiquNm5svt/87fOH4p3iC+N7F5gvyF1weaHOwvSFpxapLhIsOpZATIhOOJTwQRAqqBaMJfITdyWOCnnCHcJnIi/RNtGI2ENcKh5O8kgqTXqS7JG8NXkkxTOlLOW5hCepkLxMDUzdmzqeFpp2IG0yPTq9MYOSkZBxQqohTZO2Z+pn5mZ2y6xlhbL+xW6Lty8elQfJa7OQrAVZLQq2QqboVFoo1yoHsmdlV2a/zYnKOZarnivN7cyzytuQN5zvn//tEsIS4ZK2pYZLVy0dWOa9rGo5sjxxedsK4xUFK4ZWBqw8uIq2Km3VT6vtV5eufr0mek1rgV7ByoLBtQFr6wtVCuWFfevc1+1dT1gvWd+1YfqGnRs+FYmKrhTbF5cVf9go3HjlG4dvyr+Z3JS0qavEuWTPZtJm6ebeLZ5bDpaql+aXDm4N2dq0Dd9WtO319kXbL5fNKNu7g7ZDuaO/PLi8ZafJzs07P1SkVPRU+lQ27tLdtWHX+G7R7ht7vPY07NXbW7z3/T7JvttVAVVN1WbVZftJ+7P3P66Jqun4lvttXa1ObXHtxwPSA/0HIw6217nU1R3SPVRSj9Yr60cOxx++/p3vdy0NNg1VjZzG4iNwRHnk6fcJ3/ceDTradox7rOEH0x92HWcdL2pCmvKaRptTmvtbYlu6T8w+0dbq3nr8R9sfD5w0PFl5SvNUyWna6YLTk2fyz4ydlZ19fi753GDborZ752PO32oPb++6EHTh0kX/i+c7vDvOXPK4dPKy2+UTV7hXmq86X23qdOo8/pPTT8e7nLuarrlca7nuer21e2b36RueN87d9L158Rb/1tWeOT3dvfN6b/fF9/XfFt1+cif9zsu72Xcn7q28T7xf9EDtQdlD3YfVP1v+3Njv3H9qwHeg89HcR/cGhYPP/pH1jw9DBY+Zj8uGDYbrnjg+OTniP3L96fynQ89kzyaeF/6i/suuFxYvfvjV69fO0ZjRoZfyl5O/bXyl/erA6xmv28bCxh6+yXgzMV70VvvtwXfcdx3vo98PT+R8IH8o/2j5sfVT0Kf7kxmTk/8EA5jz/GMzLdsAAAAgY0hSTQAAeiUAAICDAAD5/wAAgOkAAHUwAADqYAAAOpgAABdvkl/FRgAABPZJREFUeNqMyXtM1WUcx/FnNTdreAVCEEThyEFUrM2kwkpS05qVl8rugVpRUelaJdZaWWktdZKHssImgV04osgBCbwAa2Whm6GWoXHxcD1wHiI4t9/z/H68+wO3av1R3+217/b+CFStsHq/W2V1HW+wOmq8VkeN/E+dR/7SUSOtrmOnLc93jxA6LsTw71XLrUsHsNwHsdxl/09HGVb7QawOF1bn4ZF26QDDsmqNsH7be9psKcJs+fy/tRZjXvwM//678BVdT6BsMarhxZHeug+reW+TMC84+s0LDv4tH7PZgdXqwGrLx7yYP9KaHISOvUCwYh3+4iUMOiIJVmSMbBfy+4X581Zp/ryVfzi/FfPXd1AntxNwvkvg6zfQZ7Zg/rIV8/x7qB9fJlT/JPrcm4SOPctg3ihCR5dhNu2QQjfmSt2Yi27MRf+Uiz67Ef1TLv7Ct5CPZtMzJ4N2243Ij7Kwmjdhnt+EUZeFr/BmhvYkoBqewl8yD9/eCejGTVLoUzlSn8pBn8xBn85B/fAcf7z6PJ7rl9KdNBdP6nwuJc2jL+9+jJrXGNr1On9seZHgkQ0ESq8l4EzBOLKMod1XoE6slUKfXCd1wxp0Qxb6RBYDLzxGz8xb8aSm05u2kL4bF9N902I89yzHe986PEseoGP2YjqfvpNQeTr+4rmEKucz6LgS9f1jUuiy+VIfvxvz1GoGN99Hz8wFeGan0zl3Ae4lK3A/vJb2x7PpWPEI3bevoHfJKtypt9H1UgbDZx5E//goofJF+AtmoasWSaG2jZE6P5zg9hQ8Nyyie1Y6rQ+vpafMhdHXx7BpgjWMr7sbT5kL9/IHcUck0X3LtfgLVqAP3YAumoHeHYvaPkYKlRcudf54Bh5KpjP5Fi69tplgIMCQabK/rIxtO3bgqqxkmJHzdXbRknYbrWIcrWEJ9D8RjXaMRe2ciNo5QQr1QYRUjnC8C1Nxr1pD0O/HFwyQmZmJ3W4nLS0Nm83G+vXrsSwLgP6vS2kWo/lNjKN57gTMTyJRH0Si8iZKoXZdI5Ujkt55SXRtfBuAffv2sXLlSpxOJ9nZ2SQkJBAWFobX6wVgoPooLWI0v4hxuFeFY30ahdoVhcqLkEJ9GCV1QRTehZNxZ9wPQNGXX5KZmUlbWxspKSkIIUhPT0dZFibQvSaHJjGKxujxBHZGoT+ehPpwEsoRIYUqmCR1YTTBd2NoGxtOz4Y3CPoDrNuwnuhpU7lq/HgW3LGU5l4P2h+g55XNnBOjORM/jsH3ozGLYlAFMag90ahPI6VQxZOlKo5BOyfjey+GliljaL0uA7l9D2f37uess5KBoyfwbvmIJnsajVePouXeCIKFsZglsajiyX8pvEYKoySm33DGYTjj0OVxhEri6N84kfalY2i/NRb3AhvNN0+i9Y4wPC+H4yuMxTocjzoYj7F/ymVxI/+ryH5huKaeMVzxGK54QuXT8B+y4atIZqB8Nt6SVDzFqXi+mIO39Dp+PziHwdIZDJVOJ3gogZArHsM1BcMVj1E+BcMVe1GY38auNqqnYdQkEKpOJPBNEv7DdnyVdnwVdoYqki+bge9wCv6qFAJVyQS/mU6oJhHjSCJG9VSM6kRUfXi2GK6fJYy6+CyjNrHRqLP1GbWJ0qizSfV39Tap6qdLVW+Xqt4ujfokadRdVpvgNWpt54y6qc8MV44Sfw4An+t+Gj1AKyYAAAAASUVORK5CYII=" style="border:0;"> weibo</a></li>
+<li>Feed订阅： <a href="http://www.ruanyifeng.com/feed.html" target="_blank"><img src="data:image/gif;base64,R0lGODlhFAAUANU2APV1GfmrePZ8IeR5VPq2ieNkLf7p3NpFJveCJ/NoFfibVPR1IexiJfvdzuZrNfXGuOhUEueTevaFOfzIpNxDGeZZJNU6IOubifiVTfOnid1aLuZpLOFSJf/28vJtIvGcefaLSd5kNu9iFv/z6//48//t4uFfLfNkCeJNGuGNc/rCof/+/PVxEeldI/V5KeKMbu9nIvB2OvzQtNxMKfOPXP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAADYALAAAAAAUABQAAAb/QJstEjKZCsjCZsl0pIS2QWXaYsA8noVWIEAgFoNhhWNyMESi7Jbr/aZCFdRnZJAFJCwAt+vlOkwtEBk1hDUkExJ6bQJaGyYMLTQTDSOFHQF8jAseSFYiJwkuAQ2FE1xaHjBIMDAgARguJwABJIQTLJswDEgeIgSEJQQILAqVNQEiui1HHgkBhTUGCiwYtR0xLS0VJhtaEgoEBoQkGCfPNSoQY9xaCwAsCBPALgmkJA4cZN0CAAgY/PJqEIDwgVAECjM0bOAnwcAKGQJclKhRgoGDDjUeUDigkN8vQiBOfByAglSDAxw3IBCgYEU0FyJoEPpA4UGNDjMsaHDQR8EdPVYOMmQYQGHAhQgHLIRIsWAlgASsGMRBMWMGBQtYZ7yIsoBRKkhjOMxAiXJGGCEpHGxIYsSIhrcaQmy1EQQAOw==" style="border:0;"></a></li>
+
+</ul>
+                                </div>
+</article>
+                            </div>
+
+                        <div id="sup-post-2" style="display: inline-block ! important;width: 100%;">
+   <p style="text-align:center;"><a href="http://www.zhufengpeixun.cn/jscourse/new/js/index.html?ref=ruanyifeng.com" target="_blank"><img alt="珠峰培训" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/sup_zhufeng_page.png" style="border:none;"></a></p>
+   <p style="text-align:center;"><a href="https://cn.udacity.com/ruanyfbanner/" title="优达学城" target="_blank"><img alt="优达学城" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/uda_banner_ryf.jpg" style="border:none;display: block !important;"></a>
+</p>                         
+  </div>
+
+<div id="related_entries">
+<h2>相关文章</h2>
+<ul>
+
+<li><strong>2016.12.02: <a href="http://www.ruanyifeng.com/blog/2016/12/user_space_vs_kernel_space.html">User space 与 Kernel space</a></strong>
+
+                           <div class="entry-body">
+                              学习 Linux 时，经常可以看到两个词：User space（用户空间）和 Kernel space（内核空间）。
+
+                           </div>
+
+</li>
+
+ 
+<li><strong>2016.11.22: <a href="http://www.ruanyifeng.com/blog/2016/11/byte-order.html">理解字节序</a></strong>
+
+                           <div class="entry-body">
+                              1.
+
+计算机硬件有两种储存数据的方式：大端字节序（big endian）和小端字节序（little endian）。
+
+                           </div>
+
+</li>
+
+ 
+<li><strong>2016.08.05: <a href="http://www.ruanyifeng.com/blog/2016/08/boolean-algebra.html">布尔代数入门</a></strong>
+
+                           <div class="entry-body">
+                              布尔代数是计算机的基础。没有它，就不会有计算机。
+
+                           </div>
+
+</li>
+
+ 
+<li><strong>2016.06.16: <a href="http://www.ruanyifeng.com/blog/2016/06/dns.html">DNS 原理入门</a></strong>
+
+                           <div class="entry-body">
+                              DNS 是互联网核心协议之一。不管是上网浏览，还是编程开发，都需要了解一点它的知识。
+
+                           </div>
+
+</li>
+
+ 
+</ul>
+</div>
+
+
+<div id="gd1" style="display: block !important;">
+<h2>广告<a href="http://www.ruanyifeng.com/support.html">（购买广告位）</a></h2>
+<div id="gd1-inner">
+<div id="gd1-left">
+<a href="http://www.miaov.com/?utm_source=ruanyifeng&amp;" alt="妙味课堂" target="_blank"><img alt="妙味课堂" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/sup_miaov_201703.jpg" style="border:none;display: block !important;"></a>
+<br>
+<a href="http://course.ptteng.com/?utm_source=ruanyifeng" title="IT修真院" target="_blank"><img alt="IT修真院" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/sup_ptteng_300.jpg" style="border:none;display: block !important;"></a>
+</div>
+<div id="gd1-right">
+<a href="http://apeclass.cn/1212/index.html?utm_source=ruanyifeng" title="海棠学院" target="_blank"><img alt="海棠学院" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/sup_apeclass_300.png" style="border:none;display: block !important;"></a>
+<br>
+<a href="http://www.ruanyifeng.com/support.html" target="_blank"><img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/sup_sale_s.png" style="border:none;"></a>
+
+</div>
+</div>
+</div>
+                    
+
+                    <div id="comments" class="comments">
+
+
+    
+    
+        
+    <h2 class="comments-header">留言（106条）</h2>
+
+    <div id="comments-content" class="comments-content" style="clear: left;">
+        
+        <div id="comment-270953" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">tingliang</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270953">
+            <p>写得太好了，显浅易懂。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 11:04 AM">2013年4月24日 11:04</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270953">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用tingliang的这条留言" onclick="return CommentQuote(&#39;comment-quote-270953&#39;,&#39;tingliang&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270955" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">dyb</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270955">
+            <p>还不错</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 11:13 AM">2013年4月24日 11:13</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270955">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用dyb的这条留言" onclick="return CommentQuote(&#39;comment-quote-270955&#39;,&#39;dyb&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270956" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">sun</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270956">
+            <p>简洁，浅显易懂，到时往往越是这样越难以触及本质。当然对于深入理解还是很有帮助的。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 11:16 AM">2013年4月24日 11:16</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270956">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用sun的这条留言" onclick="return CommentQuote(&#39;comment-quote-270956&#39;,&#39;sun&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270957" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">dee</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270957">
+            <p>写得太好了 好形象</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 11:23 AM">2013年4月24日 11:23</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270957">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用dee的这条留言" onclick="return CommentQuote(&#39;comment-quote-270957&#39;,&#39;dee&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270958" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">hope</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270958">
+            <p>配图好亮~</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 11:31 AM">2013年4月24日 11:31</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270958">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用hope的这条留言" onclick="return CommentQuote(&#39;comment-quote-270958&#39;,&#39;hope&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270959" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.blogjava.net/chinan" href="http://www.blogjava.net/chinan" target="_blank" rel="nofollow">hejianchao</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270959">
+            <p>浅显易懂，境界真高。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 11:37 AM">2013年4月24日 11:37</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270959">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用hejianchao的这条留言" onclick="return CommentQuote(&#39;comment-quote-270959&#39;,&#39;hejianchao&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270961" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">reverland</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270961">
+            <p>喜欢配图～</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 11:49 AM">2013年4月24日 11:49</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270961">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用reverland的这条留言" onclick="return CommentQuote(&#39;comment-quote-270961&#39;,&#39;reverland&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270962" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://innocentim.github.io" href="http://innocentim.github.io/" target="_blank" rel="nofollow">Tim Shen</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270962">
+            <p>现在说的线程都是内核线程，是服从系统调度，独占CPU的。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 11:50 AM">2013年4月24日 11:50</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270962">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用Tim Shen的这条留言" onclick="return CommentQuote(&#39;comment-quote-270962&#39;,&#39;Tim Shen&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270964" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">herodot</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270964">
+            <p>阮兄，<br>
+我是你的博客（包括你的英文BLOG）的忠实读者。这个回复纯属技术探讨。</p>
+
+<p>你这篇关于进程和线程的文章，图文并茂，很通俗，但不易懂。坦白说，在我看来很多比喻很不恰当，比如：<br>
+1. 车间/电力/人三者，来比喻进程/CPU/线程三者，其实既没有体现出进程作为程序的一次执行（有独立的内存空间）这一特点，也没有体现出线程作为CPU调度单位这一特点。人和电力的关系是什么呢？所以“车间的空间是工人们共享的，比如许多房间是每个工人都可以进出的”，这句话就很难理解。<br>
+2. 用厕所容量，来比喻锁，也不合适。因为线程间同步是为了防止竞争（就是说因同时修改，而导致的数据不一致）。本质上讲，进程的内存空间是天然独立的，线程的内存空间是天然共享的。正因为如此，进程通信/线程同步才是系统编程的很大一块内容。</p>
+
+<p>进程和线程简单而基本靠谱的定义如下：<br>
+1. 进程：程序的一次执行<br>
+2. 线程：CPU的基本调度单位<br>
+这两个概念虽然过于简单，但是完全可以为理解OS/线程/进程打下坚实的基础，我认为关于进程/线程的探讨，无论采用何种方式，都必须以这两句话为落脚点，才算靠谱。</p>
+
+<p>你写的大多数文章相当出色。在以通俗的方式解释复杂的概念这方面，尤其出色。但是，我个人的经验，这种方式比较适合用来解释一个复杂概念的一个方面，或者从某个角度的理解。想面面俱到的说明白一个复杂的系统，繁琐枯燥的概念，以及这些概念间的推演几乎不可避免。坦白说，在实际项目中大量用到线程/进程之前，我看过很多遍相关的概念，也写过小的示例程序，但真到了用的时候，还是发现之前没搞明白。</p>
+
+<p>我对进程/线程的理解也很粗浅。个人见解，仅供参考。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 11:57 AM">2013年4月24日 11:57</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270964">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用herodot的这条留言" onclick="return CommentQuote(&#39;comment-quote-270964&#39;,&#39;herodot&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270966" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.gu-da.com" href="http://www.gu-da.com/" target="_blank" rel="nofollow">jas</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270966">
+            <p>其实线程进程的东西比较好理解，希望下一期能用形象的方式讲讲协程　纤程</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 12:08 PM">2013年4月24日 12:08</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270966">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用jas的这条留言" onclick="return CommentQuote(&#39;comment-quote-270966&#39;,&#39;jas&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270970" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.se77en.cc" href="http://www.se77en.cc/" target="_blank" rel="nofollow">AriesDevil</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270970">
+            <p>写的真好</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 12:43 PM">2013年4月24日 12:43</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270970">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用AriesDevil的这条留言" onclick="return CommentQuote(&#39;comment-quote-270970&#39;,&#39;AriesDevil&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270971" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://zzcang.org" href="http://zzcang.org/" target="_blank" rel="nofollow">cangzhang</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270971">
+            <p>期待下一期！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 12:51 PM">2013年4月24日 12:51</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270971">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用cangzhang的这条留言" onclick="return CommentQuote(&#39;comment-quote-270971&#39;,&#39;cangzhang&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270972" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.ourunix.org/guestbook.asp" href="http://www.ourunix.org/guestbook.asp" target="_blank" rel="nofollow">walfred</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270972">
+            <p>没有讲解多进程，以及CPU对多线程的调度，不过这些比喻能让人有一些最起码的认识</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 12:52 PM">2013年4月24日 12:52</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270972">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用walfred的这条留言" onclick="return CommentQuote(&#39;comment-quote-270972&#39;,&#39;walfred&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270973" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">尹良灿</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270973">
+            <p>刚好这个学期学的操作系统，表示很有帮助</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013 12:56 PM">2013年4月24日 12:56</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270973">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用尹良灿的这条留言" onclick="return CommentQuote(&#39;comment-quote-270973&#39;,&#39;尹良灿&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270975" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.wanghusheng.cn" href="http://www.wanghusheng.cn/" target="_blank" rel="nofollow">大脸猫</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270975">
+            <p>我正学到多线程呢？看完以后表示对多线程的理解包括防锁死的机制理解清晰不少。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  1:06 PM">2013年4月24日 13:06</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270975">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用大脸猫的这条留言" onclick="return CommentQuote(&#39;comment-quote-270975&#39;,&#39;大脸猫&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270976" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">chemandy</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270976">
+            <p>赞！果真浅显易懂！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  1:10 PM">2013年4月24日 13:10</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270976">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用chemandy的这条留言" onclick="return CommentQuote(&#39;comment-quote-270976&#39;,&#39;chemandy&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270977" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">detailyang</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270977">
+            <p>多次看到博主的写的文章通俗易懂，相当优雅啊</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  1:46 PM">2013年4月24日 13:46</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270977">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用detailyang的这条留言" onclick="return CommentQuote(&#39;comment-quote-270977&#39;,&#39;detailyang&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270979" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.chenwang.net" href="http://www.chenwang.net/" target="_blank" rel="nofollow">GameXG</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270979">
+            <p>&gt;&gt;假定工厂的电力有限，一次只能供给一个车间使用。也就是说，一个车间开工的时候，其他车间都必须停工。背后的含义就是，单个CPU一次只能运行一个任务。</p>
+
+<p>&gt;&gt;进程就好比工厂的车间，它代表CPU所能处理的单个任务。任一时刻，CPU总是运行一个进程，其他进程处于非运行状态。</p>
+
+<p>&gt;&gt;一个车间里，可以有很多工人。他们协同完成一个任务。</p>
+
+<p>&gt;&gt;线程就好比车间里的工人。一个进程可以包括多个线程。</p>
+
+<p><br>
+文章的意思是同一个进程的多个线程是同时执行的，cpu的调度单位是进程。但实际是错误的，cpu的调度单位是线程，一次只能执行一个线程(当然多核的有几核就能同时执行几个线程)，而不是一次执行一个进程！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  2:21 PM">2013年4月24日 14:21</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270979">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用GameXG的这条留言" onclick="return CommentQuote(&#39;comment-quote-270979&#39;,&#39;GameXG&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270980" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">viho_he</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270980">
+            <p>抛开各种技术细节，从应用程序角度讲：</p>
+
+<p>1、在单核计算机里，有一个资源是无法被多个程序并行使用的：cpu。</p>
+
+<p>没有操作系统的情况下，一个程序一直独占着全都cpu。</p>
+
+<p>如果要有两个任务来共享同一个CPU，程序员就需要仔细地为程序安排好运行计划--某时刻cpu和由程序A来独享，下一时刻cpu由程序B来独享</p>
+
+<p>而这种安排计划后来成为OS的核心组件，被单独名命为“scheduler”，即“调度器”，它关心的只是怎样把单个cpu的运行拆分成一段一段的“运行片”，轮流分给不同的程序去使用，而在宏观上，因为分配切换的速度极快，就制造出多程序并行在一个cpu上的假象。</p>
+
+<p>2、在单核计算机里，有一个资源可以被多个程序共用，然而会引出麻烦：内存。</p>
+
+<p>在一个只有调度器，没有内存管理组件的操作系统上，程序员需要手工为每个程序安排运行的空间 -- 程序A使用物理地址0x00-0xff,程序B使用物理地址0x100-0x1ff，等等。</p>
+
+<p>然而这样做有个很大的问题：每个程序都要协调商量好怎样使用同一个内存上的不同空间，软件系统和硬件系统千差万别，使这种定制的方案没有可行性。<br>
+为了解决这个麻烦，计算机系统引入了“虚拟地址”的概念，从三方面入手来做：</p>
+
+<p>2.1、硬件上，CPU增加了一个专门的模块叫MMU，负责转换虚拟地址和物理地址。<br>
+2.2、操作系统上，操作系统增加了另一个核心组件：memory management，即内存管理模块，它管理物理内存、虚拟内存相关的一系列事务。<br>
+2.3、应用程序上，发明了一个叫做【进程】的模型，（注意）每个进程都用【完全一样的】虚拟地址空间，然而经由操作系统和硬件MMU协作，映射到不同的物理地址空间上。不同的【进程】，都有各自独立的物理内存空间，不用一些特殊手段，是无法访问别的进程的物理内存的。</p>
+
+<p>3、现在，不同的应用程序，可以不关心底层的物理内存分配，也不关心CPU的协调共享了。然而还有一个问题存在：有一些程序，想要共享CPU，【并且还要共享同样的物理内存】，这时候，一个叫【线程】的模型就出现了，它们被包裹在进程里面，在调度器的管理下共享CPu，拥有同样的虚拟地址空间，同时也共享同一个物理地址空间，然而，它们无法越过包裹自己的进程，去访问别一个进程的物理地址空间。</p>
+
+<p>4、进程之间怎样共享同一个物理地址空间呢？不同的系统方法各异，符合posix规范的操作系统都提供了一个接口，叫mmap，可以把一个物理地址空间映射到不同的进程中，由不同的进程来共享。</p>
+
+<p>5、PS：在有的操作系统里，进程不是调度单位（即不能被调度器使用），线程是最基本的调度单位，调度器只调度线程，不调度进程，比如VxWorks<br>
+</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  2:53 PM">2013年4月24日 14:53</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270980">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用viho_he的这条留言" onclick="return CommentQuote(&#39;comment-quote-270980&#39;,&#39;viho_he&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270982" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">selfcontrol</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270982">
+            <p>这个文章是转贴的。我认为楼主转贴的有些仓促了，浅显易懂但是根本不准确。很多比喻都错了。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  3:13 PM">2013年4月24日 15:13</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270982">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用selfcontrol的这条留言" onclick="return CommentQuote(&#39;comment-quote-270982&#39;,&#39;selfcontrol&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270983" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">selfcontrol</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270983">
+            <blockquote>
+<pre>引用herodot的发言：</pre>
+
+<p>你写的大多数文章相当出色。在以通俗的方式解释复杂的概念这方面，尤其出色。但是，我个人的经验，这种方式比较适合用来解释一个复杂概念的一个方面，或者从某个角度的理解。想面面俱到的说明白一个复杂的系统，繁琐枯燥的概念，以及这些概念间的推演几乎不可避免。坦白说，在实际项目中大量用到线程/进程之前，我看过很多遍相关的概念，也写过小的示例程序，但真到了用的时候，还是发现之前没搞明白。</p>
+
+</blockquote>
+
+<p>握手，比喻确实浅显易懂，但是很容易导致谬误。</p>
+
+<p>另外，这篇文章是作者转贴的，不是他原创的。<br>
+</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  3:15 PM">2013年4月24日 15:15</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270983">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用selfcontrol的这条留言" onclick="return CommentQuote(&#39;comment-quote-270983&#39;,&#39;selfcontrol&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270986" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">Tux</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270986">
+            <blockquote>
+<pre>引用GameXG的发言：</pre>
+
+<p>文章的意思是同一个进程的多个线程是同时执行的，cpu的调度单位是进程。但实际是错误的，cpu的调度单位是线程，一次只能执行一个线程(当然多核的有几核就能同时执行几个线程)，而不是一次执行一个进程！</p>
+
+</blockquote>
+
+<p>对，这样解释其实更容易误解。进程和线程的区别其实也没那么明显，像linux里面就只有一个task，当然也可以根据不同task间共享数据的多少来区分是否线程，不过似乎没什么必要。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  4:34 PM">2013年4月24日 16:34</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270986">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用Tux的这条留言" onclick="return CommentQuote(&#39;comment-quote-270986&#39;,&#39;Tux&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270987" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">阮一峰</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270987">
+            <blockquote>
+<pre>引用selfcontrol的发言：</pre>
+
+<p>这个文章是转贴的。</p>
+
+</blockquote>
+
+<p>你是指从英文翻译的？</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  4:41 PM">2013年4月24日 16:41</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270987">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用阮一峰的这条留言" onclick="return CommentQuote(&#39;comment-quote-270987&#39;,&#39;阮一峰&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270988" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">阮一峰</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270988">
+            <blockquote>
+<pre>引用herodot的发言：</pre>
+
+<p>你这篇关于进程和线程的文章，图文并茂，很通俗，但不易懂。坦白说，在我看来很多比喻很不恰当</p>
+
+<p>进程和线程简单而基本靠谱的定义如下：<br>
+1. 进程：程序的一次执行<br>
+2. 线程：CPU的基本调度单位</p>
+
+</blockquote>
+
+<p>我完全同意你对进程和线程的定义。</p>
+
+<p>这篇文章的比喻，确实不是完全准确。但是，进程和线程要找到现实生活中准确的对应，恐怕很困难吧。</p>
+
+<p>我的基本想法是：</p>
+
+<p>（1）进程是一个容器。</p>
+
+<p>（2）线程是容器中的工作单位。</p>
+
+<p>车间—工人的比喻就是这样来的。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  4:47 PM">2013年4月24日 16:47</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270988">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用阮一峰的这条留言" onclick="return CommentQuote(&#39;comment-quote-270988&#39;,&#39;阮一峰&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270989" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">jeffhyj</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270989">
+            <p>我觉得解释的很好也很正确啊，只是没有说明多进程这种情况。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  4:49 PM">2013年4月24日 16:49</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270989">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用jeffhyj的这条留言" onclick="return CommentQuote(&#39;comment-quote-270989&#39;,&#39;jeffhyj&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270990" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.xieguanglei.com" href="http://www.xieguanglei.com/" target="_blank" rel="nofollow">xgl</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270990">
+            <p>配图挺逗，哈哈</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  5:26 PM">2013年4月24日 17:26</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270990">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用xgl的这条留言" onclick="return CommentQuote(&#39;comment-quote-270990&#39;,&#39;xgl&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270992" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">dota</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270992">
+            <p>不是很容易让人理解。留言里面有高手</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  8:00 PM">2013年4月24日 20:00</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270992">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用dota的这条留言" onclick="return CommentQuote(&#39;comment-quote-270992&#39;,&#39;dota&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270995" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">herodot</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270995">
+            <blockquote>
+<pre>引用阮一峰的发言：</pre>
+
+<p>我完全同意你对进程和线程的定义。</p>
+
+<p>这篇文章的比喻，确实不是完全准确。但是，进程和线程要找到现实生活中准确的对应，恐怕很困难吧。</p>
+
+<p>我的基本想法是：</p>
+
+<p>（1）进程是一个容器。</p>
+
+<p>（2）线程是容器中的工作单位。</p>
+
+<p>车间—工人的比喻就是这样来的。</p>
+
+</blockquote>
+
+<p>确实，对于一个复杂点的系统来说，在现实中找到完全对位的例子很难。这也是我前面回复中提到的，类比这种表达方式，贵在准而不在全。用一个生活中的例子，捕获到复杂系统一个侧面，就足够了。想完全对位，取舍之后，往往会很牵强，失去通俗易懂的目的。</p>
+
+<p>我大概浏览了一下你所参考的原文（原文很长，我英文一般，可能理解的不完整），发现原文重点讲述了三个方面：<br>
+1. 进程与线程的关系<br>
+2. 线程间的关系<br>
+3. 线程与CPU （核心）的关系<br>
+而且只有1和2是用类比（多人合租房子，房子比做进程，人比做线程）来讲解的，这种比喻可以说很恰当，把进程和线程间的关系，以及线程间的关系分析的非常清楚。而讲到3的时候，已经更多的从概念角度分析了，就是说在作者并没有试图在一个类比中说明这三个概念（我没有在那篇文章中找到电力概念）。</p>
+
+<p>而阮兄的文章，通过 工厂/车间/人 试图把CPU/进程/线程说清楚，这也是我的困惑所在。<br>
+在我看了，引入电力这种类比之后，但是开头这句，已经把线程/进程混淆了（不过话说回来，在linux系统里面，在最底层，进程线程确实不分的）：</p>
+
+<blockquote>
+假定工厂的电力有限，一次只能供给一个车间使用。也就是说，一个车间开工的时候，其他车间都必须停工。背后的含义就是，单个CPU一次只能运行一个任务。 </blockquote>
+
+<p>BTW: </p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  9:11 PM">2013年4月24日 21:11</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270995">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用herodot的这条留言" onclick="return CommentQuote(&#39;comment-quote-270995&#39;,&#39;herodot&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270996" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://null" href="http://null/" target="_blank" rel="nofollow">小涛</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270996">
+            <blockquote>
+  进程是OS在程序运行时资源分配和调度的一个独立单元，一个进程可以开启一个或多个线程，进程抢到cpu时间片之后，如果该进程开启了多个线程，再由线程抢占cpu时间片，谁得到时间片谁执行。
+</blockquote>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  9:42 PM">2013年4月24日 21:42</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270996">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用小涛的这条留言" onclick="return CommentQuote(&#39;comment-quote-270996&#39;,&#39;小涛&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-270997" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">86er</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-270997">
+            <p>这个写的太赞了，通俗易懂！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 24, 2013  9:46 PM">2013年4月24日 21:46</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-270997">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用86er的这条留言" onclick="return CommentQuote(&#39;comment-quote-270997&#39;,&#39;86er&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271002" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">selfcontrol</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271002">
+            <blockquote>
+<pre>引用阮一峰的发言：</pre>
+
+<p></p>
+
+<p>你是指从英文翻译的？</p>
+
+</blockquote>
+
+<p>我的意思就是从翻译来的。我用词错误，用转贴是不合适的。见谅见谅。<br>
+</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 25, 2013  1:13 AM">2013年4月25日 01:13</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271002">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用selfcontrol的这条留言" onclick="return CommentQuote(&#39;comment-quote-271002&#39;,&#39;selfcontrol&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271019" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">（void*）</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271019">
+            <p>这篇文章写的很好，尤其是对于对计算机系统了解不是很多的人，看了这篇文章之后，会对计算机中的多任务（其实也就是多进程），以及一个进程的多线程有了一个初步的了解。但是因为文章的更多的内容是关于CPU调度的，所以其中对内存的东西解释的就不是那么清楚了。比如上面各位提到的内存共享之类的讨论。计算器系统对计算资源的分配（CPU）和对内存的分配是分开进行的，只有这两个方面的知识都介绍了，才能比较清楚的解释这方面的内容。相反如果非要把一个柔和到一个中去，那么就会出现各种不合适的地方。比如我觉的用房子的比喻进程，用房间比喻线程，是合适的，将是吧内存比喻为房子中房间是不合适的。毕竟系统的内存的时候用多种不一样的用法，堆和栈你可以勉强的比喻为房间中的空间，但是共享内存，这个东西就在进程之外了，再用空间比喻就不恰当了。我觉的阮兄可以考虑再写一篇系统如何管理内存的问题。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 25, 2013 10:38 AM">2013年4月25日 10:38</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271019">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用（void*）的这条留言" onclick="return CommentQuote(&#39;comment-quote-271019&#39;,&#39;（void*）&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271021" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://mazheng.org" href="http://mazheng.org/" target="_blank" rel="nofollow">冰上游鱼</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271021">
+            <p>配图很好玩啊</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 25, 2013 10:43 AM">2013年4月25日 10:43</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271021">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用冰上游鱼的这条留言" onclick="return CommentQuote(&#39;comment-quote-271021&#39;,&#39;冰上游鱼&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271024" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">viho_he</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271024">
+            <blockquote>
+<pre>引用小涛的发言：</pre>
+
+<p>进程是OS在程序运行时资源分配和调度的一个独立单元，一个进程可以开启一个或多个线程，进程抢到cpu时间片之后，如果该进程开启了多个线程，再由线程抢占cpu时间片，谁得到时间片谁执行。</p>
+
+</blockquote>
+就我所知道到的OS(windows / linux / VxWorks / qnx)里，目前没有哪个是这样做的。
+
+<p>虽然目前没有不排除有这系统会这样去实现，然而从模型来说，这是个很糟糕的模型，因为这个模型增加了调度器的复杂度，调度器需要判断当前调度的单位是进程还是线程，并且做出不同的处理，加上优先级、时间片轮转、线程/进程运行状态等机制以后，此模型复杂度会显著增加，而到了SMP（同构并发多处理器）的系统上，此模型基本上已无能够工作的可能性。</p>
+
+<p>即使在qnx这样鼓励用进程而非线程的微内核的OS上，文档仍然说到：Threads are scheduled globally across all processes.即调度的基本单位是线程，不是进程。调度器在调度任务时，只知道线程，不知道进程这个东西，对于进程的管理，是OS别的组件的事情。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 25, 2013 12:30 PM">2013年4月25日 12:30</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271024">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用viho_he的这条留言" onclick="return CommentQuote(&#39;comment-quote-271024&#39;,&#39;viho_he&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271080" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">noname</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271080">
+            <p>但实际上，从low-level implementation的角度来看，线程进程没什么区别，只是要处理一些资源共享带来的一些问题(比如信号怎么处理)而已。因此真正design和implement过操作系统的人就会觉得，这么解释反而会增加一些误解。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 26, 2013 11:19 PM">2013年4月26日 23:19</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271080">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用noname的这条留言" onclick="return CommentQuote(&#39;comment-quote-271080&#39;,&#39;noname&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271081" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">六月</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271081">
+            <p>从调度来看，进程和线程应该是一样的。<br>
+</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 26, 2013 11:42 PM">2013年4月26日 23:42</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271081">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用六月的这条留言" onclick="return CommentQuote(&#39;comment-quote-271081&#39;,&#39;六月&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271085" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">gordon</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271085">
+            <blockquote>
+<pre>引用viho_he的发言：</pre>
+
+<p><br>
+就我所知道到的OS(windows / linux / VxWorks / qnx)里，目前没有哪个是这样做的。</p>
+
+</blockquote>
+
+<p>viho_he 能够推荐一些资料吗？受个人条件限制，能把硬件和操作系统结合起来讲的人很少，遇到一个明白人不容易，就厚着脸皮问了。<br>
+</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 27, 2013  5:21 AM">2013年4月27日 05:21</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271085">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用gordon的这条留言" onclick="return CommentQuote(&#39;comment-quote-271085&#39;,&#39;gordon&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271094" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">artwl</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271094">
+            <p>通俗易懂</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 27, 2013  2:42 PM">2013年4月27日 14:42</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271094">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用artwl的这条留言" onclick="return CommentQuote(&#39;comment-quote-271094&#39;,&#39;artwl&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271101" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.vktone.com/" href="http://www.vktone.com/" target="_blank" rel="nofollow">V客小站</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271101">
+            <p>浅显易懂，好文！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 27, 2013  5:35 PM">2013年4月27日 17:35</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271101">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用V客小站的这条留言" onclick="return CommentQuote(&#39;comment-quote-271101&#39;,&#39;V客小站&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271106" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">bj0629</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271106">
+            <p>我个人感觉80年代和90年代初期的书和杂志里一般说multi task,后来变成 multi processing ，在90年代末期 windows 编程里又看到了 multi thread。单个CPU实现所谓的多任务、进程、线程，只能靠分时中断或事件中断，排队来实现。有些理念我自己理解是在忽悠和为了广告效应而已。</p>
+
+<p></p>
+
+<p>谢谢楼主的分享</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 28, 2013  9:45 AM">2013年4月28日 09:45</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271106">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用bj0629的这条留言" onclick="return CommentQuote(&#39;comment-quote-271106&#39;,&#39;bj0629&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271118" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">gordon</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271118">
+            <p>为什么要引入多级存储和虚拟存储器？</p>
+
+<p>单级存储器的基本矛盾和解决方法</p>
+
+<p>在一定存储器件条件下，容量越大，其寄生参量和走线延迟也越大，因而会降低其工作主频，也就是降低了存储速度。</p>
+
+<p>寄生参量是电路的东西，为什么要考虑这个？</p>
+
+<p>最典型的就是现在最热门的量子计算机，根据摩尔定律 大概每两年 一块集成电路板上可以容纳的器件数会加倍。 这个大家可以感受得到 计算机和其他电子设备的速度容量都在不断翻倍 当一个二级管小到只有几个原子那么大的时候 经典物理就不再适用 必须考虑量子效应了传统计算机10几年后就会碰到量子障碍。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 29, 2013  6:52 PM">2013年4月29日 18:52</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271118">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用gordon的这条留言" onclick="return CommentQuote(&#39;comment-quote-271118&#39;,&#39;gordon&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271123" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">xubincd</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271123">
+            <p>话说，我认为抽象的概念，发明出多少种比喻来进行解释也是在做无用功，抽象就是抽象，必须经常用去琢磨这种概念，拿现实世界的来做比喻我觉得对抽象本身来说其实并无帮助。<br>
+仅个人意见，不知道各位怎么看</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 29, 2013 10:34 PM">2013年4月29日 22:34</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271123">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用xubincd的这条留言" onclick="return CommentQuote(&#39;comment-quote-271123&#39;,&#39;xubincd&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271213" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">viho_he</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271213">
+            <blockquote>
+<pre>引用gordon的发言：</pre>
+
+<p>viho_he 能够推荐一些资料吗？受个人条件限制，能把硬件和操作系统结合起来讲的人很少，遇到一个明白人不容易，就厚着脸皮问了。</p>
+
+</blockquote>
+操作系统是一门实践性极强的学问，而且与CPU的硬件功能结合得非常紧密，可以说操作系统的核心模块都是关于怎样玩转CPU的硬件功能的，很多过去原本是操作系统的软件功能，被做到了CPU硬件里面。个人经验是，不要怕接触技术细节，只有在大量具体的技术细节的积累之上，才能真正理解抽像的概念。
+我建议你调试linux kernel玩玩，有条件的话买一个arm的开发板自己弄弄，没条件可以在PC机上安装模拟器来玩，比如QEMU。
+读书的话，可以啃《Linux内核源代码情景分析》，不用读全书，只把你关心的那几章通读就行了。
+另外，为了能真正读懂kernel源码，你需要至少学习一门CPU的知识（即阅读枯燥冗长的CPU手册）作为辅助，可以从IA入手，也可以从ARM入手，以你手头的能用的硬件为准。最起码要了解中断的处理机制、内存的处理机制。
+《Linux内核源代码情景分析》用的是IA。
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="May  2, 2013  3:12 PM">2013年5月 2日 15:12</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271213">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用viho_he的这条留言" onclick="return CommentQuote(&#39;comment-quote-271213&#39;,&#39;viho_he&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271217" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">lee</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271217">
+            <p>懂得人一看就懂<br>
+不懂的人就........<br>
+</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="May  2, 2013  6:43 PM">2013年5月 2日 18:43</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271217">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用lee的这条留言" onclick="return CommentQuote(&#39;comment-quote-271217&#39;,&#39;lee&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271383" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://50vip.com/" href="http://50vip.com/" target="_blank" rel="nofollow">红色石头</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271383">
+            <p>配图不错~~~很有爱...<br>
+另外，我对阮一峰这个名字感觉又印象，问下你是写过什么技术类书籍的？</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="May  9, 2013 10:53 AM">2013年5月 9日 10:53</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271383">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用红色石头的这条留言" onclick="return CommentQuote(&#39;comment-quote-271383&#39;,&#39;红色石头&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271384" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">mdyang</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271384">
+            <p>“不难看出，mutex是semaphore的一种特殊情况（n=1时）。也就是说，完全可以用后者替代前者。”<br>
+mutex和二元信号量并不同，http://stackoverflow.com/questions/62814/difference-between-binary-semaphore-and-mutex</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="May  9, 2013 12:17 PM">2013年5月 9日 12:17</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271384">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用mdyang的这条留言" onclick="return CommentQuote(&#39;comment-quote-271384&#39;,&#39;mdyang&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271434" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="https://tumutanzi.com/" href="https://tumutanzi.com/" target="_blank" rel="nofollow">土木坛子</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271434">
+            <p>能把抽象复杂的现象用通俗易懂的方式讲出来，是多么不容易的一件事情啊。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="May 11, 2013  4:20 AM">2013年5月11日 04:20</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271434">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用土木坛子的这条留言" onclick="return CommentQuote(&#39;comment-quote-271434&#39;,&#39;土木坛子&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271625" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://blog.qilee.me" href="http://blog.qilee.me/" target="_blank" rel="nofollow">李奇</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271625">
+            <p>虽然不是很准确，不过确实比较形象，对于初级了解一下挺有帮助。<br>
+但还未涉及到进程和线程资源分配的问题，加上这部分会更完整。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="May 21, 2013 12:29 AM">2013年5月21日 00:29</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271625">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用李奇的这条留言" onclick="return CommentQuote(&#39;comment-quote-271625&#39;,&#39;李奇&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271716" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.mednoter.com" href="http://www.mednoter.com/" target="_blank" rel="nofollow">吕小荣</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271716">
+            <p>通俗易懂，很适合新手理解。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="May 24, 2013  9:57 AM">2013年5月24日 09:57</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271716">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用吕小荣的这条留言" onclick="return CommentQuote(&#39;comment-quote-271716&#39;,&#39;吕小荣&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-271924" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">daleydeng</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-271924">
+            <p>简单的说，线程就是深度共享的进程，都是名为struct task_struct 的一家人 by kernerer</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="June  3, 2013 11:51 PM">2013年6月 3日 23:51</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-271924">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用daleydeng的这条留言" onclick="return CommentQuote(&#39;comment-quote-271924&#39;,&#39;daleydeng&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-272520" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">屌丝男</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-272520">
+            <p>进程就是我们打开的一个快播播放器,线程就是快播里面的那些功能,如搜索、播放、暂停等。。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="July  5, 2013 10:06 PM">2013年7月 5日 22:06</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-272520">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用屌丝男的这条留言" onclick="return CommentQuote(&#39;comment-quote-272520&#39;,&#39;屌丝男&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-275063" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">helloworld</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-275063">
+            <p>楼主怎么没给翻译完啊？很期待啊</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="September 21, 2013  9:38 AM">2013年9月21日 09:38</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-275063">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用helloworld的这条留言" onclick="return CommentQuote(&#39;comment-quote-275063&#39;,&#39;helloworld&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-288412" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">刀尖红叶</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-288412">
+            <p>通俗易懂~</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="November 23, 2013  3:10 PM">2013年11月23日 15:10</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-288412">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用刀尖红叶的这条留言" onclick="return CommentQuote(&#39;comment-quote-288412&#39;,&#39;刀尖红叶&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-293150" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://ueshell.com" href="http://ueshell.com/" target="_blank" rel="nofollow">大鱼</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-293150">
+            <p>看了留言收获很多。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="December 15, 2013 11:22 PM">2013年12月15日 23:22</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-293150">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用大鱼的这条留言" onclick="return CommentQuote(&#39;comment-quote-293150&#39;,&#39;大鱼&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-302576" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">pubemail</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-302576">
+            <p>开始略懂进程和线程</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="March 12, 2014  2:48 PM">2014年3月12日 14:48</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-302576">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用pubemail的这条留言" onclick="return CommentQuote(&#39;comment-quote-302576&#39;,&#39;pubemail&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-303435" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://tuzhi.letiantian.me" href="http://tuzhi.letiantian.me/" target="_blank" rel="nofollow">tuzhi</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-303435">
+            <p>写得真好。还有一种分法是按照是否拥有独立用户空间。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="March 17, 2014  7:38 PM">2014年3月17日 19:38</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-303435">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用tuzhi的这条留言" onclick="return CommentQuote(&#39;comment-quote-303435&#39;,&#39;tuzhi&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-307410" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://blog.csdn.net/navyifanr" href="http://blog.csdn.net/navyifanr" target="_blank" rel="nofollow">ifanr</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-307410">
+            <p>通俗易懂，适合资深新手，呆学得足够深入时，才好提自己的看法……</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April  3, 2014  5:16 PM">2014年4月 3日 17:16</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-307410">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用ifanr的这条留言" onclick="return CommentQuote(&#39;comment-quote-307410&#39;,&#39;ifanr&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-310401" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">马琳琳</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-310401">
+            <p>很容易看懂，图片也放的很好看，这在为软考备战，看了这篇文章，觉得看题看的晕晕的我也不晕了，谢谢楼主分享这么好的经验，这么好的文章，感谢</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 10, 2014 10:27 AM">2014年4月10日 10:27</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-310401">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用马琳琳的这条留言" onclick="return CommentQuote(&#39;comment-quote-310401&#39;,&#39;马琳琳&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-320807" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">coderlu</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-320807">
+            <p>果然简单易懂，但是没怎么讲进程喔。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="May  5, 2014 11:38 AM">2014年5月 5日 11:38</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-320807">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用coderlu的这条留言" onclick="return CommentQuote(&#39;comment-quote-320807&#39;,&#39;coderlu&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-327495" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">barry.zhou</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-327495">
+            <p>进程和线程的类比总结得非常好，跟我之前自己总结的一样，知音啊~</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="June  7, 2014 10:41 AM">2014年6月 7日 10:41</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-327495">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用barry.zhou的这条留言" onclick="return CommentQuote(&#39;comment-quote-327495&#39;,&#39;barry.zhou&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-330020" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">Alina1999</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-330020">
+            <p>确实很形象</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="July  2, 2014 11:53 AM">2014年7月 2日 11:53</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-330020">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用Alina1999的这条留言" onclick="return CommentQuote(&#39;comment-quote-330020&#39;,&#39;Alina1999&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-338848" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">Joanna</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-338848">
+            <p>写的特别赞！！！很形象很好懂</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="September 21, 2014  5:06 PM">2014年9月21日 17:06</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-338848">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用Joanna的这条留言" onclick="return CommentQuote(&#39;comment-quote-338848&#39;,&#39;Joanna&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-340374" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">Ssun</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-340374">
+            <p>醍醐灌顶的感觉，我很喜欢看博主的文章，看完发现自己需要学的东西太多了！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="September 30, 2014  9:20 PM">2014年9月30日 21:20</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-340374">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用Ssun的这条留言" onclick="return CommentQuote(&#39;comment-quote-340374&#39;,&#39;Ssun&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-341121" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://blog.csdn.net/huntinux" href="http://blog.csdn.net/huntinux" target="_blank" rel="nofollow">春泥面包</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-341121">
+            <p>看评论也能学到不少东西</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="October 10, 2014  9:05 AM">2014年10月10日 09:05</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-341121">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用春泥面包的这条留言" onclick="return CommentQuote(&#39;comment-quote-341121&#39;,&#39;春泥面包&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-344250" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">Hallie</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-344250">
+            <p>直观形象！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="November 19, 2014  5:51 PM">2014年11月19日 17:51</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-344250">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用Hallie的这条留言" onclick="return CommentQuote(&#39;comment-quote-344250&#39;,&#39;Hallie&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-344778" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://kinslover.info" href="http://kinslover.info/" target="_blank" rel="nofollow">TK</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-344778">
+            <p>@viho_he：</p>
+
+<p>寫的太讚了</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="November 25, 2014  1:28 AM">2014年11月25日 01:28</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-344778">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用TK的这条留言" onclick="return CommentQuote(&#39;comment-quote-344778&#39;,&#39;TK&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-345771" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">问</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-345771">
+            <p>通俗易懂，写的太好了，期待下一期。这必须要赞一个！！非常好</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="December  5, 2014  5:50 PM">2014年12月 5日 17:50</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-345771">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用问的这条留言" onclick="return CommentQuote(&#39;comment-quote-345771&#39;,&#39;问&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-347091" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://niewj.iteye.com" href="http://niewj.iteye.com/" target="_blank" rel="nofollow">niewj</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-347091">
+            <p>看你的技术博客，就像听袁腾飞讲历史，难得的技术解惑达人！！！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="January  9, 2015 12:45 AM">2015年1月 9日 00:45</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-347091">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用niewj的这条留言" onclick="return CommentQuote(&#39;comment-quote-347091&#39;,&#39;niewj&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-347938" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">书生Maple</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-347938">
+            <p>真真是极好的，浅显易懂。以前对这一块特别的混乱，现在理清了这些思路。想到进程、线程，就想到工厂、车间了。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="February  7, 2015  2:25 PM">2015年2月 7日 14:25</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-347938">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用书生Maple的这条留言" onclick="return CommentQuote(&#39;comment-quote-347938&#39;,&#39;书生Maple&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-348720" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">一生只做一件事</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-348720">
+            <p>这种方式比较适合用来解释一个复杂概念的一个方面，或者从某个角度的理解。想面面俱到的说明白一个复杂的系统，繁琐枯燥的概念，以及这些概念间的推演几乎不可避免。 正解！<br>
+但 阮 先生能解释到这个地步已属难得，尤其是这种比喻方式极好。往往让初学者瞬间理清思路。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="March 21, 2015  6:26 PM">2015年3月21日 18:26</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-348720">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用一生只做一件事的这条留言" onclick="return CommentQuote(&#39;comment-quote-348720&#39;,&#39;一生只做一件事&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-348791" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">火贼君</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-348791">
+            <p>大神</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="March 26, 2015  2:26 PM">2015年3月26日 14:26</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-348791">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用火贼君的这条留言" onclick="return CommentQuote(&#39;comment-quote-348791&#39;,&#39;火贼君&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-348912" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://zeffonfirstnodejs.herokuapp.com/" href="http://zeffonfirstnodejs.herokuapp.com/" target="_blank" rel="nofollow">zephoonyu</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-348912">
+            <p>赞一个</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April  2, 2015  8:58 PM">2015年4月 2日 20:58</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-348912">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用zephoonyu的这条留言" onclick="return CommentQuote(&#39;comment-quote-348912&#39;,&#39;zephoonyu&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-349029" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">yueyanglou</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-349029">
+            <p>这篇文章写得很好，对于概念比较混淆或者对因为其他文章描写复杂的互斥锁望而却步的人有很大的帮助！博主辛苦了！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 10, 2015 10:55 PM">2015年4月10日 22:55</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-349029">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用yueyanglou的这条留言" onclick="return CommentQuote(&#39;comment-quote-349029&#39;,&#39;yueyanglou&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-349247" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://hereico.me" href="http://hereico.me/" target="_blank" rel="nofollow">FredWe</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-349247">
+            <blockquote>
+<pre>引用viho_he的发言：</pre>
+
+<p>抛开各种技术细节，从应用程序角度讲：</p>
+
+<p>1、在单核计算机里，有一个资源是无法被多个程序并行使用的：cpu。</p>
+
+<p>没有操作系统的情况下，一个程序一直独占着全都cpu。</p>
+
+<p>如果要有两个任务来共享同一个CPU，程序员就需要仔细地为程序安排好运行计划--某时刻cpu和由程序A来独享，下一时刻cpu由程序B来独享</p>
+
+<p>而这种安排计划后来成为OS的核心组件，被单独名命为“scheduler”，即“调度器”，它关心的只是怎样把单个cpu的运行拆分成一段一段的“运行片”，轮流分给不同的程序去使用，而在宏观上，因为分配切换的速度极快，就制造出多程序并行在一个cpu上的假象。</p>
+
+<p>2、在单核计算机里，有一个资源可以被多个程序共用，然而会引出麻烦：内存。</p>
+
+<p>在一个只有调度器，没有内存管理组件的操作系统上，程序员需要手工为每个程序安排运行的空间 -- 程序A使用物理地址0x00-0xff,程序B使用物理地址0x100-0x1ff，等等。</p>
+
+<p>然而这样做有个很大的问题：每个程序都要协调商量好怎样使用同一个内存上的不同空间，软件系统和硬件系统千差万别，使这种定制的方案没有可行性。<br>
+为了解决这个麻烦，计算机系统引入了“虚拟地址”的概念，从三方面入手来做：</p>
+
+<p>2.1、硬件上，CPU增加了一个专门的模块叫MMU，负责转换虚拟地址和物理地址。<br>
+2.2、操作系统上，操作系统增加了另一个核心组件：memory management，即内存管理模块，它管理物理内存、虚拟内存相关的一系列事务。<br>
+2.3、应用程序上，发明了一个叫做【进程】的模型，（注意）每个进程都用【完全一样的】虚拟地址空间，然而经由操作系统和硬件MMU协作，映射到不同的物理地址空间上。不同的【进程】，都有各自独立的物理内存空间，不用一些特殊手段，是无法访问别的进程的物理内存的。</p>
+
+<p>3、现在，不同的应用程序，可以不关心底层的物理内存分配，也不关心CPU的协调共享了。然而还有一个问题存在：有一些程序，想要共享CPU，【并且还要共享同样的物理内存】，这时候，一个叫【线程】的模型就出现了，它们被包裹在进程里面，在调度器的管理下共享CPu，拥有同样的虚拟地址空间，同时也共享同一个物理地址空间，然而，它们无法越过包裹自己的进程，去访问别一个进程的物理地址空间。</p>
+
+<p>4、进程之间怎样共享同一个物理地址空间呢？不同的系统方法各异，符合posix规范的操作系统都提供了一个接口，叫mmap，可以把一个物理地址空间映射到不同的进程中，由不同的进程来共享。</p>
+
+<p>5、PS：在有的操作系统里，进程不是调度单位（即不能被调度器使用），线程是最基本的调度单位，调度器只调度线程，不调度进程，比如VxWorks</p>
+
+<p><br>
+</p></blockquote>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 25, 2015  1:56 AM">2015年4月25日 01:56</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-349247">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用FredWe的这条留言" onclick="return CommentQuote(&#39;comment-quote-349247&#39;,&#39;FredWe&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-349248" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://hereico.me" href="http://hereico.me/" target="_blank" rel="nofollow">FredWe</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-349248">
+            <p>这个评论写得好，想知道对于多核处理器又该如何解释<br>
+</p><blockquote><br>
+<pre>引用viho_he的发言：</pre></blockquote><p></p>
+
+<p>抛开各种技术细节，从应用程序角度讲：</p>
+
+<p>1、在单核计算机里，有一个资源是无法被多个程序并行使用的：cpu。</p>
+
+<p>没有操作系统的情况下，一个程序一直独占着全都cpu。</p>
+
+<p>如果要有两个任务来共享同一个CPU，程序员就需要仔细地为程序安排好运行计划--某时刻cpu和由程序A来独享，下一时刻cpu由程序B来独享</p>
+
+<p>...</p>
+
+
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="April 25, 2015  1:57 AM">2015年4月25日 01:57</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-349248">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用FredWe的这条留言" onclick="return CommentQuote(&#39;comment-quote-349248&#39;,&#39;FredWe&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-349591" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">lukase</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-349591">
+            <p>浅显易懂，境界真高。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="May 12, 2015  8:58 AM">2015年5月12日 08:58</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-349591">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用lukase的这条留言" onclick="return CommentQuote(&#39;comment-quote-349591&#39;,&#39;lukase&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-350401" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">anonymous</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-350401">
+            <blockquote>
+<pre>引用herodot的发言：</pre>
+
+<p>阮兄，<br>
+我是你的博客（包括你的英文BLOG）的忠实读者。这个回复纯属技术探讨。</p>
+
+<p>你这篇关于进程和线程的文章，图文并茂，很通俗，但不易懂。坦白说，在我看来很多比喻很不恰当，比如：<br>
+1. 车间/电力/人三者，来比喻进程/CPU/线程三者，其实既没有体现出进程作为程序的一次执行（有独立的内存空间）这一特点，也没有体现出线程作为CPU调度单位这一特点。人和电力的关系是什么呢？所以“车间的空间是工人们共享的，比如许多房间是每个工人都可以进出的”，这句话就很难理解。<br>
+2. 用厕所容量，来比喻锁，也不合适。因为线程间同步是为了防止竞争（就是说因同时修改，而导致的数据不一致）。本质上讲，进程的内存空间是天然独立的，线程的内存空间是天然共享的。正因为如此，进程通信/线程同步才是系统编程的很大一块内容。</p>
+
+<p>进程和线程简单而基本靠谱的定义如下：<br>
+1. 进程：程序的一次执行<br>
+2. 线程：CPU的基本调度单位<br>
+这两个概念虽然过于简单，但是完全可以为理解OS/线程/进程打下坚实的基础，我认为关于进程/线程的探讨，无论采用何种方式，都必须以这两句话为落脚点，才算靠谱。</p>
+
+<p>你写的大多数文章相当出色。在以通俗的方式解释复杂的概念这方面，尤其出色。但是，我个人的经验，这种方式比较适合用来解释一个复杂概念的一个方面，或者从某个角度的理解。想面面俱到的说明白一个复杂的系统，繁琐枯燥的概念，以及这些概念间的推演几乎不可避免。坦白说，在实际项目中大量用到线程/进程之前，我看过很多遍相关的概念，也写过小的示例程序，但真到了用的时候，还是发现之前没搞明白。</p>
+
+<p>我对进程/线程的理解也很粗浅。个人见解，仅供参考。</p>
+
+</blockquote>
+
+<p>这个才是正解 楼主说的其实我真没看懂 但是在各位仁兄说的 我貌似知道了点什么。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="June 19, 2015 11:32 AM">2015年6月19日 11:32</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-350401">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用anonymous的这条留言" onclick="return CommentQuote(&#39;comment-quote-350401&#39;,&#39;anonymous&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-351474" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="https://www.facebook.com/huntingw" href="https://www.facebook.com/huntingw" target="_blank" rel="nofollow">wisdom701021</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-351474">
+            <p>這篇文章真的寫得太好了，跟我心中所想，完全不謀而合<br>
+但願版主下次還有類似的講解<br>
+（當然如果這篇文章還有簡單易懂以及可執行的程式碼的話那更好）<br>
+期待下次再來，謝謝分享</p>
+
+<p><br>
+</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="August 28, 2015  1:28 PM">2015年8月28日 13:28</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-351474">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用wisdom701021的这条留言" onclick="return CommentQuote(&#39;comment-quote-351474&#39;,&#39;wisdom701021&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-351535" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">lansekuihua</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-351535">
+            <p>哈哈，好形象的比喻，一下子都看懂了，顺便理解了锁和信号量的含义！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="September  2, 2015  9:07 PM">2015年9月 2日 21:07</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-351535">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用lansekuihua的这条留言" onclick="return CommentQuote(&#39;comment-quote-351535&#39;,&#39;lansekuihua&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-351589" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">--=----</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-351589">
+            <p>解释的很清楚</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="September  7, 2015  2:59 AM">2015年9月 7日 02:59</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-351589">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用--=----的这条留言" onclick="return CommentQuote(&#39;comment-quote-351589&#39;,&#39;--=----&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-351630" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">Rick</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-351630">
+            <p>像读小人书拟的</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="September  9, 2015  5:04 PM">2015年9月 9日 17:04</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-351630">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用Rick的这条留言" onclick="return CommentQuote(&#39;comment-quote-351630&#39;,&#39;Rick&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-351684" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://mousycoder.com" href="http://mousycoder.com/" target="_blank" rel="nofollow">mousycoder</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-351684">
+            <p>@herodot：</p>
+
+<p>线程其实是轻量级进程(Lightweight Process，LWP），这个才是根本，进程才是CPU调度基本单位。</p>
+
+<p>阮兄的比喻确实不够恰当，其实这些概念翻译过来，都变味了，不过你的评判大部分是对的，少部分还是有些问题。</p>
+
+<p>详情可以看下：http://mousycoder.com/the-pragmatic-sa-13/</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="September 14, 2015  1:27 PM">2015年9月14日 13:27</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-351684">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用mousycoder的这条留言" onclick="return CommentQuote(&#39;comment-quote-351684&#39;,&#39;mousycoder&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-352060" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">小浩</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-352060">
+            <p>懂了这部分  想看下多线程</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="October  9, 2015  7:41 PM">2015年10月 9日 19:41</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-352060">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用小浩的这条留言" onclick="return CommentQuote(&#39;comment-quote-352060&#39;,&#39;小浩&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-352118" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">混的灵</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-352118">
+            <p>阮兄弟是写给没接触过的人，至少很快的理解一些基本概念。各位大神是帮我们纠正错误的概念，进一步帮我们提高，所以看完这篇博客和评论，学习效率很高。学习本来就应该相互探讨，百家争鸣，拥有批判精神，这样你们的过程和结果，让我们这个菜鸟受益无穷</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="October 14, 2015  3:10 PM">2015年10月14日 15:10</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-352118">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用混的灵的这条留言" onclick="return CommentQuote(&#39;comment-quote-352118&#39;,&#39;混的灵&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-352883" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">ss</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-352883">
+            <p>我是初学者，对于进程，线程，程序三者概念模糊。老师可以解释一下程序吗？谢谢。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="November 23, 2015  9:20 AM">2015年11月23日 09:20</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-352883">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用ss的这条留言" onclick="return CommentQuote(&#39;comment-quote-352883&#39;,&#39;ss&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-353329" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">海星</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-353329">
+            <p>我见过最最最形象的讲解！太棒了好喜欢~</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="December 16, 2015  9:02 AM">2015年12月16日 09:02</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-353329">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用海星的这条留言" onclick="return CommentQuote(&#39;comment-quote-353329&#39;,&#39;海星&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-353640" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="https://github.com/MummyDing" href="https://github.com/MummyDing" target="_blank" rel="nofollow">MummyDing</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-353640">
+            <blockquote>
+<pre>引用mousycoder的发言：</pre>
+
+<p>@herodot：</p>
+
+<p>线程其实是轻量级进程(Lightweight Process，LWP），这个才是根本，进程才是CPU调度基本单位。</p>
+
+<p>阮兄的比喻确实不够恰当，其实这些概念翻译过来，都变味了，不过你的评判大部分是对的，少部分还是有些问题。</p>
+
+<p>详情可以看下：http://mousycoder.com/the-pragmatic-sa-13/</p>
+
+</blockquote>
+
+<p>博文很赞,不过地址现在变了,更新下  <a href="http://mousycoder.com/2015/10/14/the-pragmatic-sa-13/" rel="nofollow">http://mousycoder.com/2015/10/14/the-pragmatic-sa-13/</a></p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="December 29, 2015 10:16 PM">2015年12月29日 22:16</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-353640">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用MummyDing的这条留言" onclick="return CommentQuote(&#39;comment-quote-353640&#39;,&#39;MummyDing&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-353753" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">张家浩</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-353753">
+            <p>我理解的进程，就相当于我们公司就是一个程序，没接到一个项目就开始了一个进程，我们工程师就相当于cpu，单核就相当于只有我这一个工程师，多进程就相当于我们单位同时接了好多个项目，我把每一个项目拆分成一个个小的项目来依次完成，所以这些项目的小项目就是线程，共享了我和我处理这个项目所需的一些材料，但是项目之间我是不能混淆共享的，我会把一天时间分给一个项目，把这天中的一个个小时分给各个小小项目，不断地在多个小小项目和项目之间切换，来给我的上司（用户）呈现出项目都在执行的假象，不知道这样的理解对不对。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="January  4, 2016 11:06 PM">2016年1月 4日 23:06</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-353753">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用张家浩的这条留言" onclick="return CommentQuote(&#39;comment-quote-353753&#39;,&#39;张家浩&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-354467" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://www.cnblogs.com/Sandheart/" href="http://www.cnblogs.com/Sandheart/" target="_blank" rel="nofollow">sandheart</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-354467">
+            <p>通俗易懂，不懂计算机的也能理解</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="February  4, 2016  4:43 PM">2016年2月 4日 16:43</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-354467">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用sandheart的这条留言" onclick="return CommentQuote(&#39;comment-quote-354467&#39;,&#39;sandheart&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-354799" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://later" href="http://later/" target="_blank" rel="nofollow">mary</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-354799">
+            <blockquote>
+<pre>引用sun的发言：</pre>
+
+<p>简洁，浅显易懂，到时往往越是这样越难以触及本质。当然对于深入理解还是很有帮助的。</p>
+
+</blockquote>
+
+<p>你如果觉得难以触及本质大可以自己去看“本质”的书籍，不要一边在这里看了文章入了门，一边喷别人写的“不触及本质”。请问您看文章给阮一峰付费了么。吃相难看，懂？</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="March  6, 2016 11:57 PM">2016年3月 6日 23:57</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-354799">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用mary的这条留言" onclick="return CommentQuote(&#39;comment-quote-354799&#39;,&#39;mary&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-357059" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">public</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-357059">
+            <p>写的真好</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="June  3, 2016  1:52 PM">2016年6月 3日 13:52</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-357059">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用public的这条留言" onclick="return CommentQuote(&#39;comment-quote-357059&#39;,&#39;public&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-357474" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">test</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-357474">
+            <p>只有我觉得完全没用吗？讲给小学生听得？？</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="June 11, 2016  5:22 PM">2016年6月11日 17:22</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-357474">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用test的这条留言" onclick="return CommentQuote(&#39;comment-quote-357474&#39;,&#39;test&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-359662" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://nowebsite" href="http://nowebsite/" target="_blank" rel="nofollow">jain</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-359662">
+            <p>搞这么复杂干嘛，写段代码不就浅显易懂了吗</p>
+
+<p>public List GeValue()    //进程<br>
+{<br>
+    var resultA = factoryA.getResult();   //线程<br>
+    var resultB = factoryB.getResult();   //线程<br>
+    return ...<br>
+}</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="June 23, 2016 10:35 AM">2016年6月23日 10:35</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-359662">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用jain的这条留言" onclick="return CommentQuote(&#39;comment-quote-359662&#39;,&#39;jain&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-360132" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">阮小二</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-360132">
+            <p>我觉得比喻的挺好的。至于 线程是CPU的基本调度单位，也能从工人的点去理解，因为工厂里的基本单位也是人，即使分成小组，来调度，也是人为单位的。虽然看完这篇博客中的讲解，就是我现在还理解不了代码中的 多线程，比如 张宴（赶集网架构师）的博客中 curl 抓取页面。请看到的同学 帮忙理解一下成么。QQ 508440335</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="July  4, 2016  2:23 PM">2016年7月 4日 14:23</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-360132">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用阮小二的这条留言" onclick="return CommentQuote(&#39;comment-quote-360132&#39;,&#39;阮小二&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-360665" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">11111</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-360665">
+            <p>好文章， 我也是如此理解 进程和线程的关系的。</p>
+
+<p>进程就是个完整的程序.可以单独运行一个exe 文件就是 一个进程。</p>
+
+<p>线程就是进程中多个运行路线。</p>
+
+<p>cpu控制这线程的运行。</p>
+
+<p><br>
+</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="July 14, 2016  4:04 PM">2016年7月14日 16:04</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-360665">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用11111的这条留言" onclick="return CommentQuote(&#39;comment-quote-360665&#39;,&#39;11111&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-360735" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://491136396@qq.com" href="http://491136396@qq.com/" target="_blank" rel="nofollow">小蜜蜂</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-360735">
+            <p>看了原文和留言，收获不少，谢谢，自己粗浅的总结如下：</p>
+
+<p>（1）进程process： 程序的一次执行（进程与进程之间有天然独立的内存空间），可包括1个或多个线程。</p>
+
+<p>（2）线程thread：CPU的基本调度单位。同一进程里的内存空间天然共享，不同进程里的线程则不共享。内存线程间同步是为了防止竞争（就是说因同时修改，而导致的数据不一致）。</p>
+
+<p>（3）进程与线程的关系： 线程包括进程，进程封装在线程中。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="July 15, 2016  7:52 PM">2016年7月15日 19:52</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-360735">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用小蜜蜂的这条留言" onclick="return CommentQuote(&#39;comment-quote-360735&#39;,&#39;小蜜蜂&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-362063" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">qwe</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-362063">
+            <blockquote>
+<pre>引用jain的发言：</pre>
+
+<p>搞这么复杂干嘛，写段代码不就浅显易懂了吗</p>
+
+<p>public List GeValue()//进程<br>
+{<br>
+var resultA = factoryA.getResult(); //线程<br>
+var resultB = factoryB.getResult(); //线程<br>
+return ...<br>
+}</p>
+
+</blockquote>
+
+<p>你这个都是线程吧，第一个算进程？<br>
+</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="August 10, 2016 10:05 AM">2016年8月10日 10:05</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-362063">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用qwe的这条留言" onclick="return CommentQuote(&#39;comment-quote-362063&#39;,&#39;qwe&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-362814" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">林</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-362814">
+            <p>学到了，谢谢</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="August 20, 2016 11:32 PM">2016年8月20日 23:32</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-362814">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用林的这条留言" onclick="return CommentQuote(&#39;comment-quote-362814&#39;,&#39;林&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-363442" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">黄亭亭</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-363442">
+            <p>阮老师真的是大牛，您的博客页面很好看</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="August 30, 2016 11:33 PM">2016年8月30日 23:33</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-363442">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用黄亭亭的这条留言" onclick="return CommentQuote(&#39;comment-quote-363442&#39;,&#39;黄亭亭&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-363735" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">入水的鱼渴望海洋</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-363735">
+            <p>初接触，感觉体会好深。电脑的硬件资源是一定的，上层的软件系统就是共用这些资源完成不同的工作。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="September  3, 2016  2:31 PM">2016年9月 3日 14:31</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-363735">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用入水的鱼渴望海洋的这条留言" onclick="return CommentQuote(&#39;comment-quote-363735&#39;,&#39;入水的鱼渴望海洋&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-364131" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="http://blog.csdn.net/jiujiuming" href="http://blog.csdn.net/jiujiuming" target="_blank" rel="nofollow">ice_bear</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-364131">
+            <p>我觉得很舒服，这样的文章可以加深印象，评论里很多人写出了更深刻更准确的定义，但是这种定义就是走马观花，看的时候觉得很有道理，看完之后想想那个人写了什么，头脑就一片空白了。喜欢博主的文章，以后也会继续关注。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="September  9, 2016 11:27 AM">2016年9月 9日 11:27</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-364131">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用ice_bear的这条留言" onclick="return CommentQuote(&#39;comment-quote-364131&#39;,&#39;ice_bear&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-365626" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">sunman721</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-365626">
+            <p>还真是不错！有点懂了！</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="October  4, 2016 10:06 AM">2016年10月 4日 10:06</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-365626">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用sunman721的这条留言" onclick="return CommentQuote(&#39;comment-quote-365626&#39;,&#39;sunman721&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-365663" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">杨洋</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-365663">
+            <p>一直没明白进程和线程，有了阮老师的图片解说，秒懂。原创知识一定要坚持下去，请问有公众号吗？想多向阮老师学习。</p>
+
+<p>《沙海》，闲暇之余的消遣读物，一旦看上，根本停不下来。htt://shahai.org</p>
+
+<p>谁看谁知道。</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="October  4, 2016  2:04 PM">2016年10月 4日 14:04</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-365663">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用杨洋的这条留言" onclick="return CommentQuote(&#39;comment-quote-365663&#39;,&#39;杨洋&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-366091" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">冬瓜蔡</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-366091">
+            <p>思考下这种常见：如果服务器是多核，但是只有一个任务，并且任务是多线程的。那么这个任务是运行在多处理器上还是只占用了其中一个CPU</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="October 11, 2016 10:31 AM">2016年10月11日 10:31</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-366091">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用冬瓜蔡的这条留言" onclick="return CommentQuote(&#39;comment-quote-366091&#39;,&#39;冬瓜蔡&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-371895" class="comment">
+    <div class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author">whereami</span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-371895">
+            <p>图画的不错</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="January 10, 2017  9:18 PM">2017年1月10日 21:18</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-371895">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用whereami的这条留言" onclick="return CommentQuote(&#39;comment-quote-371895&#39;,&#39;whereami&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    
+        
+        <div id="comment-372270" class="comment">
+    <div id="comment-last" class="inner">
+        <div class="comment-header">
+            <div class="asset-meta">
+<p>
+                <span class="byline">
+                    
+
+                    <span class="vcard author"><a title="https://www.cnblogs.com/LiZheng0010" href="https://www.cnblogs.com/LiZheng0010" target="_blank" rel="nofollow">李争</a></span>
+
+ 说：
+                </span>
+</p>
+            </div>
+        </div>
+        <div class="comment-content" id="comment-quote-372270">
+            <p><a href="http://blog.csdn.net/zheng548/article/details/54669908" rel="nofollow">http://blog.csdn.net/zheng548/article/details/54669908</a><br>
+我也写了关于线程和进程的一篇文章。欢迎大佬拍砖</p>
+        </div>
+<div class="comment-footer">
+<div class="comment-footer-inner">
+<p>
+                   <abbr class="published" title="January 22, 2017  8:18 PM">2017年1月22日 20:18</abbr>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-372270">#</a>
+ | <a href="http://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html#comment-text" title="引用李争的这条留言" onclick="return CommentQuote(&#39;comment-quote-372270&#39;,&#39;李争&#39;);">引用</a>
+</p>
+</div>
+</div>
+    </div>
+</div>
+        
+    </div>
+        
+    
+
+
+    
+    
+    <div class="comments-open" id="comments-open">
+        <h2 class="comments-open-header">我要发表看法</h2>
+        <div class="comments-open-content">
+
+        
+            <div id="comment-greeting"></div>
+
+            <form method="post" action="http://www.ruanyifeng.com/cgi-bin/mtos/mt-comments.cgi" name="comments_form" id="comments-form" onsubmit="return pleaseWait();">
+                <input type="hidden" name="static" value="1">
+                <input type="hidden" name="entry_id" value="1774">
+                <input type="hidden" name="__lang" value="en">
+                <input type="hidden" name="parent_id" value="" id="comment-parent-id">
+                <input type="hidden" name="armor" value="1">
+                <input type="hidden" name="preview" value="">
+                <input type="hidden" name="sid" value="">
+                <div id="comments-open-data">
+            <div id="comments-open-text">
+                    <p><label for="comment-text">您的留言
+                    （HTML标签部分可用）</label></p>
+                    <p><textarea id="comment-text" name="text" rows="10" cols="50"></textarea></p>
+                </div>
+                    <div id="comment-form-name">
+                        <p><label for="comment-author">您的大名：</label></p>
+                        <p><input id="comment-author" name="author" size="30" value="">  <span class="hint"> «-必填</span></p>
+                    </div>
+                    <div id="comment-form-email">
+                        <p><label for="comment-email">电子邮件：</label></p>
+                        <p><input id="comment-email" name="email" size="30" value="">  <span class="hint"> «-必填，不公开</span></p>
+                    </div>
+                    <div id="comment-form-url">
+                        <p><label for="comment-url">个人网址：</label></p>
+                        <p><input id="comment-url" name="url" size="30" value="">  <span class="hint"> «-我信任你，不会填写广告链接</span></p>
+                    </div>
+                    <div id="comment-form-remember-me">
+                        <p>
+                        <label for="comment-bake-cookie">记住个人信息？</label><input type="checkbox" id="comment-bake-cookie" name="bakecookie" onclick="!this.checked?forgetMe(document.comments_form):rememberMe(document.comments_form)" value="1" accesskey="r"></p>
+                    </div>
+                </div>
+                    <div id="comment-form-reply" style="display:none">
+                    <input type="checkbox" id="comment-reply" name="comment_reply" value="" onclick="mtSetCommentParentID()">
+                    <label for="comment-reply" id="comment-reply-label"></label>
+                </div>
+                <div id="comments-open-captcha"></div>
+                <div id="comments-open-footer">
+<div id="wait" style="display:none;">
+<p><strong>正在发表您的评论，请稍候</strong></p>
+<p>
+<input type="text" name="percent" size="3" style="font-family:Arial; color:black;text-align:center; border-width:medium; border-style:none;">           
+<input type="text" name="chart" size="46" style="font-family:Arial;font-weight:bolder; color:black; padding:0px; border-style:none;">
+</p>
+</div>
+
+                    <p><input type="submit" accesskey="s" name="post" id="comment-submit" value="发表">  <span class="hint"> «- 点击按钮</span></p>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+
+    
+
+
+</div>
+
+
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        <script type="text/javascript" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/prism.js.下载"></script>
+
+            <div id="footer">
+    <div id="footer-inner">
+        <div id="footer-content">
+<p><a href="http://www.ruanyifeng.com/contact.html">联系方式</a> | ruanyifeng.com 2003 - 2017
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-46829782-1', 'ruanyifeng.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+<!-- Site Meter -->
+<a href="http://sm3.sitemeter.com/stats.asp?site=sm3bomoocom" target="_top">
+<img src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/meter.asp.下载" alt="Site Meter" border="0"></a>
+
+<!-- Copyright (c)2009 Site Meter -->
+
+</p>
+
+        </div>
+    </div>
+</div>
+
+
+<div id="share_button_proto" style="display:none;">
+<a class="bshareDiv" href="http://www.bshare.cn/share" style="display: block; text-decoration: none; padding: 0px; margin: 0px; font-size: 12px; height: 21px; width: 51px;"><div class="bsPromo bsPromo1"></div><div class="buzzButton bsStyle10" style="height:21px;color:#333;;background:transparent url(http://static.bshare.cn/frame/images/button_custom10-zh-Orange.gif) no-repeat;text-align:center;width:51px;"></div><div style="clear:both;"></div></a>
+
+
+
+<script type="text/javascript" charset="utf-8" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/buttonLite.js.下载"></script>
+<script type="text/javascript" charset="utf-8">
+bShare.addEntry({
+    title: document.getElementById("page-title").innerHTML,
+url:window.location.href
+});
+</script>
+</div>
+
+<script>
+document.getElementById("share_button").innerHTML=document.getElementById("share_button_proto").innerHTML;
+</script>
+
+
+
+
+        </div>
+    </div>
+
+<div id="bsBox" class="bsBox"><div class="bsClose">X</div><div class="bsTop"><div class="bsReturn">选择其他平台 &gt;&gt;</div><span style="margin-left:15px;">分享到</span><span class="bsPlatName"></span></div><div class="bsFrameDiv"><iframe class="bShareFrame" name="bsFrame464" frameborder="0" scrolling="no" allowtransparency="true" src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/saved_resource.html"></iframe></div><div id="bsMorePanel" style="display: none;"></div></div><div id="ads"></div><div id="bsPanelHolder"><div id="bsPanel" style="display:none;"><div class="bsTitle"><a style="float:left;height:20px;line-height:20px;font-weight:bold;" class="bsSiteLink" target="_blank" href="http://www.bshare.cn/intro">分享到...</a><a class="bsSiteLink" style="cursor:pointer;float:right;height:20px;line-height:20px;font-weight:bold;" onclick="document.getElementById(&#39;bsPanel&#39;).style.display=&#39;none&#39;;">X</a><div class="bsClear"></div></div><div class="bsClear"></div><div style="padding-left:8px;background:#fff;*height:218px;"><div style="height:47px;border-bottom:1px #ccc solid;padding:4px 0 4px 16px;margin-right:8px;_padding-left:12px;"><div class="bsRlogo" onmouseover="javascript:this.className=&#39;bsRlogoSel&#39;" onmouseout="javascript:this.className=&#39;bsRlogo&#39;"><a href="javascript:;" onclick="javascript:bShare.share(event,&#39;facebook&#39;);return false;" style="text-decoration:none;line-height:120%;"><div style="cursor:pointer;width:24px;height:24px;margin:0 18px 2px;background:url(http://static.bshare.cn/frame/images//logos/m2/facebook.gif) no-repeat;"></div><div style="cursor:pointer;text-align:center;width:60px;height:16px !important;overflow:hidden;color:inherit;white-space:nowrap;line-height:120% !important;">Facebook</div></a></div><div class="bsRlogo" onmouseover="javascript:this.className=&#39;bsRlogoSel&#39;" onmouseout="javascript:this.className=&#39;bsRlogo&#39;"><a href="javascript:;" onclick="javascript:bShare.share(event,&#39;twitter&#39;);return false;" style="text-decoration:none;line-height:120%;"><div style="cursor:pointer;width:24px;height:24px;margin:0 18px 2px;background:url(http://static.bshare.cn/frame/images//logos/m2/twitter.gif) no-repeat;"></div><div style="cursor:pointer;text-align:center;width:60px;height:16px !important;overflow:hidden;color:inherit;white-space:nowrap;line-height:120% !important;">Twitter</div></a></div><div class="bsRlogo" onmouseover="javascript:this.className=&#39;bsRlogoSel&#39;" onmouseout="javascript:this.className=&#39;bsRlogo&#39;"><a href="javascript:;" onclick="javascript:bShare.share(event,&#39;sinaminiblog&#39;);return false;" style="text-decoration:none;line-height:120%;"><div style="cursor:pointer;width:24px;height:24px;margin:0 18px 2px;background:url(http://static.bshare.cn/frame/images//logos/m2/sinaminiblog.gif) no-repeat;"></div><div style="cursor:pointer;text-align:center;width:60px;height:16px !important;overflow:hidden;color:inherit;white-space:nowrap;line-height:120% !important;">新浪微博</div></a></div></div><div class="bsLogoLink"><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="微信" onclick="javascript:bShare.share(event,&#39;weixin&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//logos/s4/weixin.png) no-repeat;">微信</a></div><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="腾讯微博" onclick="javascript:bShare.share(event,&#39;qqmb&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//slogos_sprite8.png) no-repeat 0 -1512px;">腾讯微博</a></div><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="豆瓣网" onclick="javascript:bShare.share(event,&#39;douban&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//slogos_sprite8.png) no-repeat 0 -540px;">豆瓣网</a></div><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="饭否" onclick="javascript:bShare.share(event,&#39;fanfou&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//slogos_sprite8.png) no-repeat 0 -666px;">饭否</a></div><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="雪球" onclick="javascript:bShare.share(event,&#39;xueqiu&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//logos/s4/xueqiu.png) no-repeat;">雪球</a></div><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="电子邮件" onclick="javascript:bShare.share(event,&#39;email&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//slogos_sprite8.png) no-repeat 0 -612px;">电子邮件</a></div></div><div class="bsLogoLink"><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="Google+" onclick="javascript:bShare.share(event,&#39;gplus&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//logos/s4/gplus.png) no-repeat;">Google+</a></div><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="QQ空间" onclick="javascript:bShare.share(event,&#39;qzone&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//slogos_sprite8.png) no-repeat 0 -1566px;">QQ空间</a></div><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="QQ好友" onclick="javascript:bShare.share(event,&#39;qqim&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//logos/s4/qqim.png) no-repeat;">QQ好友</a></div><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="Instapaper" onclick="javascript:bShare.share(event,&#39;instapaper&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//slogos_sprite8.png) no-repeat 0 -954px;">Instapaper</a></div><div class="bsLogo" onmouseover="javascript:this.className=&#39;bsLogoSel&#39;" onmouseout="javascript:this.className=&#39;bsLogo&#39;"><a href="javascript:;" title="美味书签" onclick="javascript:bShare.share(event,&#39;delicious&#39;);return false;" style="background:url(http://static.bshare.cn/frame/images//slogos_sprite8.png) no-repeat 0 -432px;">美味书签</a></div></div><div class="bsClear"></div></div><div style="height:20px;line-height:20px;padding:0 8px;border-top:1px solid #e8e8e8;color:#666;background:#f2f2f2;"><div class="buzzButton" style="float:left;">更多平台... <font style="font-weight:normal;">(133)</font></div><div id="bsPower" style="float:right;text-align:right;overflow:hidden;height:100%;"><a class="bsSiteLink" style="font-size:10px;vertical-align:text-bottom;line-height:24px;cursor:pointer;" href="http://www.bshare.cn/" target="_blank"><span style="font-size:10px;vertical-align:text-bottom;"><span style="color:#f60;">b</span>Share</span></a></div></div></div></div><iframe src="./进程与线程的一个简单解释 - 阮一峰的网络日志_files/cm.html" style="display: none;"></iframe></body></html>

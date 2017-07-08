@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)http://www.cnblogs.com/ITtangtang/p/3976820.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>深入理解Java：String - 牛奶、不加糖 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/bundle-coffee.css">
+<link type="text/css" rel="stylesheet" href="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/115420.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/bundle-coffee-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/ITtangtang/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/ITtangtang/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/ITtangtang/wlwmanifest.xml">
+<script async="" src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/analytics.js.下载"></script><script type="text/javascript" src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/encoder.js.下载"></script><script src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/jquery.js.下载" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'ITtangtang', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/ITtangtang/"><img id="blogLogo" src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/ITtangtang/">哼哼哈嘿</a></h1>
+<h2>每天多一篇博客，生活多一份收获！</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="navigator">
+			
+<ul id="navList">
+	<li><a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+	<li><a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/ITtangtang/">首页</a></li>
+	<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+	<li><a id="blog_nav_contact" accesskey="9" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/%E7%89%9B%E5%A5%B6%E3%80%81%E4%B8%8D%E5%8A%A0%E7%B3%96">联系</a></li>
+	<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+	<li>
+	</li>
+</ul>
+
+
+			<div class="blogStats">
+				
+				<div id="blog_stats">
+<!--done-->
+随笔- 77&nbsp;
+文章- 0&nbsp;
+评论- 120&nbsp;
+</div>
+				
+			</div><!--end: blogStats -->
+		</div><!--end: navigator 博客导航栏 -->
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/ITtangtang/p/3976820.html">深入理解Java：String</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">在讲解String之前，我们先了解一下Java的内存结构。</span></p>
+<p class="p0">&nbsp;</p>
+<div id="tony_body">
+<h2>一、Java内存模型</h2>
+</div>
+<p>&nbsp;</p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">按照官方的说法：Java 虚拟机具有一个堆，堆是运行时数据区域，所有类实例和数组的内存均从此处分配。</span></p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">&nbsp; &nbsp; JVM主要管理两种类型内存：堆和非堆，堆内存（Heap&nbsp;Memory）是在 Java 虚拟机启动时创建，非堆内存(Non-heap Memory)是在JVM堆之外的内存。</span></p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">简单来说，非堆包含方法区、JVM内部处理或优化所需的内存（如&nbsp;<a href="http://baike.baidu.com/view/112978.htm#10" target="_blank">JIT</a>Compiler，Just-in-time Compiler，即时编译后的代码缓存）、每个类结构（如运行时常数池、字段和方法数据）以及方法和构造方法的代码。</span></p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">&nbsp; &nbsp;&nbsp;Java的堆是一个运行时数据区,类的(对象从中分配空间。这些对象通过new、newarray、 anewarray和multianewarray等指令建立，它们不需要程序代码来显式的释放。<strong>堆是由垃圾回收来负责的，堆的优势是可以动态地分配内存大小，</strong>生存期也不必事先告诉编译器<strong>，因为它是在运行时动态分配内存的，Java的垃圾收集器会自动收走这些不再使用的数据。但缺点是，由于要在运行时动态分配内存，存取速度较慢。</strong>&nbsp;<br><br>　　<strong>栈的优势是，存取速度比堆要快，仅次于寄存器，栈数据可以共享。但缺点是，存在栈中的数据大小与生存期必须是确定的，缺乏灵活性。</strong>栈中主要存放一些基本类型的变量数据（int, short, long, byte, float, double, boolean, char）和对象句柄(引用)。&nbsp;<br><br></span></p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">&nbsp; &nbsp; 虚拟机必须为每个被装载的类型维护一个常量池。常量池就是该类型所用到常量的一个有序集合，包括直接常量（string,integer和 floating point常量）和对其他类型，字段和方法的符号引用。&nbsp;</span><br><br><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">　　对于String常量，它的值是在常量池中的。而JVM中的常量池在内存当中是以表的形式存在的， 对于String类型，有一张固定长度的CONSTANT_String_info表用来存储文字字符串值，注意：该表只存储文字字符串值，不存储符号引用。说到这里，对常量池中的字符串值的存储位置应该有一个比较明了的理解了。在程序执行的时候,常量池会储存在Method Area,而不是堆中。常量池中保存着很多String对象;&nbsp;并且可以被共享使用，因此它提高了效率</span></p>
+<p class="p0">&nbsp;具体关于JVM和内存等知识请参考：</p>
+<p class="p0"><a href="http://blog.csdn.net/ithomer/article/details/9936743">JVM 基础知识</a></p>
+<p class="p0"><a href="http://blog.csdn.net/ithomer/article/details/6252552">Java 内存模型及GC原理</a></p>
+<div id="tony_body">
+<h2>二、案例解析</h2>
+
+
+
+
+
+
+
+</div>
+<p>&nbsp;</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> main(String[] args) {  
+        </span><span style="color: #008000;">/*</span><span style="color: #008000;">* 
+         * 情景一：字符串池 
+         * JAVA虚拟机(JVM)中存在着一个字符串池，其中保存着很多String对象; 
+         * 并且可以被共享使用，因此它提高了效率。 
+         * 由于String类是final的，它的值一经创建就不可改变。 
+         * 字符串池由String类维护，我们可以调用intern()方法来访问字符串池。  
+         </span><span style="color: #008000;">*/</span><span style="color: #000000;">  
+        String s1 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">abc</span><span style="color: #800000;">"</span><span style="color: #000000;">;     
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑ 在字符串池创建了一个对象  </span>
+        String s2 = <span style="color: #800000;">"</span><span style="color: #800000;">abc</span><span style="color: #800000;">"</span><span style="color: #000000;">;     
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑ 字符串pool已经存在对象“abc”(共享),所以创建0个对象，累计创建一个对象  </span>
+        System.<span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">s1 == s2 : </span><span style="color: #800000;">"</span>+(s1==<span style="color: #000000;">s2));    
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑ true 指向同一个对象，  </span>
+        System.<span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">s1.equals(s2) : </span><span style="color: #800000;">"</span> +<span style="color: #000000;"> (s1.equals(s2)));    
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑ true  值相等  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑------------------------------------------------------over  </span>
+        <span style="color: #008000;">/*</span><span style="color: #008000;">* 
+         * 情景二：关于new String("") 
+         *  
+         </span><span style="color: #008000;">*/</span><span style="color: #000000;">  
+        String s3 </span>= <span style="color: #0000ff;">new</span> String(<span style="color: #800000;">"</span><span style="color: #800000;">abc</span><span style="color: #800000;">"</span><span style="color: #000000;">);  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑ 创建了两个对象，一个存放在字符串池中，一个存在与堆区中；  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑ 还有一个对象引用s3存放在栈中  </span>
+        String s4 = <span style="color: #0000ff;">new</span> String(<span style="color: #800000;">"</span><span style="color: #800000;">abc</span><span style="color: #800000;">"</span><span style="color: #000000;">);  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑ 字符串池中已经存在“abc”对象，所以只在堆中创建了一个对象  </span>
+        System.<span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">s3 == s4 : </span><span style="color: #800000;">"</span>+(s3==<span style="color: #000000;">s4));  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑false   s3和s4栈区的地址不同，指向堆区的不同地址；  </span>
+        System.<span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">s3.equals(s4) : </span><span style="color: #800000;">"</span>+<span style="color: #000000;">(s3.equals(s4)));  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑true  s3和s4的值相同  </span>
+        System.<span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">s1 == s3 : </span><span style="color: #800000;">"</span>+(s1==<span style="color: #000000;">s3));  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑false 存放的地区多不同，一个栈区，一个堆区  </span>
+        System.<span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">s1.equals(s3) : </span><span style="color: #800000;">"</span>+<span style="color: #000000;">(s1.equals(s3)));  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑true  值相同  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑------------------------------------------------------over  </span>
+        <span style="color: #008000;">/*</span><span style="color: #008000;">* 
+         * 情景三：  
+         * 由于常量的值在编译的时候就被确定(优化)了。 
+         * 在这里，"ab"和"cd"都是常量，因此变量str3的值在编译时就可以确定。 
+         * 这行代码编译后的效果等同于： String str3 = "abcd"; 
+         </span><span style="color: #008000;">*/</span><span style="color: #000000;">  
+        String str1 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">ab</span><span style="color: #800000;">"</span> + <span style="color: #800000;">"</span><span style="color: #800000;">cd</span><span style="color: #800000;">"</span>;  <span style="color: #008000;">//</span><span style="color: #008000;">1个对象  </span>
+        String str11 = <span style="color: #800000;">"</span><span style="color: #800000;">abcd</span><span style="color: #800000;">"</span><span style="color: #000000;">;   
+        System.</span><span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">str1 = str11 : </span><span style="color: #800000;">"</span>+ (str1 ==<span style="color: #000000;"> str11));  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑------------------------------------------------------over  </span>
+        <span style="color: #008000;">/*</span><span style="color: #008000;">* 
+         * 情景四：  
+         * 局部变量str2,str3存储的是存储两个拘留字符串对象(intern字符串对象)的地址。 
+         *  
+         * 第三行代码原理(str2+str3)： 
+         * 运行期JVM首先会在堆中创建一个StringBuilder类， 
+         * 同时用str2指向的拘留字符串对象完成初始化， 
+         * 然后调用append方法完成对str3所指向的拘留字符串的合并， 
+         * 接着调用StringBuilder的toString()方法在堆中创建一个String对象， 
+         * 最后将刚生成的String对象的堆地址存放在局部变量str3中。 
+         *  
+         * 而str5存储的是字符串池中"abcd"所对应的拘留字符串对象的地址。 
+         * str4与str5地址当然不一样了。 
+         *  
+         * 内存中实际上有五个字符串对象： 
+         *       三个拘留字符串对象、一个String对象和一个StringBuilder对象。 
+         </span><span style="color: #008000;">*/</span><span style="color: #000000;">  
+        String str2 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">ab</span><span style="color: #800000;">"</span>;  <span style="color: #008000;">//</span><span style="color: #008000;">1个对象  </span>
+        String str3 = <span style="color: #800000;">"</span><span style="color: #800000;">cd</span><span style="color: #800000;">"</span>;  <span style="color: #008000;">//</span><span style="color: #008000;">1个对象                                         </span>
+        String str4 = str2+<span style="color: #000000;">str3;                                        
+        String str5 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">abcd</span><span style="color: #800000;">"</span><span style="color: #000000;">;    
+        System.</span><span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">str4 = str5 : </span><span style="color: #800000;">"</span> + (str4==str5)); <span style="color: #008000;">//</span><span style="color: #008000;"> false  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑------------------------------------------------------over  </span>
+        <span style="color: #008000;">/*</span><span style="color: #008000;">* 
+         * 情景五： 
+         *  JAVA编译器对string + 基本类型/常量 是当成常量表达式直接求值来优化的。 
+         *  运行期的两个string相加，会产生新的对象的，存储在堆(heap)中 
+         </span><span style="color: #008000;">*/</span><span style="color: #000000;">  
+        String str6 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">b</span><span style="color: #800000;">"</span><span style="color: #000000;">;  
+        String str7 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">a</span><span style="color: #800000;">"</span> +<span style="color: #000000;"> str6;  
+        String str67 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">ab</span><span style="color: #800000;">"</span><span style="color: #000000;">;  
+        System.</span><span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">str7 = str67 : </span><span style="color: #800000;">"</span>+ (str7 ==<span style="color: #000000;"> str67));  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑str6为变量，在运行期才会被解析。  </span>
+        final String str8 = <span style="color: #800000;">"</span><span style="color: #800000;">b</span><span style="color: #800000;">"</span><span style="color: #000000;">;  
+        String str9 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">a</span><span style="color: #800000;">"</span> +<span style="color: #000000;"> str8;  
+        String str89 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">ab</span><span style="color: #800000;">"</span><span style="color: #000000;">;  
+        System.</span><span style="color: #0000ff;">out</span>.println(<span style="color: #800000;">"</span><span style="color: #800000;">str9 = str89 : </span><span style="color: #800000;">"</span>+ (str9 ==<span style="color: #000000;"> str89));  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑str8为常量变量，编译期会被优化  
+        </span><span style="color: #008000;">//</span><span style="color: #008000;">↑------------------------------------------------------over  </span>
+    } </pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p>&nbsp;</p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">总结：</span></p>
+<p class="p0">&nbsp;</p>
+<div id="tony_body">
+<h2>1.String类初始化后是不可变的(immutable)</h2>
+</div>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">这一说又要说很多，大家只要知道String的实例一旦生成就不会再改变了，比如说：String str=”kv”+”ill”+” “+”ans”; 就是有4个字符串常量，首先”kv”和”ill”生成了”kvill”存在内存中，然后”kvill”又和” ” 生成 “kvill “存在内存中，最后又和生成了”kvill ans”;并把这个字符串的地址赋给了str,就是因为String的”不可变”产生了很多临时变量，这也就是为什么建议用StringBuffer的原 因了，因为StringBuffer是可改变的。&nbsp;<br><br>　　下面是<strong>一些String相关的常见问题</strong>：&nbsp;<br><br>　　String中的final用法和理解&nbsp;<br>　　final StringBuffer a = new StringBuffer("111");&nbsp;<br>　　final StringBuffer b = new StringBuffer("222");&nbsp;<br>　　a=b;//此句编译不通过&nbsp; final StringBuffer a = new StringBuffer("111");&nbsp;<br>　　a.append("222");// 编译通过&nbsp;<br><br>　　可见，<strong>final只对引用的"值"(即内存地址)有效，它迫使引用只能指向初始指向的那个对象，改变它的指向会导致编译期错误。</strong>至于它所指向的对象的变化，final是不负责的。&nbsp;</span></p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">2.代码中的字符串常量在编译的过程中收集并放在class文件的常量区中，如"123"、"123"+"456"等，含有变量的表达式不会收录，如"123"+a。</span></p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">3.JVM在加载类的时候，根据常量区中的字符串生成常量池，每个字符序列如"123"会生成一个实例放在常量池里，这个实例是不在堆里的，也不会被GC，这个实例的value属性从源码的构造函数看应该是用new创建数组置入123的，所以按我的理解此时value存放的字符数组地址是在堆里，如果有误的话欢迎大家指正。</span></p>
+<p class="p0">&nbsp;</p>
+<div id="tony_body">
+<h2>4.使用String不一定创建对象</h2>
+
+
+
+
+
+
+
+</div>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">在执行到双引号包含字符串的语句时，如String a = "123"，JVM会先到常量池里查找，如果有的话返回常量池里的这个实例的引用，否则的话创建一个新实例并置入常量池里。如果是 String a = "123" + b (假设b是"456")，前半部分"123"还是走常量池的路线，但是这个+操作符其实是转换成<span class="error">[SringBuffer].Appad()来实现的，所以最终a得到是一个新的实例引用，而且a的value存放的是一个新申请的字符数组内存空间的地址(存放着"123456")，而此时"123456"在常量池中是未必存在的。</span></span></p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;"><span class="error">要注意: 我们在使用诸如String str = "abc"；的格式定义类时，总是想当然地认为，创建了String类的对象str。<strong>担心陷阱！对象可能并没有被创建！而可能只是指向一个先前已经创建的对象。</strong>只有通过new()方法才能保证每次都创建一个新的对象</span></span></p>
+<p class="p0">&nbsp;</p>
+<div id="tony_body">
+<h2>5.使用new String，一定创建对象</h2>
+
+
+
+
+
+
+
+</div>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">在执行String a = new String("123")的时候，首先走常量池的路线取到一个实例的引用，然后在堆上创建一个新的String实例，走以下构造函数给value属性赋值，然后把实例引用赋值给a：</span></p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;"><span style="color: #0000ff;">public</span><span style="color: #000000;"> String(String original) {
+    </span><span style="color: #0000ff;">int</span> size =<span style="color: #000000;"> original.count;
+    </span><span style="color: #0000ff;">char</span>[] originalValue =<span style="color: #000000;"> original.value;
+    </span><span style="color: #0000ff;">char</span><span style="color: #000000;">[] v;
+      </span><span style="color: #0000ff;">if</span> (originalValue.length &gt;<span style="color: #000000;"> size) {
+         </span><span style="color: #008000;">//</span><span style="color: #008000;"> The array representing the String is bigger than the new
+         </span><span style="color: #008000;">//</span><span style="color: #008000;"> String itself.  Perhaps this constructor is being called
+         </span><span style="color: #008000;">//</span><span style="color: #008000;"> in order to trim the baggage, so make a copy of the array.</span>
+            <span style="color: #0000ff;">int</span> off =<span style="color: #000000;"> original.offset;
+            v </span>= Arrays.copyOfRange(originalValue, off, off+<span style="color: #000000;">size);
+     } </span><span style="color: #0000ff;">else</span><span style="color: #000000;"> {
+         </span><span style="color: #008000;">//</span><span style="color: #008000;"> The array representing the String is the same
+         </span><span style="color: #008000;">//</span><span style="color: #008000;"> size as the String, so no point in making a copy.</span>
+        v =<span style="color: #000000;"> originalValue;
+     }
+    </span><span style="color: #0000ff;">this</span>.offset = <span style="color: #800080;">0</span><span style="color: #000000;">;
+    </span><span style="color: #0000ff;">this</span>.count =<span style="color: #000000;"> size;
+    </span><span style="color: #0000ff;">this</span>.value =<span style="color: #000000;"> v;
+    }</span></span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">从中我们可以看到，虽然是新创建了一个String的实例，但是value是等于常量池中的实例的value，即是说没有new一个新的字符数组来存放"123"。</span></p>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">如果是String a = new String("123"+b)的情况，首先看回第4点，"123"+b得到一个实例后，再按上面的构造函数执行。</span></p>
+<p class="p0">&nbsp;</p>
+<div id="tony_body">
+<h2>6.String.intern()</h2>
+</div>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">String对象的实例调用intern方法后，可以让JVM检查常量池，如果没有实例的value属性对应的字符串序列比如"123"(注意是检查字符串序列而不是检查实例本身)，就将本实例放入常量池，如果有当前实例的value属性对应的字符串序列"123"在常量池中存在，则返回常量池中"123"对应的实例的引用而不是当前实例的引用，即使当前实例的value也是"123"。</span></p>
+<div class="cnblogs_code">
+<pre><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;"><span style="color: #0000ff;">public</span> native String intern();</span></pre>
+</div>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">存在于.class文件中的常量池，在运行期被JVM装载，并且可以扩充。String的 intern()方法就是扩充常量池的 一个方法；当一个String实例str调用intern()方法时，Java 查找常量池中 是否有相同Unicode的字符串常量，如果有，则返回其的引用，如果没有，则在常 量池中增加一个Unicode等于str的字符串并返回它的引用；看示例就清楚了</span></p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;"><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> main(String[] args) {
+        String s0 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">kvill</span><span style="color: #800000;">"</span><span style="color: #000000;">; 
+        String s1 </span>= <span style="color: #0000ff;">new</span> String(<span style="color: #800000;">"</span><span style="color: #800000;">kvill</span><span style="color: #800000;">"</span><span style="color: #000000;">); 
+        String s2 </span>= <span style="color: #0000ff;">new</span> String(<span style="color: #800000;">"</span><span style="color: #800000;">kvill</span><span style="color: #800000;">"</span><span style="color: #000000;">); 
+        System.</span><span style="color: #0000ff;">out</span>.println( s0 == s1 ); <span style="color: #008000;">//</span><span style="color: #008000;">false</span>
+        System.<span style="color: #0000ff;">out</span>.println( <span style="color: #800000;">"</span><span style="color: #800000;">**********</span><span style="color: #800000;">"</span><span style="color: #000000;"> ); 
+        s1.intern(); //虽然执行了s1.intern(),但它的返回值没有赋给s1
+        s2 </span>= s2.intern(); <span style="color: #008000;">//</span><span style="color: #008000;">把常量池中"kvill"的引用赋给s2 </span>
+        System.<span style="color: #0000ff;">out</span>.println( s0 == s1); <span style="color: #008000;">//</span><span style="color: #008000;">flase</span>
+        System.<span style="color: #0000ff;">out</span>.println( s0 == s1.intern() ); <span style="color: #008000;">//</span><span style="color: #008000;">true//说明s1.intern()返回的是常量池中"kvill"的引用</span>
+        System.<span style="color: #0000ff;">out</span>.println( s0 == s2 ); <span style="color: #008000;">//</span><span style="color: #008000;">true</span>
+    }</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">最后我再破除一个错误的理解：有人说，“使用 String.intern() 方法则可以将一个 String 类的保存到一个全局 String 表中 ，如果具有相同值的 Unicode 字符串已经在这个表中，那么该方法返回表中已有字符串的地址，如果在表中没有相同值的字符串，则将自己的地址注册到表中”如果我把他说的这个全局的 String 表理解为常量池的话，他的最后一句话，”如果在表中没有相同值的字符串，则将自己的地址注册到表中”是错的：&nbsp;</span></p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;"><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> main(String[] args) {        
+        String s1 </span>= <span style="color: #0000ff;">new</span> String(<span style="color: #800000;">"</span><span style="color: #800000;">kvill</span><span style="color: #800000;">"</span><span style="color: #000000;">); 
+        String s2 </span>=<span style="color: #000000;"> s1.intern(); 
+        System.</span><span style="color: #0000ff;">out</span>.println( s1 == s1.intern() ); <span style="color: #008000;">//</span><span style="color: #008000;">false</span>
+        System.<span style="color: #0000ff;">out</span>.println( s1 + <span style="color: #800000;">"</span> <span style="color: #800000;">"</span> + s2 ); <span style="color: #008000;">//</span><span style="color: #008000;">kvill kvill</span>
+        System.<span style="color: #0000ff;">out</span>.println( s2 == s1.intern() ); <span style="color: #008000;">//</span><span style="color: #008000;">true</span>
+    }</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">在这个类中我们没有声名一个”kvill”常量，所以常量池中一开始是没有”kvill”的，当我们调用s1.intern()后就在常量池中新添加了一 个”kvill”常量，原来的不在常量池中的”kvill”仍然存在，也就不是“将自己的地址注册到常量池中”了。&nbsp;</span><br><br><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">　　s1==s1.intern() 为false说明原来的”kvill”仍然存在；s2现在为常量池中”kvill”的地址，所以有s2==s1.intern()为true。</span></p>
+<p>&nbsp;</p>
+<p class="p0">&nbsp;</p>
+<div id="tony_body">
+<h2>StringBuffer与StringBuilder的区别，它们的应用场景是什么？</h2>
+
+
+
+
+</div>
+<p>&nbsp;</p>
+<div><span style="font-size: 16px;">jdk的实现中StringBuffer与StringBuilder都继承自AbstractStringBuilder，对于多线程的安全与非安全看到StringBuffer中方法前面的一堆synchronized就大概了解了。</span></div>
+<div><span style="font-size: 16px;">这里随便讲讲AbstractStringBuilder的实现原理：我们知道使用StringBuffer等无非就是为了提高java中字符串连接的效率，因为直接使用+进行字符串连接的话，jvm会创建多个String对象，因此造成一定的开销。AbstractStringBuilder中采用一个char数组来保存需要append的字符串，char数组有一个初始大小，当append的字符串长度超过当前char数组容量时，则对char数组进行动态扩展，也即重新申请一段更大的内存空间，然后将当前char数组拷贝到新的位置，因为重新分配内存并拷贝的开销比较大，所以每次重新申请内存空间都是采用申请大于当前需要的内存空间的方式，这里是2倍</span></div>
+<div>&nbsp;</div>
+<div>
+<div><span style="font-size: 16px;">【</span></div>
+<div><span style="font-size: 16px;">&nbsp;&nbsp;&nbsp;&nbsp;StringBuffer 始于 JDK 1.0&nbsp;</span><br><span style="font-size: 16px;">&nbsp;&nbsp;&nbsp;&nbsp;StringBuilder 始于 JDK 1.5&nbsp;</span><br><br><span style="font-size: 16px;">&nbsp;&nbsp;&nbsp;&nbsp;从 JDK 1.5 开始，带有字符串变量的连接操作（+），JVM 内部采用的是&nbsp;</span><br><span style="font-size: 16px;">&nbsp;&nbsp;&nbsp;&nbsp;StringBuilder 来实现的，而之前这个操作是采用 StringBuffer 实现的。</span></div>
+<div><span style="font-size: 16px;">】</span></div>
+<div>&nbsp;</div>
+<div><span style="font-size: 16px;">我们通过一个简单的程序来看其执行的流程：</span></div>
+<div>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="font-size: 16px;"><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> Buffer {  
+     </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> main(String[] args) {  
+            String s1 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">aaaaa</span><span style="color: #800000;">"</span><span style="color: #000000;">;  
+            String s2 </span>= <span style="color: #800000;">"</span><span style="color: #800000;">bbbbb</span><span style="color: #800000;">"</span><span style="color: #000000;">;  
+            String r </span>= <span style="color: #0000ff;">null</span><span style="color: #000000;">;  
+            </span><span style="color: #0000ff;">int</span> i = <span style="color: #800080;">3694</span><span style="color: #000000;">;  
+            r </span>= s1 + i +<span style="color: #000000;"> s2;   
+              
+            </span><span style="color: #0000ff;">for</span>(<span style="color: #0000ff;">int</span> j=<span style="color: #800080;">0</span>;i&lt;<span style="color: #800080;">10</span>;j++<span style="color: #000000;">){  
+                r</span>+=<span style="color: #800000;">"</span><span style="color: #800000;">23124</span><span style="color: #800000;">"</span><span style="color: #000000;">;  
+            }  
+     }  
+}  </span></span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p><span style="font-size: 16px;">使用命令javap -c Buffer查看其字节码实现：</span></p>
+<p><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/171325393786790.png" alt=""></p>
+<div><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">将清单1和清单2对应起来看，清单2的字节码中ldc指令即从常量池中加载“aaaaa”字符串到栈顶，istore_1将“aaaaa”存到变量1中，后面的一样，sipush是将一个短整型常量值(-32768~32767)推送至栈顶，这里是常量“3694”，更多的Java指令集请查看另一篇文章“<a href="http://blog.csdn.net/shi1122/article/details/8053605" target="_blank">Java指令集</a>”。</span></div>
+<div><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">&nbsp;</span></div>
+<div><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">让我们直接看到13,13~17是new了一个StringBuffer对象并调用其初始化方法，20~21则是先通过aload_1将变量1压到栈顶，前面说过变量1放的就是字符串常量“aaaaa”，接着通过指令invokevirtual调用StringBuffer的append方法将“aaaaa”拼接起来，后续的24~30同理。最后在33调用StringBuffer的toString函数获得String结果并通过astore存到变量3中。</span></div>
+<div><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">&nbsp;</span></div>
+<div><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">看到这里可能有人会说，“既然JVM内部采用了StringBuffer来连接字符串了，那么我们自己就不用用StringBuffer，直接用”+“就行了吧！“。是么？当然不是了。俗话说”存在既有它的理由”，让我们继续看后面的循环对应的字节码。</span></div>
+<div><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">&nbsp;</span></div>
+<div><span style="font-family: &#39;courier new&#39;, courier; font-size: 16px;">37~42都是进入for循环前的一些准备工作，37,38是将j置为1。44这里通过if_icmpge将j与10进行比较，如果j大于10则直接跳转到73，也即return语句退出函数；否则进入循环，也即47~66的字节码。这里我们只需看47到51就知道为什么我们要在代码中自己使用StringBuffer来处理字符串的连接了，因为每次执行“+”操作时jvm都要new一个StringBuffer对象来处理字符串的连接，这在涉及很多的字符串连接操作时开销会很大。</span></div>
+</div>
+</div>
+<p>&nbsp;</p>
+<p>参考：</p>
+<p>&nbsp;</p>
+<p><span class="link_title" style="font-family: &#39;courier new&#39;, courier; font-size: 16px;"><a href="http://blog.csdn.net/shi1122/article/details/8053680">java那点事——StringBuffer与StringBuilder原理与区别</a></span></p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/ITtangtang/category/374061.html" target="_blank">Java</a></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/ITtangtang/tag/Java/">Java</a>, <a href="http://www.cnblogs.com/ITtangtang/tag/Java%E5%9F%BA%E7%A1%80/">Java基础</a></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(3976820,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;977fd6f0-948a-e111-aa3f-842b2b196315&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/ITtangtang/" target="_blank"><img src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/20140919213832.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/ITtangtang/">牛奶、不加糖</a><br>
+            <a href="http://home.cnblogs.com/u/ITtangtang/followees">关注 - 2</a><br>
+            <a href="http://home.cnblogs.com/u/ITtangtang/followers">粉丝 - 558</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;977fd6f0-948a-e111-aa3f-842b2b196315&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(3976820,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">8</span>
+    </div>
+    <div class="buryit" onclick="votePost(3976820,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">2</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips" style="color: red;">请先<a href="javascript:void(0);" onclick="login()">登录</a></div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/ITtangtang/p/3974531.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/ITtangtang/p/3974531.html" title="发布于2014-09-16 11:23">深入理解Java：注解</a><br><a href="http://www.cnblogs.com/ITtangtang/p/3978102.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/ITtangtang/p/3978102.html" title="发布于2014-09-17 21:32">深入理解Java：类加载机制及反射</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2014-09-17 12:11</span> <a href="http://www.cnblogs.com/ITtangtang/">牛奶、不加糖</a> 阅读(<span id="post_view_count">18296</span>) 评论(<span id="post_comment_count">8</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=3976820" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#" onclick="AddToWz(3976820);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=115420,cb_entryId=3976820,cb_blogApp=currentBlogApp,cb_blogUserGuid='977fd6f0-948a-e111-aa3f-842b2b196315',cb_entryCreatedDate='2014/9/17 12:11:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<!--done-->
+<br>
+<div class="feedback_area_title">评论</div>
+<div class="feedbackNoItems"></div>
+	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3239809" class="layer">#1楼</a><a name="3239809" id="comment_anchor_3239809"></a> <span class="comment_date">2015-08-02 16:13</span> | <a id="a_comment_author_3239809" href="http://home.cnblogs.com/u/774642/" target="_blank">dq3wrr</a> <a href="http://msg.cnblogs.com/send/dq3wrr" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3239809" class="blog_comment_body"><a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3239794" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3239794);">@</a>
+balanche1<br>我才对你无语呢，这么简单的东西你都弄错别学java了，还在这里只问博主，再好好看看书吧！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3239809,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3239809,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3256188" class="layer">#2楼</a><a name="3256188" id="comment_anchor_3256188"></a> <span class="comment_date">2015-08-28 14:47</span> | <a id="a_comment_author_3256188" href="http://home.cnblogs.com/u/804270/" target="_blank">fntasn0w</a> <a href="http://msg.cnblogs.com/send/fntasn0w" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3256188" class="blog_comment_body">1楼真无语。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3256188,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3256188,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3398863" class="layer">#3楼</a><a name="3398863" id="comment_anchor_3398863"></a> <span class="comment_date">2016-04-03 11:43</span> | <a id="a_comment_author_3398863" href="http://www.cnblogs.com/jxrichar/" target="_blank">阿乐子</a> <a href="http://msg.cnblogs.com/send/%E9%98%BF%E4%B9%90%E5%AD%90" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3398863" class="blog_comment_body">学习了！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3398863,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3398863,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3429606" class="layer">#4楼</a><a name="3429606" id="comment_anchor_3429606"></a> <span class="comment_date">2016-05-12 14:58</span> | <a id="a_comment_author_3429606" href="http://www.cnblogs.com/panyinghua/" target="_blank">martine</a> <a href="http://msg.cnblogs.com/send/martine" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3429606" class="blog_comment_body">学习了。<br>ps：文末，String的+号操作应该都已经转为了使用StringBuilder，博主有部分地方还是写了StringBuffer哈。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3429606,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3429606,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3441029" class="layer">#5楼</a><a name="3441029" id="comment_anchor_3441029"></a> <span class="comment_date">2016-05-28 15:37</span> | <a id="a_comment_author_3441029" href="http://home.cnblogs.com/u/924495/" target="_blank">dragonkiiiiiiiing</a> <a href="http://msg.cnblogs.com/send/dragonkiiiiiiiing" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3441029" class="blog_comment_body">才看开头就发现楼主错了，楼主说“栈数据可以共享”，栈数据不是线程私有的吗？怎么共享？<br>这种常识都错，此文的可信度明显较低</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3441029,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3441029,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3462332" class="layer">#6楼</a><a name="3462332" id="comment_anchor_3462332"></a> <span class="comment_date">2016-07-01 15:34</span> | <a id="a_comment_author_3462332" href="http://home.cnblogs.com/u/935922/" target="_blank">luotuomianyang</a> <a href="http://msg.cnblogs.com/send/luotuomianyang" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3462332" class="blog_comment_body"><a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3441029" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3441029);">@</a>
+dragonkiiiiiiiing<br>两个栈帧作为虚拟机的元素，是完全独立的的，但是大多数虚拟机会对其进行优化处理，令两个栈帧出现一部分重叠，让下面栈帧部分的操作数与上面栈帧的部分局部变量表重叠在一起，这样方法调用的时候就可以共享一部分数据。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3462332,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3462332,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3473579" class="layer">#7楼</a><a name="3473579" id="comment_anchor_3473579"></a> <span class="comment_date">2016-07-20 19:35</span> | <a id="a_comment_author_3473579" href="http://www.cnblogs.com/SyBlog/" target="_blank">PoolMan</a> <a href="http://msg.cnblogs.com/send/PoolMan" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3473579" class="blog_comment_body">错别字有点多。<br>另外，在第 6 点中：<br>“最后我再破除一个错误的理解：有人说，“使用 String.intern() 方法则可以将一个 String 类的保存到一个全局 String 表中 ，如果具有相同值的 Unicode 字符串已经在这个表中，那么该方法返回表中已有字符串的地址，如果在表中没有相同值的字符串，则将自己的地址注册到表中””<br>个人理解：你给出的证明是错误的。<br>原因见下面的代码：<br><div class="cnblogs_Highlighter sh-gutter"><div><div id="highlighter_997650" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java keyword">public</code> <code class="java keyword">static</code> <code class="java keyword">void</code> <code class="java plain">main(String[] args) {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </code></div><div class="line number2 index1 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//在下面这条语句中，实际上已经导致 "kvill" 被存储到了</code></div><div class="line number3 index2 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//string pool中；</code></div><div class="line number4 index3 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">String s1 = </code><code class="java keyword">new</code> <code class="java plain">String(</code><code class="java string">"kvill"</code><code class="java plain">); </code></div><div class="line number5 index4 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//由于上面的原因，所以 intern 方法返回了 string pool 中的</code></div><div class="line number6 index5 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//字符串 "kvill" 的引用；</code></div><div class="line number7 index6 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">String s2 = s1.intern(); </code></div><div class="line number8 index7 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//综合上面两点，s1 肯定是不等于 s1.intern 的，所以以下的</code></div><div class="line number9 index8 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//的输出结果是不能够说明你反驳的观点是错误的。</code></div><div class="line number10 index9 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">System.out.println( s1 == s1.intern() );</code><code class="java comments">//false</code></div><div class="line number11 index10 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">System.out.println( s1 + </code><code class="java string">" "</code> <code class="java plain">+ s2 ); </code><code class="java comments">//kvill kvill</code></div><div class="line number12 index11 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">System.out.println( s2 == s1.intern() ); </code><code class="java comments">//true</code></div><div class="line number13 index12 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">}</code></div></div></td></tr></tbody></table></div></div></div><br>相反的，我个人认为你反驳的观点是正确的（当然我没看源码，不保证我说的就是正确的）<br>见下面的代码：<br><div class="cnblogs_Highlighter sh-gutter"><div><div id="highlighter_131179" class="syntaxhighlighter  java"><div class="toolbar"><span><a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="gutter"><div class="line number1 index0 alt2">1</div><div class="line number2 index1 alt1">2</div><div class="line number3 index2 alt2">3</div><div class="line number4 index3 alt1">4</div><div class="line number5 index4 alt2">5</div><div class="line number6 index5 alt1">6</div><div class="line number7 index6 alt2">7</div><div class="line number8 index7 alt1">8</div><div class="line number9 index8 alt2">9</div><div class="line number10 index9 alt1">10</div><div class="line number11 index10 alt2">11</div><div class="line number12 index11 alt1">12</div><div class="line number13 index12 alt2">13</div><div class="line number14 index13 alt1">14</div></td><td class="code"><div class="container"><div class="line number1 index0 alt2"><code class="java keyword">public</code> <code class="java keyword">static</code> <code class="java keyword">void</code> <code class="java plain">main(String[] args)</code></div><div class="line number2 index1 alt1"><code class="java plain">{</code></div><div class="line number3 index2 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">Integer i = </code><code class="java keyword">new</code> <code class="java plain">Integer(</code><code class="java value">4</code><code class="java plain">);</code></div><div class="line number4 index3 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//调用 i.toString() 方法，保证 string pool 中没有字符</code></div><div class="line number5 index4 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//串</code></div><div class="line number6 index5 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">String s1 = </code><code class="java keyword">new</code> <code class="java plain">String(i.toString());</code></div><div class="line number7 index6 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//由于此时 string pool 没有 "4" 这个字符串，所以进行</code></div><div class="line number8 index7 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//“注册”，并将其地址赋值给 s2；其实该地址就是 s1 的</code></div><div class="line number9 index8 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java comments">//值</code></div><div class="line number10 index9 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">String s2 = s1.intern();</code></div><div class="line number11 index10 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code>&nbsp;</div><div class="line number12 index11 alt1"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">System.out.println(</code><code class="java string">"s1 == s1.intern() ? "</code> <code class="java plain">+ (s1 == s1.intern()));</code><code class="java comments">//true</code></div><div class="line number13 index12 alt2"><code class="java spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="java plain">System.out.println(s1 == s2);</code><code class="java comments">//true</code></div><div class="line number14 index13 alt1"><code class="java plain">}</code></div></div></td></tr></tbody></table></div></div></div></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3473579,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3473579,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3473579_avatar" style="display:none;">http://pic.cnblogs.com/face/678469/20150308222755.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#3577879" class="layer">#8楼</a><a name="3577879" id="comment_anchor_3577879"></a><span id="comment-maxId" style="display:none;">3577879</span><span id="comment-maxDate" style="display:none;">2016/12/11 17:04:28</span> <span class="comment_date">2016-12-11 17:04</span> | <a id="a_comment_author_3577879" href="http://www.cnblogs.com/jxrichar/" target="_blank">阿乐子</a> <a href="http://msg.cnblogs.com/send/%E9%98%BF%E4%B9%90%E5%AD%90" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3577879" class="blog_comment_body">/** <br>         * 情景四：  <br>         * 局部变量str2,str3存储的是存储两个拘留字符串对象(intern字符串对象)的地址。 <br>         *  <br>         * 第三行代码原理(str2+str3)： <br>         * 运行期JVM首先会在堆中创建一个StringBuilder类， <br>         * 同时用str2指向的拘留字符串对象完成初始化， <br>         * 然后调用append方法完成对str3所指向的拘留字符串的合并， <br>         * 接着调用StringBuilder的toString()方法在堆中创建一个String对象， <br>         * 最后将刚生成的String对象的堆地址存放在局部变量str3中。 <br>         *  <br>         * 而str5存储的是字符串池中"abcd"所对应的拘留字符串对象的地址。 <br>         * str4与str5地址当然不一样了。 <br>         *  <br>         * 内存中实际上有五个字符串对象： <br>         *       三个拘留字符串对象、一个String对象和一个StringBuilder对象。 <br>         */  <br>        String str2 = "ab";  //1个对象  <br>        String str3 = "cd";  //1个对象                                         <br>        String str4 = str2+str3;                                        <br>        String str5 = "abcd";    <br>        System.out.println("str4 = str5 : " + (str4==str5)); // false<br><br> * 最后将刚生成的String对象的堆地址存放在局部变量str3中。 这句有误呀！应该是str4</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3577879,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3577879,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/ITtangtang/p/3976820.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://cloud.qy.com.cn/68?a=cnblog" target="_blank">【推荐】群英云服务器性价王，2核4G5M BGP带宽 68元首月！</a><br><a href="https://group.cnblogs.com/topic/76725.html" target="_blank">【福利】阿里云免费套餐升级，更多产品，更久时长</a><br></div>
+<div id="opt_under_post"></div>
+<div id="cnblogs_c1" class="c_ad_block"><a href="http://wijmo.gcpowertools.com.cn/angular2/?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=wijmo&amp;utm_campaign=community" target="_blank"><img width="300" height="250" src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/24442-20170418140602931-555118785.gif" alt="Wijmo"></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/567749/" target="_blank">摩拜、ofo隔空斗图秀恩爱，不就过个生日，至于吗！</a><br> ·  <a href="http://news.cnblogs.com/n/567748/" target="_blank">爱奇艺上线七年之际专访龚宇：遇到什么我都心平气和 真不是嘚瑟</a><br> ·  <a href="http://news.cnblogs.com/n/567746/" target="_blank">特斯拉CEO：读心术是未来，我们已经是半机械人</a><br> ·  <a href="http://news.cnblogs.com/n/567745/" target="_blank">Mozilla Firefox 54.0 Beta 1发布</a><br> ·  <a href="http://news.cnblogs.com/n/567744/" target="_blank">苹果最酷招聘：麻省高材生曾3D打印自己的脑瘤</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="cnblogs_c2" class="c_ad_block"><a href="http://click.aliyun.com/m/15483/" target="_blank"><img width="468" height="60" src="./深入理解Java：String - 牛奶、不加糖 - 博客园_files/24442-20170331150421570-489464769.jpg" alt="阿里云C2"></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/565901/" target="_blank">唱吧DevOps的落地，微服务CI/CD的范本技术解读</a><br> ·  <a href="http://kb.cnblogs.com/page/566523/" target="_blank">程序员，如何从平庸走向理想？</a><br> ·  <a href="http://kb.cnblogs.com/page/566318/" target="_blank">我为什么鼓励工程师写blog</a><br> ·  <a href="http://kb.cnblogs.com/page/566528/" target="_blank">怎么轻松学习JavaScript</a><br> ·  <a href="http://kb.cnblogs.com/page/509431/" target="_blank">如何打好前端游击战</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/ITtangtang/">牛奶、不加糖</a><br>园龄：<a href="http://home.cnblogs.com/u/ITtangtang/" title="入园时间：2012-04-20">5年</a><br>粉丝：<a href="http://home.cnblogs.com/u/ITtangtang/followers/">558</a><br>关注：<a href="http://home.cnblogs.com/u/ITtangtang/followees/">2</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;977fd6f0-948a-e111-aa3f-842b2b196315&#39;)">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="calendar"><div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2017/03/01&#39;);return false;">&lt;</a></td><td align="center">2017年4月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2017/05/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">26</td><td class="CalOtherMonthDay" align="center">27</td><td class="CalOtherMonthDay" align="center">28</td><td class="CalOtherMonthDay" align="center">29</td><td class="CalOtherMonthDay" align="center">30</td><td class="CalOtherMonthDay" align="center">31</td><td class="CalWeekendDay" align="center">1</td></tr><tr><td class="CalWeekendDay" align="center">2</td><td align="center">3</td><td align="center">4</td><td align="center">5</td><td align="center">6</td><td align="center">7</td><td class="CalWeekendDay" align="center">8</td></tr><tr><td class="CalWeekendDay" align="center">9</td><td align="center">10</td><td align="center">11</td><td align="center">12</td><td align="center">13</td><td align="center">14</td><td class="CalWeekendDay" align="center">15</td></tr><tr><td class="CalWeekendDay" align="center">16</td><td align="center">17</td><td align="center">18</td><td align="center">19</td><td align="center">20</td><td align="center">21</td><td class="CalWeekendDay" align="center">22</td></tr><tr><td class="CalTodayDay" align="center">23</td><td align="center">24</td><td align="center">25</td><td align="center">26</td><td align="center">27</td><td align="center">28</td><td class="CalWeekendDay" align="center">29</td></tr><tr><td class="CalWeekendDay" align="center">30</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script></div>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/ITtangtang/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/ITtangtang/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/ITtangtang/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/ITtangtang/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/ITtangtang/tag/" title="我的博客的标签列表">我的标签</a></li>
+<li><a id="itemListLink" onclick="this.blur();WarpClass(&#39;itemListLink&#39;, &#39;itemListLin_con&#39;);return false;" href="http://www.cnblogs.com/ITtangtang/p/3976820.html#">更多链接</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_recentposts" class="sidebar-block">
+<div class="catListEssay">
+<h3 class="catListTitle">最新随笔</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/ITtangtang/p/4126395.html">1. JSP基础学习</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/4103144.html">2. 双十一活动开发技术总结</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3982297.html">3. WEB安全：XSS漏洞与SQL注入漏洞介绍及解决方案</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3980460.html">4. 深入理解Java：内部类</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3978349.html">5. Spring：源码解读Spring IOC原理</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3978102.html">6. 深入理解Java：类加载机制及反射</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3976820.html">7. 深入理解Java：String</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3974531.html">8. 深入理解Java：注解</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3968284.html">9. 文件上传---普通文件fileupload.jar和url文件httpUrlConnection</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3968093.html">10. HttpClient学习整理</a></li>
+</ul>
+</div>
+</div><div id="sidebar_toptags" class="sidebar-block">
+<div class="catListTag">
+<h3 class="catListTitle">我的标签</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/ITtangtang/tag/Java/">Java</a>(26)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/Linux/">Linux</a>(13)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/Java%E5%9F%BA%E7%A1%80/">Java基础</a>(5)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/%E7%AE%97%E6%B3%95/">算法</a>(5)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/jQuery/">jQuery</a>(5)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>(4)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/Oracle/">Oracle</a>(4)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/Spring/">Spring</a>(2)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">正则表达式</a>(2)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>(1)</li><li><a href="http://www.cnblogs.com/ITtangtang/tag/">更多</a></li>
+</ul>
+</div></div><div id="sidebar_categories">
+<div class="catListPostCategory">
+<h3 class="catListTitle">随笔分类<span style="font-size:11px;font-weight:normal">(75)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/ITtangtang/category/374455.html">Android(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/ITtangtang/category/376498.html">J2EE(6)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/ITtangtang/category/374061.html">Java(35)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/ITtangtang/category/376304.html">JQuery(5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/ITtangtang/category/609169.html">Linux(13)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/ITtangtang/category/376305.html">设计模式(4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/ITtangtang/category/373894.html">数据库(5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="http://www.cnblogs.com/ITtangtang/category/373896.html">算法和数据结构(5)</a> </li>
+
+</ul>
+
+</div>
+
+<div class="catListPostArchive">
+<h3 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(77)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/ITtangtang/archive/2014/11.html">2014年11月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="http://www.cnblogs.com/ITtangtang/archive/2014/09.html">2014年9月 (37)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="http://www.cnblogs.com/ITtangtang/archive/2014/08.html">2014年8月 (7)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="http://www.cnblogs.com/ITtangtang/archive/2014/07.html">2014年7月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="http://www.cnblogs.com/ITtangtang/archive/2013/08.html">2013年8月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="http://www.cnblogs.com/ITtangtang/archive/2012/05.html">2012年5月 (12)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="http://www.cnblogs.com/ITtangtang/archive/2012/04.html">2012年4月 (16)</a> </li>
+
+</ul>
+
+</div>
+
+<div class="catListArticleCategory">
+<h3 class="catListTitle">文章分类</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_2_Link_0" href="http://www.cnblogs.com/ITtangtang/category/382147.html">日常记事</a> </li>
+
+<li><a id="CatList_LinkList_2_Link_1" href="http://www.cnblogs.com/ITtangtang/category/382145.html">生活百科</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_scorerank" class="sidebar-block">
+<div class="catListBlogRank">
+<h3 class="catListTitle">积分与排名</h3>
+<ul>
+	<li class="liScore">
+		积分 -	137824
+	</li><li class="liRank">
+		排名 -	1629
+	</li>
+</ul>
+</div>
+
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/ITtangtang/p/3948610.html#3667344">1. Re:Java集合---LinkedList源码解析</a></li>
+        <li class="recent_comment_body">7、数据获取get()Get(int)方法的实现在remove(int)中已经涉及过了。首先判断位置信息是否合法（大于等于0，小于当前LinkedList实例的Size），然后遍历到具体位置，获得节点......</li>
+        <li class="recent_comment_author">--白杨道</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/ITtangtang/p/3978349.html#3663642">2. Re:Spring：源码解读Spring IOC原理</a></li>
+        <li class="recent_comment_body">厉害啊，可以说是我的spring导师了</li>
+        <li class="recent_comment_author">--亦忆</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/ITtangtang/p/3927768.html#3643499">3. Re:Java获取客户端IP</a></li>
+        <li class="recent_comment_body">@无厘头的娃我现在也是要获取移动端的ip地址，不知道你解决了没有？...</li>
+        <li class="recent_comment_author">--相健欢</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/ITtangtang/p/3980460.html#3640782">4. Re:深入理解Java：内部类</a></li>
+        <li class="recent_comment_body">博主还在吗，有遇到问题关于匿名内部类一下代码及问题都没看懂，有什么用？如果你的基类需要一个有参数的构造器，应该怎么办：public class Parcel7 { public Wrapping......</li>
+        <li class="recent_comment_author">--reddawn</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/ITtangtang/p/3927768.html#3640377">5. Re:Java获取客户端IP</a></li>
+        <li class="recent_comment_body">真棒~！</li>
+        <li class="recent_comment_author">--浅笑依西</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/ITtangtang/p/3926665.html">1. Log4J日志配置详解(76421)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3920916.html">2. Android数据存储五种方式总结(68651)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3968093.html">3. HttpClient学习整理(67776)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3948786.html">4. Java集合---ConcurrentHashMap原理分析(57644)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3978349.html">5. Spring：源码解读Spring IOC原理(45503)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/ITtangtang/p/3968093.html">1. HttpClient学习整理(14)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3978349.html">2. Spring：源码解读Spring IOC原理(9)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3948555.html">3. Java集合---ArrayList的实现原理(9)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3948406.html">4. Java集合---HashMap源码剖析(8)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3976820.html">5. 深入理解Java：String(8)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/ITtangtang/p/3926665.html">1. Log4J日志配置详解(20)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3978349.html">2. Spring：源码解读Spring IOC原理(13)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3968093.html">3. HttpClient学习整理(13)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/p/3978102.html">4. 深入理解Java：类加载机制及反射(11)</a></li><li><a href="http://www.cnblogs.com/ITtangtang/archive/2012/05/21/2511749.html">5. Tomcat7配置数据源(10)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2017 牛奶、不加糖
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+</body></html>

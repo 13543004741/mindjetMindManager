@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)http://www.cnblogs.com/liuyonga/p/4662509.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>线程和进程的知识点 - Liu_Yong - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./线程和进程的知识点 - Liu_Yong - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./线程和进程的知识点 - Liu_Yong - 博客园_files/bundle-red_autumnal_leaves.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./线程和进程的知识点 - Liu_Yong - 博客园_files/bundle-red_autumnal_leaves-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/liuyonga/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/liuyonga/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/liuyonga/wlwmanifest.xml">
+<script async="" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/analytics.js.下载"></script><script src="./线程和进程的知识点 - Liu_Yong - 博客园_files/jquery.js.下载" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'liuyonga', cb_enable_mathjax=false;var isLogined=true;</script>
+<script src="./线程和进程的知识点 - Liu_Yong - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/liuyonga/"><img id="blogLogo" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/liuyonga/">Liu_Yong</a></h1>
+<h2></h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/liuyonga/">首页</a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/Liu_Yong">联系</a></li>
+<li><a id="blog_nav_rss" class="menu" href="http://www.cnblogs.com/liuyonga/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="http://www.cnblogs.com/liuyonga/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count">随笔 - 22&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 6</span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/liuyonga/p/4662509.html">线程和进程的知识点</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><p>&nbsp;&nbsp;&nbsp; 多线程和并发问题是Java技术面试中面试官比较喜欢问的问题之一。<br><br>一、进程和线程定义<br>&nbsp;&nbsp; &nbsp;进程和线程：都是由操作系统所体会的程序运行的基本单元，系统利用该基本单元实现系统对应用的并发性。<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 进程在执行过程中拥有独立的内存单元，而多个线程共享内存，从而极大地提高了程序的运行效率。<br>&nbsp;&nbsp; &nbsp;进程：进程，是具有一定独立功能的程序关于某个数据集合上的一次运行活动,进程是系统进行资源分配和调<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 度的一个独立单位. &nbsp;&nbsp; &nbsp;<br>&nbsp;&nbsp; &nbsp;线程：线程，是指进程内的一个执行单元,也是进程内的可调度实体.<br><br>二、进程和线程区别<br>&nbsp;&nbsp; &nbsp;(1)地址空间:线程是进程内的一个执行单元;进程至少有一个线程;它们共享进程的地址空间;而进程有自己独立<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 的地址空间;<br>&nbsp;&nbsp; &nbsp;(2)资源拥有:进程是资源分配和拥有的单位,同一个进程内的线程共享进程的资源；<br>&nbsp;&nbsp; &nbsp;(3)处理器调度:线程是处理器调度的基本单位,但进程不是.<br>&nbsp;&nbsp; &nbsp;(4)线程是进程的一个实体,是CPU调度和分派的基本单位,它是比进程更小的能独立运行的基本单位.<br>&nbsp;&nbsp; &nbsp;(5)线程自己基本上不拥有系统资源,只拥有一点在运行中必不可少的资源(如程序计数器,一组寄存器和栈),<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 但是它可与同属一个进程的其他的线程共享进程所拥有的全部资源. <br><br>三、进程和线程关系<br>&nbsp;&nbsp; &nbsp;1、一个线程可以创建和撤销另一个线程;同一个进程中的多个线程之间可以并发执行.<br>&nbsp;&nbsp; &nbsp;2、从逻辑角度来看，多线程的意义在于一个应用程序中，有多个执行部分可以同时执行。但操作系<br>&nbsp;&nbsp; &nbsp;统并没有将多个线程看做多个独立的应用，来实现进程的调度和管理以及资源分配。<br>&nbsp;&nbsp; &nbsp;3、线程可以被称为轻量级进程。线程需要较少的资源来创建和驻留在进程中，并且可以共享进程中<br>&nbsp;&nbsp; &nbsp;的资源。<br>&nbsp;&nbsp; &nbsp;4、二者均可并发执行，从而极大地提高了程序的运行效率。<br><br>三、多线程编程优点<br>&nbsp;&nbsp; &nbsp;在多线程程序中，多个线程被并发的执行以提高程序的效率，CPU不会因为某个线程需要等待资源而进入空<br>&nbsp;&nbsp; &nbsp;闲状态。多个线程共享堆内存(heap memory)，因此创建多个线程去执行一些任务会比创建多个进程更好。<br>&nbsp;&nbsp; &nbsp;举个例子，Servlets比CGI更好，是因为Servlets支持多线程而CGI不支持。<br><br>四、创建一个线程<br>&nbsp;&nbsp; &nbsp;有两种创建线程的方法：<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;一是实现Runnable接口，然后将它传递给Thread的构造函数，创建一个Thread对象；<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;二是直接继承Thread类。<br><br>五、原子操作 - （包装类相关）<br>&nbsp;&nbsp; &nbsp;原子操作是指一个不受其他操作影响的操作任务单元。原子操作是在多线程环境下避免数据不一致必须的手段。<br>&nbsp;&nbsp; &nbsp;<br>&nbsp;&nbsp; &nbsp;int++并不是一个原子操作，所以当一个线程读取它的值并加1时，另外一个线程有可能会读到之前的值，这就<br>&nbsp;&nbsp; &nbsp;会引发错误。为了解决这个问题，必须保证增加操作是原子的，在JDK1.5之前我们可以使用同步技术来做到这<br>&nbsp;&nbsp; &nbsp;一点。到JDK1.5，java.util.concurrent.atomic包提供了int和long类型的装类，它们可以自动的保证对于他们<br>&nbsp;&nbsp; &nbsp;的操作是原子的并且不需要使用同步。<br>&nbsp;&nbsp; &nbsp;<br>六、Lock接口(Lock interface) - 锁<br>&nbsp;&nbsp; &nbsp;Lock接口比同步方法和同步块提供了更具扩展性的锁操作。他们允许更灵活的结构，可以具有完全不同的性质，<br>&nbsp;&nbsp; &nbsp;并且可以支持多个相关类的条件对象。<br>&nbsp;&nbsp; &nbsp;它的优势有：<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; @可以使锁更公平<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; @可以使线程在等待锁的时候响应中断<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; @可以让线程尝试获取锁，并在无法获取锁的时候立即返回或者等待一段时间<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; @可以在不同的范围，以不同的顺序获取和释放锁<br><br>七、用户线程和守护线程区别<br>&nbsp;&nbsp; &nbsp;当我们在Java程序中创建一个线程，它就被称为用户线程。<br>&nbsp;&nbsp; &nbsp;一个守护线程是在后台执行并且不会阻止JVM终止的线程。<br>&nbsp;&nbsp; &nbsp;当没有用户线程在运行的时候，JVM关闭程序并且退出。<br>&nbsp;&nbsp; &nbsp;一个守护线程创建的子线程依然是守护线程。<br><br>八、不同的线程生命周期<br>&nbsp;&nbsp; &nbsp;当我们在Java程序中新建一个线程时，它的状态是New。当我们调用线程的start()方法时，状态被改变为Runnable。<br>&nbsp;&nbsp; &nbsp;线程调度器会为Runnable线程池中的线程分配CPU时间并且讲它们的状态改变为Running。其他的线程状态还有<br>&nbsp;&nbsp; &nbsp;Waiting，Blocked和Dead。<br><br>九、直接调用Thread类的run()方法吗？<br>&nbsp;&nbsp; &nbsp;当然可以，但是如果我们调用了Thread的run()方法，它的行为就会和普通的方法一样，为了在新的线程中执行我们的代码，<br>&nbsp;&nbsp; &nbsp;必须使用Thread.start()方法。<br><br>十、如何让正在运行的线程暂停一段时间？<br>&nbsp;&nbsp; &nbsp;我们可以使用Thread类的Sleep()方法让线程暂停一段时间。需要注意的是，这并不会让线程终止，一旦从休眠中唤醒线程，<br>&nbsp;&nbsp; &nbsp;线程的状态将会被改变为Runnable，并且根据线程调度，它将得到执行。<br><br>十一、线程优先级的理解<br>&nbsp;&nbsp; &nbsp;每一个线程都是有优先级的，一般来说，高优先级的线程在运行时会具有优先权，但这依赖于线程调度的实现，这个实现是和<br>&nbsp;&nbsp; &nbsp;操作系统相关的(OS dependent)。我们可以定义线程的优先级，但是这并不能保证高优先级的线程会在低优先级的线程前执行。<br>&nbsp;&nbsp; &nbsp;线程优先级是一个int变量(从1-10)，1代表最低优先级，10代表最高优先级。<br><br>十二、线程调度器(Thread Scheduler)和时间分片(Time Slicing)<br>&nbsp;&nbsp; &nbsp;线程调度器是一个操作系统服务，它负责为Runnable状态的线程分配CPU时间。一旦我们创建一个线程并启动它，它的执行便<br>&nbsp;&nbsp; &nbsp;依赖于线程调度器的实现。<br>&nbsp;&nbsp; &nbsp;时间分片是指将可用的CPU时间分配给可用的Runnable线程的过程。分配CPU时间可以基于线程优先级或者线程等待的时间。<br>&nbsp;&nbsp; &nbsp;线程调度并不受到Java虚拟机控制，所以由应用程序来控制它是更好的选择（也就是说不要让你的程序依赖于线程的优先级）。<br><br>十三、确保线程安全<br>&nbsp;&nbsp; &nbsp;在Java中可以有很多方法来保证线程安全——同步，使用原子类(atomic concurrent classes)，实现并发锁，使用volatile关键字，<br>&nbsp;&nbsp; &nbsp;使用不变类和线程安全类。在线程安全教程中，你可以学到更多。<br><br>十四、创建守护线程<br>&nbsp;&nbsp; &nbsp;使用Thread类的setDaemon(true)方法可以将线程设置为守护线程，需要注意的是，需要在调用start()方法前调用这个方法，否<br>&nbsp;&nbsp; &nbsp;则会抛出IllegalThreadStateException异常。<br><br>十五、 同步方法和同步块，哪个是更好的选择？<br>&nbsp;&nbsp; &nbsp;同步块是更好的选择，因为它不会锁住整个对象（当然你也可以让它锁住整个对象）。同步方法会锁住整个对象，哪怕这个<br>&nbsp;&nbsp; &nbsp;类中有多个不相关联的同步块，这通常会导致他们停止执行并需要等待获得这个对象上的锁。<br><br>十六、volatile关键字在Java中作用<br>&nbsp;&nbsp; &nbsp;当我们使用volatile关键字去修饰变量的时候，所以线程都会直接读取该变量并且不缓存它。这就确保了线程读取到的变量是同<br>&nbsp;&nbsp; &nbsp;内存中是一致的。<br><br>十七、wait(), notify()和notifyAll()必须在同步方法或者同步块中被调用原因<br>&nbsp;&nbsp; &nbsp;当一个线程需要调用对象的wait()方法的时候，这个线程必须拥有该对象的锁，接着它就会释放这个对象锁并进入等待状态直到<br>&nbsp;&nbsp; &nbsp;其他线程调用这个对象上的notify()方法。同样的，当一个线程需要调用对象的notify()方法时，它会释放这个对象的锁，以便其<br>&nbsp;&nbsp; &nbsp;他在等待的线程就可以得到这个对象锁。由于所有的这些方法都需要线程持有对象的锁，这样就只能通过同步来实现，所以他们<br>&nbsp;&nbsp; &nbsp;只能在同步方法或者同步块中被调用。<br><br>十八、线程通信的方法wait(), notify()和notifyAll()被定义在Object类里原因<br>&nbsp;&nbsp; &nbsp;Java的每个对象中都有一个锁(monitor，也可以成为监视器) 并且wait()，notify()等方法用于等待对象的锁或者通知其他线程对<br>&nbsp;&nbsp; &nbsp;象的监视器可用。在Java的线程中并没有可供任何对象使用的锁和同步器。这就是为什么这些方法是Object类的一部分，这样<br>&nbsp;&nbsp; &nbsp;Java的每一个类都有用于线程间通信的基本方法<br><br><br><br><br><br></p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/liuyonga/category/713427.html" target="_blank">JavaSE</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(4662509,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;5e336856-6cfd-e411-b908-9dcfd8948a71&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./线程和进程的知识点 - Liu_Yong - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./线程和进程的知识点 - Liu_Yong - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/liuyonga/" target="_blank"><img src="./线程和进程的知识点 - Liu_Yong - 博客园_files/sample_face.gif" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/liuyonga/">Liu_Yong</a><br>
+            <a href="http://home.cnblogs.com/u/liuyonga/followees">关注 - 2</a><br>
+            <a href="http://home.cnblogs.com/u/liuyonga/followers">粉丝 - 1</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;5e336856-6cfd-e411-b908-9dcfd8948a71&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(4662509,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">0</span>
+    </div>
+    <div class="buryit" onclick="votePost(4662509,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/liuyonga/p/4662491.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/liuyonga/p/4662491.html" title="发布于2015-07-20 19:51">数组</a><br><a href="http://www.cnblogs.com/liuyonga/p/4662577.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/liuyonga/p/4662577.html" title="发布于2015-07-20 20:33">UUID产生的JAR</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2015-07-20 20:01</span> <a href="http://www.cnblogs.com/liuyonga/">Liu_Yong</a> 阅读(<span id="post_view_count">553</span>) 评论(<span id="post_comment_count">0</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=4662509" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/liuyonga/p/4662509.html#" onclick="AddToWz(4662509);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=228261,cb_entryId=4662509,cb_blogApp=currentBlogApp,cb_blogUserGuid='5e336856-6cfd-e411-b908-9dcfd8948a71',cb_entryCreatedDate='2015/7/20 20:01:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/liuyonga/p/4662509.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/liuyonga/p/4662509.html#top">返回顶部</a></div>
+<div id="comment_form_container">
+<div id="commentform_title">发表评论</div>
+<span id="tip_comment" style="color:Red"></span>
+<p>
+昵称：<input type="text" id="tbCommentAuthor" class="author" disabled="disabled" size="50" value="_xuanwang">
+</p>
+<div class="commentbox_main">
+<div class="commentbox_title">
+<div class="commentbox_title_left">评论内容：</div>
+<div class="commentbox_title_right">
+<img id="ubb_quote" class="comment_icon" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/quote.gif" alt="引用" title="添加引用" onclick="insertUBB(&#39;tbCommentBody&#39;,&#39;quote&#39;)">
+<img id="ubb_bold" class="comment_icon" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/b.png" alt="粗体" title="添加粗体" onclick="insertUBB(&#39;tbCommentBody&#39;,&#39;b&#39;)">
+<img id="ubb_url" class="comment_icon" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/lk.png" alt="链接" title="添加链接" onclick="insertUbbUrl(&#39;tbCommentBody&#39;)">
+<img id="ubb_indent" class="comment_icon" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/indent.png" alt="缩进" title="添加首行缩进" onclick="insertIndent(&#39;tbCommentBody&#39;)">
+<img id="ubb_code" class="comment_icon" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/InsertCode.gif" alt="代码" title="添加代码" onclick="insertUbbCode()">
+<img id="ubb_img" class="comment_icon" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/img.gif" alt="图片" title="上传图片" onclick="OpenImageUploadWindow();">
+</div>
+</div>
+<div class="clear"></div>
+<textarea id="tbCommentBody" class="comment_textarea"></textarea>
+</div>
+<p id="commentbox_opt">
+<input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论">
+<span id="span_comment_canceledit" style="display:none"><a href="javascript:void(0);" onclick="return CancelCommentEdit()">不改了</a></span>
+<a href="javascript:void(0);" onclick="return logout();">退出</a>
+        <a id="commentbox_opt_sub" href="javascript:void(0);" title="订阅后有新评论时会邮件通知您" onclick="commentManager.Subscribe()">订阅评论</a>
+</p>
+<div id="tip_comment2" style="color:Red"></div>
+<p>
+[Ctrl+Enter快捷键提交]
+</p>
+<div style="display:none">
+<span id="comment_edit_id"></span><span id="span_parentcomment_id"></span>
+<span id="span_parent_id"></span>
+<span id="span_comment_replyto"></span>
+<span id="span_comment_posted"></span>
+</div>
+</div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://cn.udacity.com/android/?utm_source=cnblogs&amp;utm_medium=referral&amp;utm_campaign=AND02" target="_blank">【推荐】Google+滴滴联手打造Android开发工程师课程</a><br><a href="http://cloud.qy.com.cn/68?a=cnblog" target="_blank">【推荐】群英云服务器性价王，2核4G5M BGP带宽 68元首月！</a><br></div>
+<div id="opt_under_post"></div>
+<div id="cnblogs_c1" class="c_ad_block"><a href="http://www.gcpowertools.com.cn/products/componentone_studio_enterprise.htm?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=C1&amp;utm_campaign=community" target="_blank"><img width="300" height="250" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/24442-20170331214657258-1483842641.png" alt="C1"></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/567150/" target="_blank">5G时代，为何说谷歌被低估了？</a><br> ·  <a href="http://news.cnblogs.com/n/567149/" target="_blank">模块化手机的“罗曼蒂克消亡史”</a><br> ·  <a href="http://news.cnblogs.com/n/567148/" target="_blank">.NET Framework 4.7改进了WPF和WinForms</a><br> ·  <a href="http://news.cnblogs.com/n/567147/" target="_blank">科学家发现海底大量绿色能源材料金属：碲</a><br> ·  <a href="http://news.cnblogs.com/n/567115/" target="_blank">AlphaGo之父：关于围棋，人类错了</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="cnblogs_c2" class="c_ad_block"><a href="http://click.aliyun.com/m/15483/" target="_blank"><img width="468" height="60" src="./线程和进程的知识点 - Liu_Yong - 博客园_files/24442-20170331150421570-489464769.jpg" alt="阿里云C2"></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/566523/" target="_blank">程序员，如何从平庸走向理想？</a><br> ·  <a href="http://kb.cnblogs.com/page/566318/" target="_blank">我为什么鼓励工程师写blog</a><br> ·  <a href="http://kb.cnblogs.com/page/566528/" target="_blank">怎么轻松学习JavaScript</a><br> ·  <a href="http://kb.cnblogs.com/page/509431/" target="_blank">如何打好前端游击战</a><br> ·  <a href="http://kb.cnblogs.com/page/564590/" target="_blank">技术文章的阅读姿势</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/liuyonga/">Liu_Yong</a><br>园龄：<a href="http://home.cnblogs.com/u/liuyonga/" title="入园时间：2015-05-18">1年10个月</a><br>粉丝：<a href="http://home.cnblogs.com/u/liuyonga/followers/">1</a><br>关注：<a href="http://home.cnblogs.com/u/liuyonga/followees/">2</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;5e336856-6cfd-e411-b908-9dcfd8948a71&#39;)">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2017/03/01&#39;);return false;">&lt;</a></td><td align="center">2017年4月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2017/05/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">26</td><td class="CalOtherMonthDay" align="center">27</td><td class="CalOtherMonthDay" align="center">28</td><td class="CalOtherMonthDay" align="center">29</td><td class="CalOtherMonthDay" align="center">30</td><td class="CalOtherMonthDay" align="center">31</td><td class="CalWeekendDay" align="center">1</td></tr><tr><td class="CalWeekendDay" align="center">2</td><td align="center">3</td><td align="center">4</td><td align="center">5</td><td align="center">6</td><td align="center">7</td><td class="CalWeekendDay" align="center">8</td></tr><tr><td class="CalWeekendDay" align="center">9</td><td align="center">10</td><td align="center">11</td><td align="center">12</td><td align="center">13</td><td class="CalTodayDay" align="center">14</td><td class="CalWeekendDay" align="center">15</td></tr><tr><td class="CalWeekendDay" align="center">16</td><td align="center">17</td><td align="center">18</td><td align="center">19</td><td align="center">20</td><td align="center">21</td><td class="CalWeekendDay" align="center">22</td></tr><tr><td class="CalWeekendDay" align="center">23</td><td align="center">24</td><td align="center">25</td><td align="center">26</td><td align="center">27</td><td align="center">28</td><td class="CalWeekendDay" align="center">29</td></tr><tr><td class="CalWeekendDay" align="center">30</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/liuyonga/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/liuyonga/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/liuyonga/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/liuyonga/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/liuyonga/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block"></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle">随笔分类</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/liuyonga/category/713904.html">AJAX</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/liuyonga/category/713903.html">CSS</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/liuyonga/category/714960.html">Database(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/liuyonga/category/713898.html">Hibernate(4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/liuyonga/category/713901.html">HTML</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/liuyonga/category/713428.html">JavaEE(8)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/liuyonga/category/713427.html">JavaSE(9)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="http://www.cnblogs.com/liuyonga/category/713902.html">JQuery</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="http://www.cnblogs.com/liuyonga/category/713897.html">JS(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_9" href="http://www.cnblogs.com/liuyonga/category/713896.html">JSP(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_10" href="http://www.cnblogs.com/liuyonga/category/714961.html">MySQLDatabase</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_11" href="http://www.cnblogs.com/liuyonga/category/714962.html">OracleDatabase</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_12" href="http://www.cnblogs.com/liuyonga/category/713905.html">Servlet(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_13" href="http://www.cnblogs.com/liuyonga/category/713899.html">Spring(4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_14" href="http://www.cnblogs.com/liuyonga/category/713900.html">Struts2(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_15" href="http://www.cnblogs.com/liuyonga/category/713919.html">UsefulJar(3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_16" href="http://www.cnblogs.com/liuyonga/category/712798.html">环境配置(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_17" href="http://www.cnblogs.com/liuyonga/category/713906.html">设计模式(3)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle">随笔档案</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/liuyonga/archive/2015/07.html">2015年7月 (22)</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/liuyonga/p/4658716.html#3664905">1. Re:JDK 环境配置</a></li>
+        <li class="recent_comment_body">public class hello{ // 程序的主函数入门 public static void main(String args[]) { // ......</li>
+        <li class="recent_comment_author">--Liu_Yong</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/liuyonga/p/4692517.html#3239116">2. Re:SpringMVC 入门教程知识</a></li>
+        <li class="recent_comment_body">详细学习参考<a href="http://www.cnblogs.com/liuyonga/p/4662509.html" target="_blank"></a></li>
+        <li class="recent_comment_author">--Liu_Yong</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/liuyonga/p/4692517.html#3239113">3. Re:SpringMVC 入门教程知识</a></li>
+        <li class="recent_comment_body">注橙红色字体为默认的不用修改，通用代码。蓝色是变化的。</li>
+        <li class="recent_comment_author">--Liu_Yong</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/liuyonga/p/4687251.html#3237766">4. Re:Spring基础</a></li>
+        <li class="recent_comment_body">问题：<br>     工厂注入方式？<br>     继承注入方式？</li>
+        <li class="recent_comment_author">--Liu_Yong</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/liuyonga/p/4668262.html#3233359">5. Re:jsp同一应用中页面间传值方式</a></li>
+        <li class="recent_comment_body">来源 <a href="http://www.cnblogs.com/liuyonga/p/4662509.html" target="_blank"></a></li>
+        <li class="recent_comment_author">--Liu_Yong</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/liuyonga/p/4668262.html">1. jsp同一应用中页面间传值方式(1345)</a></li><li><a href="http://www.cnblogs.com/liuyonga/p/4662509.html">2. 线程和进程的知识点(554)</a></li><li><a href="http://www.cnblogs.com/liuyonga/p/4662585.html">3. map的数据创建任意类的JavaBean对象(181)</a></li><li><a href="http://www.cnblogs.com/liuyonga/p/4690366.html">4. SSH整合开发过程(153)</a></li><li><a href="http://www.cnblogs.com/liuyonga/p/4668453.html">5. JAVA常见的集合类知识(124)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/liuyonga/p/4692517.html">1. SpringMVC 入门教程知识(2)</a></li><li><a href="http://www.cnblogs.com/liuyonga/p/4687251.html">2. Spring  基础知识(1)</a></li><li><a href="http://www.cnblogs.com/liuyonga/p/4658716.html">3. JDK 环境配置(1)</a></li><li><a href="http://www.cnblogs.com/liuyonga/p/4662397.html">4. 设计模式——代理模式(1)</a></li><li><a href="http://www.cnblogs.com/liuyonga/p/4668262.html">5. jsp同一应用中页面间传值方式(1)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap" style="display: none;">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2017 Liu_Yong
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+</body></html>

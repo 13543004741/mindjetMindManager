@@ -1,0 +1,195 @@
+1. 使用Array.Reverse方法
+
+对于字符串反转，我们可以使用.NET类库自带的Array.Reverse方法
+
+public static string ReverseByArray(string original)
+{
+char[] c = original.ToCharArray();
+Array.Reverse(c);
+return new string(c);
+}
+
+2. 使用字符缓存
+
+在面试或笔试中，往往要求不用任何类库方法，那么有朋友大概会使用类似下面这样的循环方法
+
+public static string ReverseByCharBuffer(this string original)
+{
+char[] c = original.ToCharArray();
+int l = original.Length;
+char[] o = new char[l];
+for (int i = 0; i < l ; i++)
+{
+o[i] = c[l - i - 1];
+}
+return new string(o);
+}
+
+当然，聪明的同学们一定会发现不必对这个字符数组进行完全遍历，通常情况下我们会只遍历一半
+
+public static string ReverseByCharBuffer2(string original)
+{
+char[] c = original.ToCharArray();
+int l = original.Length;
+for (int i = 0; i < l / 2; i++)
+{
+char t = c[i];
+c[i] = c[l - i - 1];
+c[l - i - 1] = t;
+}
+return new string(c);
+}
+
+ReverseByCharBuffer使用了一个新的数组，而且遍历了字符数组的所有元素，因此时间和空间的开销都要大于ReverseByCharBuffer2。
+
+在Array.Reverse内部，调用了非托管方法TrySZReverse，如果TrySZReverse不成功，实际上也是调用了类似ReverseByCharBuffer2的方法。
+
+if (!TrySZReverse(array, index, length))
+{
+int num = index;
+int num2 = (index + length) - 1;
+object[] objArray = array as object[];
+if (objArray == null)
+{
+while (num < num2)
+{
+object obj3 = array.GetValue(num);
+array.SetValue(array.GetValue(num2), num);
+array.SetValue(obj3, num2);
+num++;
+num2--;
+}
+}
+else
+{
+while (num < num2)
+{
+object obj2 = objArray[num];
+objArray[num] = objArray[num2];
+objArray[num2] = obj2;
+num++;
+num2--;
+}
+}
+}
+
+大致上我能想到的算法就是这么多了，但是我无意间发现了StackOverflow上的一篇帖子，才发现这么一个看似简单的反转算法实现起来真可谓花样繁多。
+3. 使用StringBuilder
+
+使用StringBuilder方法大致和ReverseByCharBuffer一样，只不过不使用字符数组做缓存，而是使用StringBuilder。
+
+public static string ReverseByStringBuilder(this string original)
+{
+StringBuilder sb = new StringBuilder(original.Length);
+for (int i = original.Length - 1; i >= 0; i--)
+{
+sb.Append(original[i]);
+}
+return sb.ToString();
+}
+
+当然，你可以预见，这种算法的效率不会比ReverseByCharBuffer要高。
+
+我们可以像使用字符缓存那样，对使用StringBuilder方法进行优化，使其遍历过程也减少一半
+
+public static string ReverseByStringBuilder2(this string original)
+{
+StringBuilder sb = new StringBuilder(original);
+for (int i = 0, j = original.Length - 1; i <= j; i++, j--)
+{
+sb[i] = original[j];
+sb[j] = original[i];
+}
+return sb.ToString();
+}
+
+以上这几种方法按算法角度来说，其实可以归结为一类。然而下面的几种算法就完全不是同一类型的了。
+使用栈
+
+4. 栈是一个很神奇的数据结构。我们可以使用它后进先出的特性来对数组进行反转。先将数组所有元素压入栈，然后再取出，顺序很自然地就与原先相反了。
+
+public static string ReverseByStack(this string original)
+{
+Stack<char> stack = new Stack<char>();
+foreach (char ch in original)
+{
+stack.Push(ch);
+}
+char[] c = new char[original.Length];
+for (int i = 0; i < original.Length; i++)
+{
+c[i] = stack.Pop();
+}
+return new string(c);
+}
+
+两次循环和栈的开销无疑使这种方法成为目前为止开销最大的方法。但使用栈这个数据结构的想法还是非常有价值的。
+使用XOR
+
+5. 使用逻辑异或也可以进行反转
+
+public static string ReverseByXor(string original)
+{
+char[] charArray = original.ToCharArray();
+int l = original.Length - 1;
+for (int i = 0; i < l; i++, l--)
+{
+charArray[i] ^= charArray[l];
+charArray[l] ^= charArray[i];
+charArray[i] ^= charArray[l];
+}
+return new string(charArray);
+}
+
+在C#中，x ^= y相当于x = x ^ y。通过3次异或操作，可以将两个字符为止互换。对于算法具体的解释可以参考这篇文章。
+6. 使用指针
+
+使用指针可以达到最快的速度，但是unsafe代码不是微软所推荐的，在这里我们就不多做讨论了
+
+public static unsafe string ReverseByPointer(this string original)
+{
+fixed (char* pText = original)
+{
+char* pStart = pText;
+char* pEnd = pText + original.Length - 1;
+for (int i = original.Length / 2; i >= 0; i--)
+{
+char temp = *pStart;
+*pStart++ = *pEnd;
+*pEnd-- = temp;
+}
+
+return original;
+}
+}
+
+7. 使用递归
+
+对于反转这类算法，都可以使用递归方法
+
+public static string ReverseByRecursive(string original)
+{
+if (original.Length == 1)
+return original;
+else
+return original.Substring(1).ReverseByRecursive() + original[0];
+}
+
+8. 使用委托，还可以使代码变得更加简洁
+
+public static string ReverseByRecursive2(this string original)
+{
+Func<string, string> f = null;
+f = s => s.Length > 0 ? f(s.Substring(1)) + s[0] : string.Empty;
+return f(original);
+}
+
+但是委托开销大的弊病在这里一点也没有减少，以至于我做性能测试的时候导致系统假死甚至内存益处。
+使用LINQ
+
+9. System.Enumerable里提供了默认的Reverse扩展方法，我们可以基于该方法来对String类型进行扩展
+
+public static string ReverseByLinq(this string original)
+{
+return new string(original.Reverse().ToArray());
+}

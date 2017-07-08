@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<!-- saved from url=(0035)http://www.importnew.com/18961.html -->
+<html dir="ltr" lang="zh-CN" xmlns:wb="http://open.weibo.com/wb" class=" js rgba borderradius boxshadow textshadow opacity cssanimations cssgradients csstransitions fontface generatedcontent video audio js"><!--<![endif]--><!-- BEGIN head --><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><div class="fit-vids-style">­<style>               .fluid-width-video-wrapper {                 width: 100%;                              position: relative;                       padding: 0;                            }                                                                                   .fluid-width-video-wrapper iframe,        .fluid-width-video-wrapper object,        .fluid-width-video-wrapper embed {           position: absolute;                       top: 0;                                   left: 0;                                  width: 100%;                              height: 100%;                          }                                       </style></div><script src="./JVM的内存区域划分 - ImportNew_files/shares.php" charset="utf-8"></script><script src="http://id.jiathis.com/id.php?u=http%3A%2F%2Fwww.importnew.com%2F18961.html&amp;t=JVM%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%88%92%E5%88%86%20-%20ImportNew&amp;r=&amp;k=&amp;s=&amp;jiathis=1&amp;uyan=0&amp;ujian=0&amp;time=1480994072474" charset="utf-8"></script>
+
+	<!-- Title -->
+	<title>JVM的内存区域划分 - ImportNew</title>
+	
+	<!-- Meta Tags -->
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<!-- Favicon & Mobileicon -->
+	<link rel="shortcut icon" href="http://www.importnew.com/wp-content/uploads/2014/12/d02a42d9cb3dec9320e5f550278911c7.ico">
+	<link rel="apple-touch-icon" href="http://www.importnew.com/wp-content/themes/jobbolev4blog/mobileicon.png">
+	
+	<!-- RSS, Atom & Pingbacks -->
+		<link rel="alternate" title="ImportNew RSS Feed" href="http://www.importnew.com/feed">
+		<link rel="alternate" title="RSS .92" href="http://www.importnew.com/feed/rss">
+	<link rel="alternate" title="Atom 0.3" href="http://www.importnew.com/feed/atom">
+	<link rel="pingback" href="http://www.importnew.com/xmlrpc.php">
+	
+	<!-- Theme Hook -->
+	<link rel="stylesheet" id="lightboxStyle-css" href="./JVM的内存区域划分 - ImportNew_files/colorbox.css" type="text/css" media="screen">
+<link rel="stylesheet" id="core3.0-css" href="./JVM的内存区域划分 - ImportNew_files/shCore.css" type="text/css" media="all">
+<link rel="stylesheet" id="core-Default3.0-css" href="./JVM的内存区域划分 - ImportNew_files/shCoreDefault.css" type="text/css" media="all">
+<link rel="stylesheet" id="theme-Default3.0-css" href="./JVM的内存区域划分 - ImportNew_files/shThemeDefault.css" type="text/css" media="all">
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/jquery.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/q2w3-fixed-widget.min.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/modernizr.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/comment-reply.js.下载"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.importnew.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.importnew.com/wp-includes/wlwmanifest.xml"> 
+<link rel="prev" title="Java NIO系列教程（7）：FileChannel" href="http://www.importnew.com/18955.html">
+<link rel="next" title="Java LinkedList工作原理及实现" href="http://www.importnew.com/18968.html">
+<link rel="shortlink" href="http://www.importnew.com/?p=18961">
+
+<!-- All in One SEO Pack 1.6.15.2 by Michael Torbert of Semper Fi Web Design[465,498] -->
+<link rel="author" href="http://www.importnew.com/liuchi1993">
+<meta name="description" content="学过C语言的朋友都知道C编译器在划分内存区域的时候经常将管理的区域划分为数据段和代码段，数据段包括堆、栈以及静态数据区。那么在Java语言当中，内存又是如何划分的呢？">
+<meta name="keywords" content="jvm,内存">
+<link rel="canonical" href="http://www.importnew.com/18961.html">
+<!-- /all in one seo pack -->
+
+<!-- Comment Rating plugin Version: 2.9.32 by Bob King, http://wealthynetizen.com/, dynamic comment voting & styling. --> 
+<style type="text/css" media="screen">
+   .ckrating_highly_rated {background-color:#FFFFCC !important;}
+   .ckrating_poorly_rated {opacity:0.6;filter:alpha(opacity=60) !important;}
+   .ckrating_hotly_debated {background-color:#FFF0F5 !important;}
+</style>
+
+
+<!-- WP SyntaxHighlighter Ver.1.7.3 CSS for code Begin -->
+<style type="text/css">
+.syntaxhighlighter,
+.syntaxhighlighter a,
+.syntaxhighlighter div,
+.syntaxhighlighter code,
+.syntaxhighlighter table,
+.syntaxhighlighter table td,
+.syntaxhighlighter table tr,
+.syntaxhighlighter table tbody,
+.syntaxhighlighter table thead,
+.syntaxhighlighter table caption,
+.syntaxhighlighter textarea {
+font-size: 12px !important; /* Set the font size in pixels */  
+font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important; /* Set the font type */  
+}
+.syntaxhighlighter table caption {
+/* For Title(Caption) */  
+font-size: 14px !important; /* Set the font size in pixels */  
+font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important; /* Set the font type */  
+}
+.syntaxhighlighter.nogutter td.code .line {
+/* Set the left padding space when no-gutter in ver. 3.0 */  
+padding-left: 3px !important;
+}
+.syntaxhighlighter {
+/* For Chrome/Safari(WebKit) */  
+/* Hide the superfluous vertical scrollbar in ver. 3.0 */  
+overflow-y: hidden !important;
+padding: 1px !important;
+}
+.widget-area.syntaxhighlighter a,
+.widget-area.syntaxhighlighter div,
+.widget-area.syntaxhighlighter code,
+.widget-area.syntaxhighlighter table,
+.widget-area.syntaxhighlighter table td,
+.widget-area.syntaxhighlighter table tr,
+.widget-area.syntaxhighlighter table tbody,
+.widget-area.syntaxhighlighter table thead,
+.widget-area.syntaxhighlighter table caption,
+.widget-area.syntaxhighlighter textarea {
+/* For Widget */  
+font-size: 14px !important; /* Set the font size in pixels */  
+font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important; /* Set the font type */  
+}
+.widget-area table caption {
+/* For Widget */  
+/* For Title(Caption) */  
+font-size: 10px !important; /* Set the font size in pixels */  
+font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important; /* Set the font type */  
+}
+</style>
+<!-- WP SyntaxHighlighter Ver.1.7.3 CSS for code End -->
+	
+	<!-- CSS -->
+	<link rel="stylesheet" href="./JVM的内存区域划分 - ImportNew_files/style.css" media="screen">
+	<!-- link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Noticia+Text:400,700italic,700,400italic" media="screen" / -->
+	<style>
+				*::selection { background: #0099cc; }
+		*::-moz-selection { background: #0099cc; }
+		body { background: #ffffff  }
+		a, .tabs ul.nav li a:hover, .tabs ul.nav li.active a, .dropcap, .toggle.hover .toggle-title, li.comment cite a:hover, h3.widget-title, .post-meta .meta-title:hover, .the-latest a:hover h4, .aw_socialcounter_widget li a:hover, .aw_tabbed_widget #tab-latest-comments a:hover { color: #0099cc; }
+		a:hover { color: #b30000; }
+		input:focus, textarea:focus { border-color: #0099cc; }
+		#searchsubmit, .highlight, .aw_tabbed_widget .tabs ul.nav li.active a, footer .aw_tabbed_widget .tabs ul.nav li.active a, #top .aw_tabbed_widget .tabs ul.nav li.active a, .aw_tabbed_widget .tabs ul.nav li a:hover, footer .aw_tabbed_widget .tabs ul.nav li a:hover, #top .aw_tabbed_widget .tabs ul.nav li a:hover, .aw_twitter_widget .twitter-icon, .testimonial-icon, #top-closed:hover, .flex-control-nav a:hover, .flex-control-nav a.flex-active { background-color: #0099cc; }
+		.submit { background-color: #0099cc; border-color: #007399; }
+		.submit:hover { background-color: #b30000; border-color: #860000; }
+		#searchsubmit:hover { background-color: #b30000; }
+		.toggle.hover .toggle-icon { border-top-color: #0099cc; }
+		.toggle.hover.active .toggle-icon { border-bottom-color: #0099cc; }
+		.flex-direction-nav li .flex-prev:hover { border-right-color: #0099cc; }
+		.flex-direction-nav li .flex-next:hover { border-left-color: #0099cc; }
+		@media only screen and (min-width: 768px) and (max-width: 959px) {
+			.aw_tabbed_widget .tabs ul.nav li a:hover, .tabs ul.nav li.active a { color: #0099cc; }
+		}
+		@media screen and (max-width: 767px) {
+			.tabs ul.nav li a:hover, .tabs ul.nav li.active a { color: #0099cc; }
+		}
+	</style>
+		
+	<!--[if IE 8]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+    <![endif]-->
+
+	<!-- Links: RSS + Atom Syndication + Pingback etc. -->
+	<link rel="alternate" type="application/rss+xml" title="ImportNew RSS Feed" href="http://www.importnew.com/feed">
+	<link rel="alternate" type="text/xml" title="RSS .92" href="http://www.importnew.com/feed/rss">
+	<link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="http://www.importnew.com/feed/atom">
+	<link rel="pingback" href="http://www.importnew.com/xmlrpc.php">
+    <script src="./JVM的内存区域划分 - ImportNew_files/wb.js.下载" type="text/javascript" charset="utf-8"></script><script charset="UTF-8" src="./JVM的内存区域划分 - ImportNew_files/query"></script>
+
+<!-- END head -->
+</head>
+
+<!-- BEGIN body -->
+<body class="single single-post postid-18961 single-format-standard chrome"><link href="./JVM的内存区域划分 - ImportNew_files/jiathis_counter.css" rel="stylesheet" type="text/css"><link href="./JVM的内存区域划分 - ImportNew_files/jiathis_share.css" rel="stylesheet" type="text/css"><iframe frameborder="0" style="position: absolute; display: none; opacity: 0;" src="./JVM的内存区域划分 - ImportNew_files/saved_resource.html"></iframe><div class="jiathis_style" style="position: absolute; z-index: 1000000000; display: none; top: 50%; left: 50%; overflow: auto;"></div><div class="jiathis_style" style="position: absolute; z-index: 1000000000; display: none; overflow: auto;"></div><iframe frameborder="0" src="./JVM的内存区域划分 - ImportNew_files/jiathis_utility.html" style="display: none;"></iframe>
+
+		
+	
+	<!-- BEGIN #top-nav -->
+	<nav id="top-nav" class="menu-nav">
+		
+		<!-- BEGIN .container -->
+		<div class="container">
+
+			            <div class="grid-12">
+            </div>
+			<div class="clear"></div>
+		
+		</div>
+		<!-- END .container -->
+    
+	</nav>
+	<!-- END #top-nav -->
+	
+	  	
+	<!-- BEGIN #wrapper -->
+	<div id="wrapper" class="container">
+
+		<!-- BEGIN header -->
+		<header>
+		
+						
+			<div class="header-wrapper">
+								
+				<!-- BEGIN #logo -->
+				<div id="logo" class="leaderboard-true">
+				
+										<a href="http://www.importnew.com/"><img src="./JVM的内存区域划分 - ImportNew_files/6c537425c9ad078efe656a346e5facec.png" width="137" height="85" alt="ImportNew"></a>
+									
+				</div>
+				<!-- END #logo -->
+				
+				<!-- BEGIN #leaderboard -->
+				<div id="leaderboard">
+				
+					<a href="http://blog.jobbole.com/106093/" target="_blank" class="external" rel="nofollow"><img width="728" height="90" src="./JVM的内存区域划分 - ImportNew_files/bfdcef89gw1f9cf7deatvj20k802idgf.jpg"></a>				
+				</div>
+				<!-- END #leaderboard -->
+				
+				<div class="clear"></div>
+			
+			</div>
+			
+						
+			<div class="clear"></div>
+			
+			<!-- BEGIN #main-nav -->
+			<nav id="main-nav" class="grid-12 menu-nav">
+
+				<div class="menu-main-container"><ul id="main-nav-menu" class="menu sf-js-enabled"><li id="menu-item-14265" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-14265"><a href="http://www.importnew.com/">首页</a></li>
+<li id="menu-item-14278" class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-14278"><a href="http://www.importnew.com/all-posts">所有文章</a></li>
+<li id="menu-item-858" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-858"><a href="http://www.importnew.com/cat/news">资讯</a></li>
+<li id="menu-item-1120" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1120"><a href="http://www.importnew.com/cat/web-development">Web</a></li>
+<li id="menu-item-1923" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1923"><a href="http://www.importnew.com/cat/architecture">架构</a></li>
+<li id="menu-item-832" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-832"><a href="http://www.importnew.com/cat/basic">基础技术</a></li>
+<li id="menu-item-836" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-836"><a href="http://www.importnew.com/cat/books">书籍</a></li>
+<li id="menu-item-2183" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-2183"><a href="http://www.importnew.com/cat/tutorial">教程</a></li>
+<li id="menu-item-20858" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-20858"><a href="http://group.jobbole.com/category/tech/java/" class="external" rel="nofollow" target="_blank">Java小组</a></li>
+<li id="menu-item-20859" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-20859"><a href="http://hao.jobbole.com/?catid=32" class="external" rel="nofollow" target="_blank">工具资源</a></li>
+</ul><select class="selectnav" id="selectnav1"><option value="">- 导航条 -</option><option value="http://www.importnew.com/">首页</option><option value="http://www.importnew.com/all-posts">所有文章</option><option value="http://www.importnew.com/cat/news">资讯</option><option value="http://www.importnew.com/cat/web-development">Web</option><option value="http://www.importnew.com/cat/architecture">架构</option><option value="http://www.importnew.com/cat/basic">基础技术</option><option value="http://www.importnew.com/cat/books">书籍</option><option value="http://www.importnew.com/cat/tutorial">教程</option><option value="http://group.jobbole.com/category/tech/java/">Java小组</option><option value="http://hao.jobbole.com/?catid=32">工具资源</option></select></div>				
+				<div class="clear"></div>
+            
+			</nav>
+			<!-- END #main-nav -->
+			
+			<div class="clear"></div>
+		
+		</header>
+		<!-- END header -->
+		
+		
+
+<!-- BEGIN .grid-8 -->
+<div class="grid-8">
+
+		
+	<!-- BEGIN .post -->
+<div class="post-18961 post type-post status-publish format-standard hentry category-basic tag-jvm tag-200 odd" id="post-18961">
+	
+	<!-- BEGIN .entry-header -->
+	<div class="entry-header">
+	
+				
+		<h1>JVM的内存区域划分</h1>
+		
+							
+	</div>
+	<!-- BEGIN .entry-header -->
+	
+	<!-- BEGIN .entry-meta -->
+	<div class="entry-meta">
+	
+		<p class="entry-meta-hide-on-mobile">2016/04/03 | 分类： <a href="http://www.importnew.com/cat/basic" title="查看 基础技术 中的全部文章" rel="category tag">基础技术</a> | <a href="http://www.importnew.com/18961.html#respond" title="《JVM的内存区域划分》上的评论">0 条评论</a>
+
+		 | 标签： <a href="http://www.importnew.com/tag/jvm">JVM</a>, <a href="http://www.importnew.com/tag/%e5%86%85%e5%ad%98">内存</a></p>
+<!-- JiaThis Button BEGIN -->
+<div class="jiathis_style" style="display: block; margin: 0 0px; clear: both;"><span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_tsina" title="分享到微博"><span class="jiathis_txt jtico jtico_tsina"></span></a>
+<a class="jiathis_button_weixin" title="分享到微信"><span class="jiathis_txt jtico jtico_weixin"></span></a>
+<a class="jiathis_button_qzone" title="分享到QQ空间"><span class="jiathis_txt jtico jtico_qzone"></span></a>
+<a class="jiathis_button_fb" title="分享到Facebook"><span class="jiathis_txt jtico jtico_fb"></span></a>
+<a class="jiathis_button_renren" title="分享到人人网"><span class="jiathis_txt jtico jtico_renren"></span></a>
+<a class="jiathis_button_douban" title="分享到豆瓣"><span class="jiathis_txt jtico jtico_douban"></span></a>
+<a class="jiathis_button_readitlater"></a>
+<a class="jiathis_button_evernote" title="分享到印象笔记"><span class="jiathis_txt jtico jtico_evernote"></span></a>
+<a class="jiathis_button_ydnote" title="分享到有道云笔记"><span class="jiathis_txt jtico jtico_ydnote"></span></a>
+<a href="http://www.jiathis.com/share?uid=1745061" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+<a class="jiathis_counter_style"><span class="jiathis_button_expanded jiathis_counter jiathis_bubble_style" id="jiathis_counter_27" title="累计分享21次">21</span></a>
+</div>
+<!-- JiaThis Button END -->
+
+
+	</div>
+	<!-- END .entry-meta -->
+
+	<!-- BEGIN .entry -->
+	<div class="entry">
+
+        
+		<div class="copyright-area">原文出处： <a ref="nofollow" target="_blank" href="http://www.cnblogs.com/dolphin0520/p/3613043.html">海 子</a></div>
+<p>学过C语言的朋友都知道C编译器在划分内存区域的时候经常将管理的区域划分为数据段和代码段，数据段包括堆、栈以及静态数据区。那么在Java语言当中，内存又是如何划分的呢？</p>
+<p>由于Java程序是交由JVM执行的，所以我们在谈Java内存区域划分的时候事实上是指JVM内存区域划分。在讨论JVM内存区域划分之前，先来看一下Java程序具体执行的过程：</p>
+<p><img src="./JVM的内存区域划分 - ImportNew_files/281630330728961.jpg" alt=""></p>
+<p>如上图所示，首先Java源代码文件(.java后缀)会被Java编译器编译为字节码文件(.class后缀)，然后由JVM中的类加载器加载各个类的字节码文件，加载完毕之后，交由JVM执行引擎执行。在整个程序执行过程中，JVM会用一段空间来存储程序执行期间需要用到的数据和相关信息，这段空间一般被称作为Runtime Data Area（运行时数据区），也就是我们常说的JVM内存。因此，在Java中我们常常说到的内存管理就是针对这段空间进行管理（如何分配和回收内存空间）。</p>
+<p>在知道了JVM内存是什么东西之后，下面我们就来讨论一下这段空间具体是如何划分区域的，是不是也像C语言中一样也存在栈和堆呢？</p>
+<h2>一.运行时数据区包括哪几部分？</h2>
+<p>根据《Java虚拟机规范》的规定，运行时数据区通常包括这几个部分：程序计数器(Program Counter Register)、Java栈(VM Stack)、本地方法栈(Native Method Stack)、方法区(Method Area)、堆(Heap)。</p>
+<p><img src="./JVM的内存区域划分 - ImportNew_files/281726404166686.jpg" alt=""></p>
+<p>如上图所示，JVM中的运行时数据区应该包括这些部分。在JVM规范中虽然规定了程序在执行期间运行时数据区应该包括这几部分，但是至于具体如何实现并没有做出规定，不同的虚拟机厂商可以有不同的实现方式。</p>
+<h2>二.运行时数据区的每部分到底存储了哪些数据？</h2>
+<p>下面我们来了解一下运行时数据区的每部分具体用来存储程序执行过程中的哪些数据。</p>
+<h3>1.程序计数器</h3>
+<p>程序计数器（Program Counter Register），也有称作为PC寄存器。想必学过汇编语言的朋友对程序计数器这个概念并不陌生，在汇编语言中，程序计数器是指CPU中的寄存器，它保存的是程序当前执行的指令的地址（也可以说保存下一条指令的所在存储单元的地址），当CPU需要执行指令时，需要从程序计数器中得到当前需要执行的指令所在存储单元的地址，然后根据得到的地址获取到指令，在得到指令之后，程序计数器便自动加1或者根据转移指针得到下一条指令的地址，如此循环，直至执行完所有的指令。</p>
+<p><span style="color: #ff0000;">虽然JVM中的程序计数器并不像汇编语言中的程序计数器一样是物理概念上的CPU寄存器，但是JVM中的程序计数器的功能跟汇编语言中的程序计数器的功能在逻辑上是等同的，也就是说是用来指示 执行哪条指令的</span>。</p>
+<p>由于在JVM中，多线程是通过线程轮流切换来获得CPU执行时间的，因此，在任一具体时刻，一个CPU的内核只会执行一条线程中的指令，因此，为了能够使得每个线程都在线程切换后能够恢复在切换之前的程序执行位置，每个线程都需要有自己独立的程序计数器，并且不能互相被干扰，否则就会影响到程序的正常执行次序。因此，可以这么说，程序计数器是每个线程所私有的。</p>
+<p><span style="color: #ff0000;">在JVM规范中规定，如果线程执行的是非native方法，则程序计数器中保存的是当前需要执行的指令的地址；如果线程执行的是native方法，则程序计数器中的值是undefined。</span></p>
+<p><span style="color: #ff0000;">由于程序计数器中存储的数据所占空间的大小不会随程序的执行而发生改变，因此，对于程序计数器是不会发生内存溢出现象(OutOfMemory)的</span>。</p>
+<h3>2.Java栈</h3>
+<p>Java栈也称作虚拟机栈（Java Vitual Machine Stack），也就是我们常常所说的栈，跟C语言的数据段中的栈类似。事实上，<span style="color: #ff0000;">Java栈是Java方法执行的内存模型</span>。为什么这么说呢？下面就来解释一下其中的原因。</p>
+<p>Java栈中存放的是一个个的栈帧，每个栈帧对应一个被调用的方法，在栈帧中包括局部变量表(Local Variables)、操作数栈(Operand Stack)、指向当前方法所属的类的运行时常量池（运行时常量池的概念在方法区部分会谈到）的引用(Reference to runtime constant pool)、方法返回地址(Return Address)和一些额外的附加信息。当线程执行一个方法时，就会随之创建一个对应的栈帧，并将建立的栈帧压栈。当方法执行完毕之后，便会将栈帧出栈。因此可知，线程当前执行的方法所对应的栈帧必定位于Java栈的顶部。讲到这里，大家就应该会明白为什么 在 使用 递归方法的时候容易导致栈内存溢出的现象了以及为什么栈区的空间不用程序员去管理了（当然在Java中，程序员基本不用关系到内存分配和释放的事情，因为Java有自己的垃圾回收机制），这部分空间的分配和释放都是由系统自动实施的。对于所有的程序设计语言来说，栈这部分空间对程序员来说是不透明的。下图表示了一个Java栈的模型：</p>
+<p><img src="./JVM的内存区域划分 - ImportNew_files/291429030562182.jpg" alt=""></p>
+<p>局部变量表，顾名思义，想必不用解释大家应该明白它的作用了吧。就是用来存储方法中的<span style="color: #ff0000;">局部变量（包括在方法中声明的非静态变量以及函数形参）。对于基本数据类型的变量，则直接存储它的值，对于引用类型的变量，则存的是指向对象的引用。局部变量表的大小在编译器就可以确定其大小了，因此在程序执行期间局部变量表的大小是不会改变的</span>。</p>
+<p>操作数栈，想必学过数据结构中的栈的朋友想必对表达式求值问题不会陌生，栈最典型的一个应用就是用来对表达式求值。想想一个线程执行方法的过程中，实际上就是不断执行语句的过程，而归根到底就是进行计算的过程。因此可以这么说，程序中的所有计算过程都是在借助于操作数栈来完成的。</p>
+<p>指向运行时常量池的引用，因为在方法执行的过程中有可能需要用到类中的常量，所以必须要有一个引用指向运行时常量。</p>
+<p>方法返回地址，当一个方法执行完毕之后，要返回之前调用它的地方，因此在栈帧中必须保存一个方法返回地址。</p>
+<p>由于每个线程正在执行的方法可能不同，因此每个线程都会有一个自己的Java栈，互不干扰。</p>
+<h3>3.本地方法栈</h3>
+<p>本地方法栈与Java栈的作用和原理非常相似。区别只不过是Java栈是为执行Java方法服务的，而本地方法栈则是为执行本地方法（Native Method）服务的。<span style="color: #ff0000;">在JVM规范中，并没有对本地方发展的具体实现方法以及数据结构作强制规定，虚拟机可以自由实现它。在HotSopt虚拟机中直接就把本地方法栈和Java栈合二为一</span>。</p>
+<h3>4.堆</h3>
+<p>在C语言中，堆这部分空间是唯一一个程序员可以管理的内存区域。程序员可以通过malloc函数和free函数在堆上申请和释放空间。那么在Java中是怎么样的呢？</p>
+<p>Java中的堆是用来存储对象本身的以及数组（当然，数组引用是存放在Java栈中的）。只不过和C语言中的不同，在Java中，程序员基本不用去关心空间释放的问题，Java的垃圾回收机制会自动进行处理。因此这部分空间也是Java垃圾收集器管理的主要区域。另外，堆是被所有线程共享的，在JVM中只有一个堆。</p>
+<h3>5.方法区</h3>
+<p>方法区在JVM中也是一个非常重要的区域，它与堆一样，是被线程共享的区域。<span style="color: #ff0000;">在方法区中，存储了每个类的信息（包括类的名称、方法信息、字段信息）、静态变量、常量以及编译器编译后的代码等</span>。</p>
+<p>在Class文件中除了类的字段、方法、接口等描述信息外，还有一项信息是常量池，用来存储编译期间生成的字面量和符号引用。</p>
+<p><span style="color: #ff0000;">在方法区中有一个非常重要的部分就是运行时常量池，它是每一个类或接口的常量池的运行时表示形式，在类和接口被加载到JVM后，对应的运行时常量池就被创建出来。当然并非Class文件常量池中的内容才能进入运行时常量池，在运行期间也可将新的常量放入运行时常量池中，比如String的intern方法</span>。</p>
+<p><span style="color: #ff0000;">在JVM规范中，没有强制要求方法区必须实现垃圾回收</span>。很多人习惯将方法区称为“永久代”，是因为HotSpot虚拟机以永久代来实现方法区，从而JVM的垃圾收集器可以像管理堆区一样管理这部分区域，从而不需要专门为这部分设计垃圾回收机制。不过自从JDK7之后，Hotspot虚拟机便将运行时常量池从永久代移除了。</p>
+<p>以上为个人看法和观点，如有不正之处希望谅解并欢迎指正。</p>
+<p><strong>　　参考资料：</strong></p>
+<p><a href="http://blog.csdn.net/ns_code/article/details/17565503" target="_blank" class="external" rel="nofollow">http://blog.csdn.net/ns_code/article/details/17565503</a></p>
+<p><a href="http://www.cnblogs.com/sunada2005/p/3577799.html" target="_blank" class="external" rel="nofollow">http://www.cnblogs.com/sunada2005/p/3577799.html</a></p>
+<p>《深入理解Java虚拟机》</p>
+<p>《Java虚拟机规范 SE7》</p>
+
+        
+        
+        <!-- BEGIN #author-bio -->
+
+
+<!-- END #author-bio -->
+	</div>
+	<!-- END .entry -->
+
+
+<!-- JiaThis Button BEGIN -->
+<div class="jiathis_style_24x24">
+<a class="jiathis_button_tsina" title="分享到微博"><span class="jiathis_txt jtico jtico_tsina"></span></a>
+<a class="jiathis_button_weixin" title="分享到微信"><span class="jiathis_txt jtico jtico_weixin"></span></a>
+<a class="jiathis_button_qzone" title="分享到QQ空间"><span class="jiathis_txt jtico jtico_qzone"></span></a>
+<a class="jiathis_button_fb" title="分享到Facebook"><span class="jiathis_txt jtico jtico_fb"></span></a>
+<a class="jiathis_button_renren" title="分享到人人网"><span class="jiathis_txt jtico jtico_renren"></span></a>
+<a class="jiathis_button_douban" title="分享到豆瓣"><span class="jiathis_txt jtico jtico_douban"></span></a>
+<a class="jiathis_button_googleplus" title="分享到Google+"><span class="jiathis_txt jtico jtico_googleplus"></span></a>
+<a class="jiathis_button_readitlater"></a>
+<a class="jiathis_button_evernote" title="分享到印象笔记"><span class="jiathis_txt jtico jtico_evernote"></span></a>
+<a class="jiathis_button_ydnote" title="分享到有道云笔记"><span class="jiathis_txt jtico jtico_ydnote"></span></a>
+<a href="http://www.jiathis.com/share?uid=1745061" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis external" target="_blank" rel="nofollow"></a>
+<a class="jiathis_counter_style"><span class="jiathis_button_expanded jiathis_counter jiathis_bubble_style" id="jiathis_counter_42" title="累计分享21次">21</span></a>
+</div>
+
+
+<script type="text/javascript">
+var jiathis_config={
+	data_track_clickback:false,
+	title:"《JVM的内存区域划分》",
+	summary:"学过C语言的朋友都知道C编译器在划分内存区域的时候经常将管理的区域划分为数据段和代码段，数据段包括堆、栈以及静态数据区。那么在Java语言当中，内存又是如何划分的呢？",
+	pic:"http://incdn1.b0.upaiyun.com/2014/03/53f58b3f058444c8c1178ae6d2decdaa.png",
+	appkey:{
+                "tsina":2284713194 //for importnew
+        },
+	ralateuid:{
+		"tsina":2991905905 //for importnew
+	},
+	hideMore:false
+}
+</script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/jia.js.下载" charset="utf-8"></script><script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/plugin.client.js.下载" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<br><br>
+<div id="text-13">			<div class="textwidget"><p><a href="http://blog.jobbole.com/106093/" target="_blank" class="external" rel="nofollow"><img src="./JVM的内存区域划分 - ImportNew_files/bfdcef89gw1f9cf7iwi24j20h802sjrz.jpg"></a></p>
+</div>
+		</div>
+</div>
+<!-- END .post -->	
+	
+<script type="text/javascript">
+window._wp_rp_static_base_url = "http://dtmvdvtzf8rz0.cloudfront.net/static/";
+
+</script>
+<h3 class="related_post_title">相关文章</h3><ul class="related_post wp_rp" style="visibility:visible;"><li position="0"><a href="http://www.importnew.com/5061.html">经典论文翻译导读之《A Bloat-Aware Design for Big Data Applications》</a></li><li position="1"><a href="http://www.importnew.com/22484.html">java虚拟机 jvm 局部变量表实战</a></li><li position="2"><a href="http://www.importnew.com/22462.html">Class热替换与卸载</a></li><li position="3"><a href="http://www.importnew.com/22270.html">Java虚拟机学习（10）：类加载器(ClassLoader)</a></li><li position="4"><a href="http://www.importnew.com/22264.html">Java虚拟机学习（9）：对象引用强度</a></li><li position="5"><a href="http://www.importnew.com/22258.html">Java虚拟机学习（8）：查看JVM参数及值的命令行工具</a></li><li position="6"><a href="http://www.importnew.com/22251.html">Java虚拟机学习（7）：对象内存分配与回收</a></li><li position="7"><a href="http://www.importnew.com/22245.html">Java虚拟机学习（6）：对象访问</a></li><li position="8"><a href="http://www.importnew.com/22240.html">Java虚拟机学习（5）：内存调优</a></li><li position="9"><a href="http://www.importnew.com/22235.html">Java虚拟机学习（4）：JDK可视化监控工具</a></li></ul>
+
+			
+	
+<!-- BEGIN #respond -->
+<div id="respond">
+
+	<h3 class="widget-title">发表评论</h3>
+	
+	<!-- BEGIN .cancel-comment-reply -->
+	<p class="cancel-comment-reply">
+		
+		<a rel="nofollow" id="cancel-comment-reply-link" href="http://www.importnew.com/18961.html#respond" style="display:none;">点击这里取消回复。</a>		
+	</p>
+	<!-- END .cancel-comment-reply -->
+
+		
+	<!-- BEGIN #comment-form -->
+	<form action="http://www.importnew.com/wp-comments-post.php" method="post" id="comment-form">
+		
+		<fieldset>
+		
+			<legend class="none">Comment form</legend>
+			
+			<!-- BEGIN .container -->
+			<div class="container">
+			
+							
+				<div class="grid-4 margin-20">
+					<label for="author">Name<span class="red">*</span></label>
+				</div>
+				
+				<div class="grid-4 margin-20">
+					<div class="input-wrapper"><input type="text" name="author" id="author" value="" tabindex="1" size="30" class="required" placeholder="姓名"></div>
+				</div>
+				<div class="clear"></div>
+				
+				<div class="grid-4 margin-20">
+					<label for="email">邮箱<span class="red">*</span></label>
+				</div>
+				
+				<div class="grid-4 margin-20">
+					<div class="input-wrapper"><input type="email" name="email" id="email" value="" tabindex="2" size="30" class="required email" placeholder="请填写邮箱"></div>
+				</div>
+				<div class="clear"></div>
+				
+				<div class="grid-4 margin-20">
+					<label for="url">网站 (请以 http://开头)</label>
+				</div>
+				
+				<div class="grid-4 margin-20">
+					<div class="input-wrapper"><input type="url" name="url" id="url" value="" tabindex="3" size="30" placeholder="请填写网站地址"></div>
+				</div>
+				<div class="clear"></div>
+				
+								
+				<div class="grid-8 margin-20">
+					<label for="comment" class="none margin-20">评论内容<span class="red">*</span></label>
+					<div class="input-wrapper"><textarea name="comment" id="comment" rows="20" cols="30" class="required" tabindex="4" onkeydown="if(event.ctrlKey &amp;&amp; event.keyCode==13){document.getElementById(&#39;comment-form-submit&#39;).click(); return false;}" placeholder="请填写评论内容"></textarea></div>
+				</div>
+				<div class="clear"></div>
+				
+			</div>
+			<!-- END .container -->
+			
+			<p>(<span class="red">*</span>) 表示必填项</p>
+			<p></p><div class="submit-wrapper"><a id="comment-form-submit" class="submit">提交评论</a></div><p></p>
+			<input type="hidden" name="comment_post_ID" value="18961" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+			<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="f04f643bc0"></p>			
+		</fieldset>
+		
+	</form>
+	<!-- END #comment-form -->
+	
+	
+</div>
+<!-- END #respond -->
+
+
+			<p class="nocomments none">还没有评论。</p>
+	 
+
+
+
+		
+				
+	<!-- BEGIN .navigation -->
+	<div class="navigation margin-20">
+	
+		<div class="alignleft"><a href="http://www.importnew.com/18878.html" rel="prev">« Java内存使用系列一：Java 对象的内存占用</a></div>
+		<div class="alignright"><a href="http://www.importnew.com/18968.html" rel="next">Java LinkedList工作原理及实现 »</a></div>
+		<div class="clear"></div>
+
+	</div>
+	<!-- END .navigation -->
+	
+		
+</div>
+<!-- END .grid-8 -->
+
+<!-- BEGIN #sidebar -->
+<div id="sidebar" class="grid-4">
+
+	<div id="search-3" class="widget widget_search"><!-- BEGIN #searchform -->
+<form method="get" id="searchform" action="http://www.importnew.com/">
+
+	<label class="none" for="s">Search for:</label>
+	<div class="input-wrapper"><input type="text" value="" name="s" id="s" placeholder="Search"></div>
+	<input type="submit" id="searchsubmit" value="Search">
+	
+</form>
+<!-- END #searchform --></div><div id="text-14" class="widget widget_text">			<div class="textwidget"><p><a href="http://blog.jobbole.com/84342/?utm_source=www.importnew.com&amp;utm_medium=rightBanner-1&amp;utm_content=2015.9.16" target="_blank" class="external" rel="nofollow"><img src="./JVM的内存区域划分 - ImportNew_files/e5298966gw1evyjrd4iqcj208c03c0t0.jpg"></a></p>
+</div>
+		</div><div id="aw_tabbed_widget-2" class="widget aw_tabbed_widget"><div class="tabs"><ul class="nav clearfix"><li class="active"><a id="link-most-discussed" href="http://www.importnew.com/18961.html#tab-most-discussed" title="本周热门文章">本周热门文章</a></li><li><a id="link-latest-comments" href="http://www.importnew.com/18961.html#tab-latest-comments" title="本月热门">本月热门</a></li><li><a id="link-tags" href="http://www.importnew.com/18961.html#tab-tags" title="热门标签">热门标签</a></li></ul><div id="tab-most-discussed" class="tab" style="display: block;"><div class="floated-thumb">							
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">0</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22542.html" title="大话程序猿眼里的高并发（上）">大话程序猿眼里的高并发（上）</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">1</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22529.html" title="Java语法糖（3）：泛型">Java语法糖（3）：泛型</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">2</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22535.html" title="Java语法糖（4）：内部类">Java语法糖（4）：内部类</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">3</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22546.html" title="大话程序猿眼里的高并发（下）">大话程序猿眼里的高并发（下）</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">4</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22554.html" title="线程及同步的性能 - 线程池/ ThreadPoolExecutors/ ForkJoinPool">线程及同步的性能 - 线程池/ ThreadPoolExe...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">5</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22559.html" title="JavaEE - JPA（1）：事务的基础概念">JavaEE - JPA（1）：事务的...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">6</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22564.html" title="JavaEE - JPA（2）：EJB中的事务管理">JavaEE - JPA（2）：EJB...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">7</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22570.html" title="JavaEE - JPA（3）：Spring Framework中的事务管理">JavaEE - JPA（3）：Spring Fr...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">8</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22576.html" title="JavaEE - JPA（4）：EntityManager相关核心概念">JavaEE - JPA（4）：EntityMa...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+							
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">9</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22582.html" title="JavaEE - JPA（5）：ORM的核心注解 - 访问方式，表映射以及主键生成">JavaEE - JPA（5）：ORM...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+						</div></div><div id="tab-latest-comments" class="tab" style="display: none;"><div class="floated-thumb">							
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">0</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22386.html" title="奇怪的Java题：为什么1000 == 1000返回为False，而100 == 100会返回为True?">奇怪的Java题：为什么1000 == 1000返回为Fa...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">1</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22493.html" title="如何防止单例模式被JAVA反射攻击">如何防止单例模式被JAVA反射攻击</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">2</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22434.html" title="JVM 性能调优实战之：一次系统性能瓶颈的寻找过程">JVM 性能调优实战之：一次系统性...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">3</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22438.html" title="JVM 性能调优实战之：使用阿里开源工具 TProfiler 在海量业务代码中精确定位性能代码">JVM 性能调优实战之：使用阿里开源工具...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">4</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22290.html" title="从零开始玩转logback">从零开始玩转logback</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">5</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22417.html" title="Java 8开发的4大顶级技巧">Java 8开发的4大顶级技巧</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">6</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22409.html" title="GitHub漫游指南：10个值得你关注的Java项目 ">GitHub漫游指南：10个值得你关注的J...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">7</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22429.html" title="2016年7款最佳 Java 框架推荐">2016年7款最佳 Java 框架推荐</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">8</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22270.html" title="Java虚拟机学习（10）：类加载器(ClassLoader)">Java虚拟机学习（10）：类加载器(Class...</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+													
+											
+							<!-- BEGIN .post-meta -->
+							<div class="post-meta ">
+							
+								<p>
+								    <span class="numb">9</span>
+								    <a class="meta-title" target="_blank" href="http://www.importnew.com/22286.html" title="关于Java并发编程的总结和思考">关于Java并发编程的总结和思考</a><br>
+								</p>
+									
+							</div>
+							<!-- END .post-meta -->
+							
+							<div class="clear"></div>
+							
+						</div></div><div id="tab-tags" class="tab" style="display: none;"><p><a href="http://www.importnew.com/tag/android23days" class="tag-link-240" title="8 个话题" style="font-size: 9.12px;">android23days</a>
+<a href="http://www.importnew.com/tag/android" class="tag-link-36" title="64 个话题" style="font-size: 18.752px;">Android开发</a>
+<a href="http://www.importnew.com/tag/aop" class="tag-link-204" title="15 个话题" style="font-size: 11.92px;">AOP</a>
+<a href="http://www.importnew.com/tag/api" class="tag-link-308" title="6 个话题" style="font-size: 8px;">API</a>
+<a href="http://www.importnew.com/tag/arraylist" class="tag-link-314" title="7 个话题" style="font-size: 8.56px;">ArrayList</a>
+<a href="http://www.importnew.com/tag/concurrenthashmap" class="tag-link-355" title="10 个话题" style="font-size: 10.128px;">ConcurrentHashMap</a>
+<a href="http://www.importnew.com/tag/controller" class="tag-link-797" title="7 个话题" style="font-size: 8.56px;">Controller</a>
+<a href="http://www.importnew.com/tag/eclipse" class="tag-link-81" title="27 个话题" style="font-size: 14.72px;">Eclipse</a>
+<a href="http://www.importnew.com/tag/gc" class="tag-link-87" title="34 个话题" style="font-size: 15.728px;">GC</a>
+<a href="http://www.importnew.com/tag/guava" class="tag-link-554" title="11 个话题" style="font-size: 10.576px;">Guava</a>
+<a href="http://www.importnew.com/tag/hadoop" class="tag-link-140" title="13 个话题" style="font-size: 11.36px;">Hadoop</a>
+<a href="http://www.importnew.com/tag/hashmap" class="tag-link-284" title="28 个话题" style="font-size: 14.832px;">HashMap</a>
+<a href="http://www.importnew.com/tag/hashset" class="tag-link-60" title="9 个话题" style="font-size: 9.68px;">HashSet</a>
+<a href="http://www.importnew.com/tag/hbase" class="tag-link-128" title="14 个话题" style="font-size: 11.696px;">HBase</a>
+<a href="http://www.importnew.com/tag/hibernate" class="tag-link-109" title="12 个话题" style="font-size: 10.912px;">Hibernate</a>
+<a href="http://www.importnew.com/tag/intellij" class="tag-link-213" title="8 个话题" style="font-size: 9.12px;">IntelliJ</a>
+<a href="http://www.importnew.com/tag/io" class="tag-link-70" title="11 个话题" style="font-size: 10.576px;">io</a>
+<a href="http://www.importnew.com/tag/ioc" class="tag-link-475" title="6 个话题" style="font-size: 8px;">IoC</a>
+<a href="http://www.importnew.com/tag/java" class="tag-link-35" title="125 个话题" style="font-size: 22px;">Java</a>
+<a href="http://www.importnew.com/tag/java8" class="tag-link-354" title="32 个话题" style="font-size: 15.504px;">java8</a>
+<a href="http://www.importnew.com/tag/java-8" class="tag-link-50" title="31 个话题" style="font-size: 15.392px;">java 8</a>
+<a href="http://www.importnew.com/tag/java9" class="tag-link-436" title="8 个话题" style="font-size: 9.12px;">Java9</a>
+<a href="http://www.importnew.com/tag/javaee" class="tag-link-379" title="6 个话题" style="font-size: 8px;">javaee</a>
+<a href="http://www.importnew.com/tag/javaee%e4%b8%8emaven%e6%95%99%e7%a8%8b" class="tag-link-462" title="7 个话题" style="font-size: 8.56px;">JavaEE与Maven教程</a>
+<a href="http://www.importnew.com/tag/java-gc" class="tag-link-115" title="6 个话题" style="font-size: 8px;">Java GC</a>
+<a href="http://www.importnew.com/tag/java-nio" class="tag-link-750" title="13 个话题" style="font-size: 11.36px;">Java NIO</a>
+<a href="http://www.importnew.com/tag/java%e4%b9%b1%e7%a0%81" class="tag-link-807" title="8 个话题" style="font-size: 9.12px;">Java乱码</a>
+<a href="http://www.importnew.com/tag/java%e7%bc%96%e7%a8%8b%e5%85%a5%e9%97%a8" class="tag-link-639" title="24 个话题" style="font-size: 14.16px;">Java编程入门</a>
+<a href="http://www.importnew.com/tag/java%e8%99%9a%e6%8b%9f%e6%9c%ba" class="tag-link-671" title="7 个话题" style="font-size: 8.56px;">java虚拟机</a>
+<a href="http://www.importnew.com/tag/jdbc" class="tag-link-122" title="15 个话题" style="font-size: 11.92px;">JDBC</a>
+<a href="http://www.importnew.com/tag/jdk" class="tag-link-44" title="10 个话题" style="font-size: 10.128px;">JDK</a>
+<a href="http://www.importnew.com/tag/jmeter" class="tag-link-487" title="6 个话题" style="font-size: 8px;">JMeter</a>
+<a href="http://www.importnew.com/tag/jpa" class="tag-link-161" title="8 个话题" style="font-size: 9.12px;">JPA</a>
+<a href="http://www.importnew.com/tag/jsoup" class="tag-link-703" title="9 个话题" style="font-size: 9.68px;">Jsoup</a>
+<a href="http://www.importnew.com/tag/junit" class="tag-link-337" title="7 个话题" style="font-size: 8.56px;">JUnit</a>
+<a href="http://www.importnew.com/tag/jvm" class="tag-link-80" title="89 个话题" style="font-size: 20.32px;">JVM</a>
+<a href="http://www.importnew.com/tag/lambda" class="tag-link-92" title="8 个话题" style="font-size: 9.12px;">Lambda</a>
+<a href="http://www.importnew.com/tag/linkedhashmap" class="tag-link-306" title="6 个话题" style="font-size: 8px;">LinkedHashMap</a>
+<a href="http://www.importnew.com/tag/mapreduce" class="tag-link-106" title="7 个话题" style="font-size: 8.56px;">MapReduce</a>
+<a href="http://www.importnew.com/tag/maven" class="tag-link-385" title="12 个话题" style="font-size: 10.912px;">maven</a>
+<a href="http://www.importnew.com/tag/netty" class="tag-link-130" title="16 个话题" style="font-size: 12.256px;">Netty</a>
+<a href="http://www.importnew.com/tag/nio" class="tag-link-69" title="15 个话题" style="font-size: 11.92px;">nio</a>
+<a href="http://www.importnew.com/tag/nio2-0" class="tag-link-116" title="6 个话题" style="font-size: 8px;">NIO2.0</a>
+<a href="http://www.importnew.com/tag/oracle" class="tag-link-153" title="9 个话题" style="font-size: 9.68px;">oracle</a>
+<a href="http://www.importnew.com/tag/restful" class="tag-link-196" title="9 个话题" style="font-size: 9.68px;">RESTful</a>
+<a href="http://www.importnew.com/tag/scala" class="tag-link-89" title="17 个话题" style="font-size: 12.592px;">Scala</a>
+<a href="http://www.importnew.com/tag/scala-tutorial" class="tag-link-155" title="6 个话题" style="font-size: 8px;">Scala tutorial</a>
+<a href="http://www.importnew.com/tag/servlet" class="tag-link-320" title="8 个话题" style="font-size: 9.12px;">Servlet</a>
+<a href="http://www.importnew.com/tag/socket" class="tag-link-559" title="11 个话题" style="font-size: 10.576px;">Socket</a>
+<a href="http://www.importnew.com/tag/solr" class="tag-link-429" title="8 个话题" style="font-size: 9.12px;">solr</a>
+<a href="http://www.importnew.com/tag/spring" class="tag-link-53" title="116 个话题" style="font-size: 21.664px;">Spring</a>
+<a href="http://www.importnew.com/tag/spring4" class="tag-link-771" title="8 个话题" style="font-size: 9.12px;">Spring4</a>
+<a href="http://www.importnew.com/tag/springmvc" class="tag-link-614" title="20 个话题" style="font-size: 13.264px;">SpringMVC</a>
+<a href="http://www.importnew.com/tag/spring-mvc" class="tag-link-443" title="8 个话题" style="font-size: 9.12px;">Spring MVC</a>
+<a href="http://www.importnew.com/tag/string" class="tag-link-252" title="29 个话题" style="font-size: 15.056px;">String</a>
+<a href="http://www.importnew.com/tag/synchronized" class="tag-link-737" title="7 个话题" style="font-size: 8.56px;">synchronized</a>
+<a href="http://www.importnew.com/tag/threadlocal" class="tag-link-376" title="12 个话题" style="font-size: 10.912px;">ThreadLocal</a>
+<a href="http://www.importnew.com/tag/tomcat" class="tag-link-225" title="16 个话题" style="font-size: 12.256px;">Tomcat</a>
+<a href="http://www.importnew.com/tag/volatile" class="tag-link-433" title="9 个话题" style="font-size: 9.68px;">volatile</a>
+<a href="http://www.importnew.com/tag/%e4%ba%8b%e5%8a%a1" class="tag-link-339" title="9 个话题" style="font-size: 9.68px;">事务</a>
+<a href="http://www.importnew.com/tag/%e4%be%9d%e8%b5%96%e6%b3%a8%e5%85%a5" class="tag-link-293" title="6 个话题" style="font-size: 8px;">依赖注入</a>
+<a href="http://www.importnew.com/tag/%e5%86%85%e5%ad%98%e6%b3%84%e9%9c%b2" class="tag-link-124" title="6 个话题" style="font-size: 8px;">内存泄露</a>
+<a href="http://www.importnew.com/tag/%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86" class="tag-link-273" title="17 个话题" style="font-size: 12.592px;">内存管理</a>
+<a href="http://www.importnew.com/tag/%e5%8d%95%e4%be%8b%e6%a8%a1%e5%bc%8f" class="tag-link-574" title="6 个话题" style="font-size: 8px;">单例模式</a>
+<a href="http://www.importnew.com/tag/%e5%8f%82%e6%95%b0%e5%a4%aa%e5%a4%9a%e6%80%8e%e4%b9%88%e5%8a%9e" class="tag-link-470" title="8 个话题" style="font-size: 9.12px;">参数太多怎么办</a>
+<a href="http://www.importnew.com/tag/%e5%8f%8d%e5%b0%84" class="tag-link-301" title="7 个话题" style="font-size: 8.56px;">反射</a>
+<a href="http://www.importnew.com/tag/%e5%9e%83%e5%9c%be%e5%9b%9e%e6%94%b6" class="tag-link-575" title="13 个话题" style="font-size: 11.36px;">垃圾回收</a>
+<a href="http://www.importnew.com/tag/%e5%9f%ba%e7%a1%80%e6%8a%80%e6%9c%af" class="tag-link-58" title="60 个话题" style="font-size: 18.528px;">基础技术</a>
+<a href="http://www.importnew.com/tag/%e5%a4%9a%e7%ba%bf%e7%a8%8b" class="tag-link-46" title="22 个话题" style="font-size: 13.712px;">多线程</a>
+<a href="http://www.importnew.com/tag/%e5%ad%97%e7%ac%a6%e4%b8%b2" class="tag-link-636" title="8 个话题" style="font-size: 9.12px;">字符串</a>
+<a href="http://www.importnew.com/tag/%e5%ad%97%e8%8a%82%e7%a0%81" class="tag-link-38" title="6 个话题" style="font-size: 8px;">字节码</a>
+<a href="http://www.importnew.com/tag/%e5%b7%a5%e5%85%b7" class="tag-link-126" title="6 个话题" style="font-size: 8px;">工具</a>
+<a href="http://www.importnew.com/tag/%e5%b9%b6%e5%8f%91" class="tag-link-401" title="35 个话题" style="font-size: 15.952px;">并发</a>
+<a href="http://www.importnew.com/tag/%e5%b9%b6%e5%8f%91%e7%bc%96%e7%a8%8b" class="tag-link-64" title="25 个话题" style="font-size: 14.272px;">并发编程</a>
+<a href="http://www.importnew.com/tag/%e5%ba%8f%e5%88%97%e5%8c%96" class="tag-link-298" title="10 个话题" style="font-size: 10.128px;">序列化</a>
+<a href="http://www.importnew.com/tag/%e5%bc%82%e5%b8%b8" class="tag-link-83" title="6 个话题" style="font-size: 8px;">异常</a>
+<a href="http://www.importnew.com/tag/%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86" class="tag-link-214" title="15 个话题" style="font-size: 11.92px;">异常处理</a>
+<a href="http://www.importnew.com/tag/%e6%80%a7%e8%83%bd" class="tag-link-47" title="16 个话题" style="font-size: 12.256px;">性能</a>
+<a href="http://www.importnew.com/tag/%e6%80%a7%e8%83%bd%e4%bc%98%e5%8c%96" class="tag-link-88" title="11 个话题" style="font-size: 10.576px;">性能优化</a>
+<a href="http://www.importnew.com/tag/%e6%80%a7%e8%83%bd%e8%b0%83%e4%bc%98" class="tag-link-282" title="9 个话题" style="font-size: 9.68px;">性能调优</a>
+<a href="http://www.importnew.com/tag/%e6%8e%92%e5%ba%8f" class="tag-link-368" title="6 个话题" style="font-size: 8px;">排序</a>
+<a href="http://www.importnew.com/tag/%e6%95%99%e7%a8%8b" class="tag-link-156" title="17 个话题" style="font-size: 12.592px;">教程</a>
+<a href="http://www.importnew.com/tag/%e6%95%b0%e7%bb%84" class="tag-link-375" title="6 个话题" style="font-size: 8px;">数组</a>
+<a href="http://www.importnew.com/tag/%e6%97%a5%e5%bf%97" class="tag-link-29" title="10 个话题" style="font-size: 10.128px;">日志</a>
+<a href="http://www.importnew.com/tag/%e6%9e%b6%e6%9e%84" class="tag-link-139" title="6 个话题" style="font-size: 8px;">架构</a>
+<a href="http://www.importnew.com/tag/%e6%ad%bb%e9%94%81" class="tag-link-343" title="6 个话题" style="font-size: 8px;">死锁</a>
+<a href="http://www.importnew.com/tag/%e6%b3%9b%e5%9e%8b" class="tag-link-246" title="14 个话题" style="font-size: 11.696px;">泛型</a>
+<a href="http://www.importnew.com/tag/%e6%b3%a8%e8%a7%a3" class="tag-link-360" title="7 个话题" style="font-size: 8.56px;">注解</a>
+<a href="http://www.importnew.com/tag/%e6%b5%8b%e8%af%95" class="tag-link-237" title="8 个话题" style="font-size: 9.12px;">测试</a>
+<a href="http://www.importnew.com/tag/%e6%b8%b8%e6%88%8f" class="tag-link-184" title="9 个话题" style="font-size: 9.68px;">游戏</a>
+<a href="http://www.importnew.com/tag/%e7%ae%97%e6%b3%95" class="tag-link-270" title="6 个话题" style="font-size: 8px;">算法</a>
+<a href="http://www.importnew.com/tag/%e7%ba%bf%e7%a8%8b" class="tag-link-374" title="10 个话题" style="font-size: 10.128px;">线程</a>
+<a href="http://www.importnew.com/tag/%e7%ba%bf%e7%a8%8b%e6%b1%a0" class="tag-link-297" title="12 个话题" style="font-size: 10.912px;">线程池</a>
+<a href="http://www.importnew.com/tag/%e7%bc%93%e5%ad%98" class="tag-link-353" title="6 个话题" style="font-size: 8px;">缓存</a>
+<a href="http://www.importnew.com/tag/%e8%99%9a%e6%8b%9f%e6%9c%ba" class="tag-link-685" title="11 个话题" style="font-size: 10.576px;">虚拟机</a>
+<a href="http://www.importnew.com/tag/%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f" class="tag-link-30" title="41 个话题" style="font-size: 16.624px;">设计模式</a>
+<a href="http://www.importnew.com/tag/%e8%af%ad%e6%b3%95%e7%b3%96" class="tag-link-848" title="6 个话题" style="font-size: 8px;">语法糖</a>
+<a href="http://www.importnew.com/tag/%e8%b5%84%e8%ae%af" class="tag-link-108" title="9 个话题" style="font-size: 9.68px;">资讯</a>
+<a href="http://www.importnew.com/tag/%e9%9d%a2%e8%af%95" class="tag-link-31" title="18 个话题" style="font-size: 12.816px;">面试</a>
+<a href="http://www.importnew.com/tag/%e9%9d%a2%e8%af%95%e9%a2%98" class="tag-link-27" title="11 个话题" style="font-size: 10.576px;">面试题</a></p></div></div></div><div id="text-18" class="widget widget_text">			<div class="textwidget"><p><a href="http://date.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=rightBanner-2&amp;utm_content=2015.9.16" target="_blank" class="external" rel="nofollow"><img src="./JVM的内存区域划分 - ImportNew_files/bfdcef89gw1esk2g5dvq1j208c03cglu.jpg"></a></p>
+</div>
+		</div><div id="recent_comments_widget-2" class="widget recent_comments_widget">		<h3 class="widget-title">最新评论</h3>
+		<ul>
+		
+					
+			<li id="rc-comment-535574" class="rc-item rc-comment rc-clearfix">
+				<img class="rc-avatar rc-left" width="32" height="32" alt="" src="./JVM的内存区域划分 - ImportNew_files/cb962c0fddc4ba5282bbf2996f3ee0d2.png">
+				<div class="rc-info">
+				Re:
+				<a class="rc-post" target="_blank" href="http://www.importnew.com/22438.html#comment-535574" rel="nofollow">JVM 性能调优实战之：使用阿里开源...</a>
+				</div>
+				<div class="rc-timestamp"></div>
+				<div class="rc-excerpt">
+				盲目改为fastjson。fastjson在序列化过程中，实测比jackson有30%的差距。反序列...								<span class="rc-reviewer"> wota</span>
+								</div>
+			</li>
+			
+						
+			<li id="rc-comment-535549" class="rc-item rc-comment rc-clearfix">
+				<img class="rc-avatar rc-left" width="32" height="32" alt="" src="./JVM的内存区域划分 - ImportNew_files/cb962c0fddc4ba5282bbf2996f3ee0d2.png">
+				<div class="rc-info">
+				Re:
+				<a class="rc-post" target="_blank" href="http://www.importnew.com/12707.html#comment-535549" rel="nofollow">全文检索引擎Solr系列—...</a>
+				</div>
+				<div class="rc-timestamp"></div>
+				<div class="rc-excerpt">
+				写的不错								<span class="rc-reviewer"> 张亚洲</span>
+								</div>
+			</li>
+			
+						
+			<li id="rc-comment-535511" class="rc-item rc-comment rc-clearfix">
+				<img class="rc-avatar rc-left" width="32" height="32" alt="" src="./JVM的内存区域划分 - ImportNew_files/cb962c0fddc4ba5282bbf2996f3ee0d2.png">
+				<div class="rc-info">
+				Re:
+				<a class="rc-post" target="_blank" href="http://www.importnew.com/22493.html#comment-535511" rel="nofollow">如何防止单例模式被JAVA反射...</a>
+				</div>
+				<div class="rc-timestamp"></div>
+				<div class="rc-excerpt">
+				第二次获取实例前，可以先通过反射修改掉flag的值。所以这种方式不可行								<span class="rc-reviewer"> 王佳</span>
+								</div>
+			</li>
+			
+						
+			<li id="rc-comment-535345" class="rc-item rc-comment rc-clearfix">
+				<img class="rc-avatar rc-left" width="32" height="32" alt="" src="./JVM的内存区域划分 - ImportNew_files/cb962c0fddc4ba5282bbf2996f3ee0d2.png">
+				<div class="rc-info">
+				Re:
+				<a class="rc-post" target="_blank" href="http://www.importnew.com/17072.html#comment-535345" rel="nofollow">HotSpot模板解释器目标代码生...</a>
+				</div>
+				<div class="rc-timestamp"></div>
+				<div class="rc-excerpt">
+				真的需要太多知识才能读懂，我略作了笔记，感觉自己还要努力10倍才行。。。citi007@126.co...								<span class="rc-reviewer"> allchin</span>
+								</div>
+			</li>
+			
+						
+			<li id="rc-comment-535278" class="rc-item rc-comment rc-clearfix">
+				<img class="rc-avatar rc-left" width="32" height="32" alt="" src="./JVM的内存区域划分 - ImportNew_files/cb962c0fddc4ba5282bbf2996f3ee0d2.png">
+				<div class="rc-info">
+				Re:
+				<a class="rc-post" target="_blank" href="http://www.importnew.com/7010.html#comment-535278" rel="nofollow">HashMap和Hashtable的区别</a>
+				</div>
+				<div class="rc-timestamp"></div>
+				<div class="rc-excerpt">
+				老外的这篇文章不错，翻译的也很好。								<span class="rc-reviewer"> Pa</span>
+								</div>
+			</li>
+			
+						
+			<li id="rc-comment-535151" class="rc-item rc-comment rc-clearfix">
+				<img class="rc-avatar rc-left" width="32" height="32" alt="" src="./JVM的内存区域划分 - ImportNew_files/cb962c0fddc4ba5282bbf2996f3ee0d2.png">
+				<div class="rc-info">
+				Re:
+				<a class="rc-post" target="_blank" href="http://www.importnew.com/22493.html#comment-535151" rel="nofollow">如何防止单例模式被JAVA反射...</a>
+				</div>
+				<div class="rc-timestamp"></div>
+				<div class="rc-excerpt">
+				先用反射把 flag 改成 false，不就抛不出异常了么？用最常用的双重校验锁单例写法，在构造函数...								<span class="rc-reviewer"> 如何防止单例模式被JAVA反射攻击</span>
+								</div>
+			</li>
+			
+						
+			<li id="rc-comment-535088" class="rc-item rc-comment rc-clearfix">
+				<img class="rc-avatar rc-left" width="32" height="32" alt="" src="./JVM的内存区域划分 - ImportNew_files/cb962c0fddc4ba5282bbf2996f3ee0d2.png">
+				<div class="rc-info">
+				Re:
+				<a class="rc-post" target="_blank" href="http://www.importnew.com/1068.html#comment-535088" rel="nofollow">如何增强JAVA的I/O性能</a>
+				</div>
+				<div class="rc-timestamp"></div>
+				<div class="rc-excerpt">
+				Very Good!								<span class="rc-reviewer"> Penn</span>
+								</div>
+			</li>
+			
+						
+			<li id="rc-comment-535086" class="rc-item rc-comment rc-clearfix">
+				<img class="rc-avatar rc-left" width="32" height="32" alt="" src="./JVM的内存区域划分 - ImportNew_files/cb962c0fddc4ba5282bbf2996f3ee0d2.png">
+				<div class="rc-info">
+				Re:
+				<a class="rc-post" target="_blank" href="http://www.importnew.com/11908.html#comment-535086" rel="nofollow">Java 8新特性终极指南</a>
+				</div>
+				<div class="rc-timestamp"></div>
+				<div class="rc-excerpt">
+				很多特性和google 的java api guava很响，学习后可以在使用中做些什么对比，在开发中...									<a class="rc-reviewer external" target="_blank" href="https://segmentfault.com/u/kevin_segmentfault" rel="nofollow external"> 王锴</a>
+								</div>
+			</li>
+			
+					
+		</ul>
+        </div><div id="text-19" class="widget widget_text">			<div class="textwidget"><p><a href="http://fanyi.jobbole.com/" target="_blank" class="external" rel="nofollow"><img src="./JVM的内存区域划分 - ImportNew_files/bfdcef89gw1esnyzyrczej208c03cgm3.jpg"></a></p>
+</div>
+		</div>	
+	<!-- BEGIN .container -->
+	<div class="container">
+	
+		<!-- BEGIN .grid-2 -->
+		<div class="grid-2">
+			
+						
+		</div>
+		<!-- END .grid-2 -->
+		
+		<!-- BEGIN .grid-2 -->
+		<div class="grid-2">
+			
+						
+		</div>
+		<!-- END .grid-2 -->
+		
+		<div class="clear"></div>
+			
+	</div>
+	<!-- END .container -->
+
+</div>
+<!-- END #sidebar -->
+<div class="clear"></div>	
+
+
+</div>
+<!-- END #wrapper -->
+
+<!-- BEGIN footer -->
+<footer>
+
+	<!-- BEGIN .container -->
+	<div class="container">
+		
+		<!-- BEGIN .grid-4 -->
+		<div class="grid-4">
+			
+			<div id="text-15" class="widget widget_text"><h3 class="widget-title">关于ImportNew</h3>			<div class="textwidget"><p>ImportNew 专注于 Java 技术分享。于2012年11月11日 11:11正式上线。是的，这是一个很特别的时刻 :) </p>
+<p>ImportNew 由两个 Java 关键字 import 和 new 组成，意指：Java 开发者学习新知识的网站。 import 可认为是学习和吸收， new 则可认为是新知识、新技术圈子和新朋友……</p>
+<div id="aw_socialcounter_widget-2" class="widget aw_socialcounter_widget">
+<ul>
+<li>
+<a target="_blank" href="http://weibo.com/importnew" class="external" rel="nofollow"><img class="alignleft" src="./JVM的内存区域划分 - ImportNew_files/sina_32.png" alt="关注我们的新浪微博" title="关注我们的新浪微博"></a><p></p>
+<div class="view-rss"><a target="_blank" href="http://www.importnew.com/feed/" class="rss-link"><img class="alignleft" src="./JVM的内存区域划分 - ImportNew_files/rss_32.png" alt="RSS订阅" title="RSS订阅"></a></div>
+</li>
+</ul>
+</div>
+</div>
+		</div>			
+		</div>
+		<!-- END .grid-4 -->
+		
+		<!-- BEGIN .grid-4 -->
+		<div class="grid-4">
+			
+			<div id="text-17" class="widget widget_text"><h3 class="widget-title">联系我们</h3>			<div class="textwidget"><p>Email：<a href="mailto:ImportNew.com@gmail.com">ImportNew.com@gmail.com</a><br>
+新浪微博：<a href="http://weibo.com/importnew" target="_blank" class="external" rel="nofollow">@ImportNew</a><br>
+推荐微信号<br>
+<img src="./JVM的内存区域划分 - ImportNew_files/ImportNew_weixin.png" width="100" height="110"><img src="./JVM的内存区域划分 - ImportNew_files/android_weixin.png" width="100" height="110"><img src="./JVM的内存区域划分 - ImportNew_files/Linux_weixin.png" width="100" height="110"></p>
+<p>反馈建议：ImportNew.com@gmail.com<br>
+广告与商务合作QQ：2302462408 </p>
+</div>
+		</div>			
+		</div>
+		<!-- END .grid-4 -->
+		
+		<!-- BEGIN .grid-4 -->
+		<div class="grid-4">
+			
+			<div id="text-16" class="widget widget_text"><h3 class="widget-title">推荐关注</h3>			<div class="textwidget"><p><a href="http://group.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">小组</a> – 好的话题、有启发的回复、值得信赖的圈子<br>
+<a href="http://top.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">头条</a> – 写了文章？看干货？去头条！<br>
+<a href="http://date.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">相亲</a> – 为IT单身男女服务的征婚传播平台<br>
+<a href="http://hao.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">资源</a> – 优秀的工具资源导航<br>
+<a href="http://fanyi.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">翻译</a> – 活跃 &amp; 专业的翻译小组<br>
+<a href="http://blog.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">博客</a> – 国内外的精选博客文章<br>
+<a href="http://design.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">设计</a> – UI,网页，交互和用户体验<br>
+<a href="http://web.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">前端</a> – JavaScript, HTML5, CSS<br>
+<a href="http://android.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">安卓</a> – 专注Android技术分享<br>
+<a href="http://ios.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">iOS</a> – 专注iOS技术分享<br>
+<a href="http://www.importnew.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank">Java</a> – 专注Java技术分享<br>
+<a href="http://python.jobbole.com/?utm_source=www.importnew.com&amp;utm_medium=bottomText" target="_blank" class="external" rel="nofollow">Python</a> – 专注Python技术分享</p>
+</div>
+		</div>			
+		</div>
+		<!-- END .grid-4 -->
+		
+		<div class="clear"></div>
+	
+	</div>
+	<!-- END .container -->
+
+	<!-- BEGIN #bottom -->
+	<div id="bottom">
+	
+		<!-- BEGIN .container -->
+		<div class="container">
+		
+			<!-- BEGIN .grid-12 -->
+			<div class="grid-12">
+	
+				<p>© 2016 ImportNew</p>
+			
+			</div>
+			<!-- END .grid-12 -->
+			
+			<div class="clear"></div>
+						
+		</div>
+		<!-- END .container -->
+		
+	</div>
+	<!-- END #bottom -->
+	
+</footer>
+<!-- END footer -->
+
+
+	
+<!-- Lightbox Plus v2.3 - 2011.08.11 - Message: 0-->
+<script type="text/javascript">
+jQuery(document).ready(function($){
+  $("a[rel*=lightbox]").colorbox({opacity:0.8});
+});
+</script>
+<link rel="stylesheet" id="wp_rp_scrollup-css" href="http://dtmvdvtzf8rz0.cloudfront.net/static/css-img/scrollup.css?ver=3.4.2" type="text/css" media="all">
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/ck-karma.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/jquery.colorbox-min.js.下载"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var viewsCacheL10n = {"admin_ajax_url":"http:\/\/www.importnew.com\/wp-admin\/admin-ajax.php","post_id":"18961"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/postviews-cache.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/ready.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/easing.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/superfish.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/validate.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/touchwipe.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/caroufredsel.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/flexslider.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/jplayer.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/fitvids.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/selectnav.js.下载"></script>
+<script type="text/javascript" src="./JVM的内存区域划分 - ImportNew_files/effects.js.下载"></script>
+<script type="text/javascript" src="http://dtmvdvtzf8rz0.cloudfront.net/static/js/scrollup.js?ver=3.4.2"></script>
+
+
+<div id="full-btm" style="position:fixed; left:50%; top:550px;  z-index:100; text-align:center; cursor:pointer;">
+<a><img src="./JVM的内存区域划分 - ImportNew_files/back-btm.png" width="20" border="0" alt="跳到底部" title="跳到底部"></a>
+</div>
+
+<script type="text/javascript">
+jQuery('#full-btm').click(function(){
+    jQuery('html, body').animate({scrollTop:jQuery(document).height()}, 'slow');
+    return false;
+});
+</script>
+
+<div id="full-top" style="position:fixed; left:50%; top:520px; margin-left:495px; z-index:100; text-align:center; cursor:pointer;">
+<a><img src="./JVM的内存区域划分 - ImportNew_files/back-top.png" width="20" border="0" alt="返回顶部" title="返回顶部"></a>
+</div>
+
+<script type="text/javascript">
+jQuery('#full-top').click(function(){
+    jQuery('html, body').animate({scrollTop:0}, 'slow');
+    return false;
+});
+</script>
+
+<!-- script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','/_assets/js/analytics.js','ga');
+
+    ga('create', 'UA-15621043-1', 'jobbole.com');
+    ga('send', 'pageview');
+
+</script -->
+
+
+<!-- END body -->
+
+
+<!-- END html -->
+<!-- Performance optimized by W3 Total Cache. Learn more: http://www.w3-edge.com/wordpress-plugins/
+
+ Served from: importnew.com @ 2016-12-06 11:14:33 by W3 Total Cache --><div id="cboxOverlay" style="display: none;"></div><div id="colorbox" class="" style="padding-bottom: 50px; padding-right: 50px; display: none;"><div id="cboxWrapper"><div><div id="cboxTopLeft" style="float: left;"></div><div id="cboxTopCenter" style="float: left;"></div><div id="cboxTopRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxMiddleLeft" style="float: left;"></div><div id="cboxContent" style="float: left;"><div id="cboxLoadedContent" style="width: 0px; height: 0px; overflow: hidden; float: left;"></div><div id="cboxLoadingOverlay" style="float: left;"></div><div id="cboxLoadingGraphic" style="float: left;"></div><div id="cboxTitle" style="float: left;"></div><div id="cboxCurrent" style="float: left;"></div><div id="cboxNext" style="float: left;"></div><div id="cboxPrevious" style="float: left;"></div><div id="cboxSlideshow" style="float: left;"></div><div id="cboxClose" style="float: left;"></div></div><div id="cboxMiddleRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxBottomLeft" style="float: left;"></div><div id="cboxBottomCenter" style="float: left;"></div><div id="cboxBottomRight" style="float: left;"></div></div></div><div style="position: absolute; width: 9999px; visibility: hidden; display: none;"></div></div></body></html>

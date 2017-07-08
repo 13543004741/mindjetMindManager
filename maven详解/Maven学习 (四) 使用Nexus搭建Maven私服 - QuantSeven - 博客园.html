@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/bundle-darkgreentrip.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/bundle-darkgreentrip-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/quanyongan/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/quanyongan/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/quanyongan/wlwmanifest.xml">
+<script type="text/javascript" src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/encoder.js.下载"></script><script src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/jquery.js.下载" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'quanyongan', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/quanyongan/"><img id="blogLogo" src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/quanyongan/">QuantSeven</a></h1>
+<h2>代码改变人生,技术改变世界</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/quanyongan/">首页</a></li>
+<li></li>
+<li></li>
+<li>
+<!----></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html">Maven学习 (四) 使用Nexus搭建Maven私服</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><p>为什么要搭建nexus私服，原因很简单，有些公司都不提供外网给<span>项目组人员，因此就不能使用maven访问远程的仓库地址，所以很有必要在局域网里找一台有外网权限的机器，搭建nexus私服，然后开发人员连到这台私服上，这样的话就可以通过这台搭建了nexus私服的电脑访问maven的远程仓库。</span></p>
+<p>1.首先确定我们的环境安装好<span>maven，jdk等必须的环境</span></p>
+<p><span>2.这些都准备好之后，去下载最新版本的nexus&nbsp;<span>&nbsp; &nbsp;下载地址：<a title="http://www.sonatype.org/nexus/go" href="http://www.sonatype.org/nexus/go">http://www.sonatype.org/nexus/go</a>&nbsp; </span></span></p>
+<p><span><span>&nbsp; &nbsp; 我本地安装的是<span>&nbsp;nexus-2.2-01-bundle，最新的版本是nexus-2.4.0-09-bundle</span><br></span></span></p>
+<p><span><span><span>3.打开目录nexus-2.4.0-09-bundle\nexus-2.4.0-09\bin\jsw 这个目录下面你会发现有很多系统版本的nexus环境</span></span></span></p>
+<p><span><span><span>&nbsp; &nbsp;我的电脑是win7 (64)为的系统，所以我选择的是windows-x86-64这个版本，当然可以根据个人的电脑系统选择对应的版本</span></span></span></p>
+<p><span><span><span>&nbsp;<img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/23124204-ca35d21f3b63467eb5f2179e11e7f181.png" alt=""></span></span></span></p>
+<p><span><span><span>打开一个版本你会看到如下:</span></span></span></p>
+<p><span><span><span><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/23125600-7f3c16843b4f47c888286c4b3b0bfe3e.png" alt=""></span></span></span></p>
+<p>&nbsp;</p>
+<p>我一般都是将nexus安装成windows服务，所以点击<span style="color: #ff0000;">install-nexus.bat</span>这个，访问<span style="color: #ff0000;">http://localhost:8081/nexus/&nbsp;</span>启动后如下页面，在右上角有个Log in 的超链接，点击登录</p>
+<p>默认的用户名是 admin 密码是 admin123</p>
+<p><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/23130021-a102e7588a984840b4248ac87b2b7481.png" alt=""></p>
+<p>&nbsp;登录后你可以在左侧修改登录信息：</p>
+<p><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/23130206-fa8cf52288ab4cb2ac409a4840a2ed99.png" alt=""></p>
+<p>&nbsp;</p>
+<p>4.接下来，我们配置一下maven的代理服务器(前提是你的电脑不能连接外网，如果可以上外网，这里也没有意思，只是介绍一下)</p>
+<p>&nbsp; &nbsp;在左侧菜单找到如图：</p>
+<p>&nbsp; &nbsp;<img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/23130753-c67d5e1f3798433696bb0a90ea5dc622.png" alt=""></p>
+<p>&nbsp; 点击查看右边有很多选项，找到这里</p>
+<p><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/23130857-ff405afbdf8f473f853075409827c072.png" alt=""></p>
+<p>添加你的代理服务器就可以了。</p>
+<p>&nbsp;5：接下来，好像这里都不需要怎么配置的，反正我没有用到很多的功能，可能是技术学得不好，不会用，呵呵....</p>
+<p>&nbsp; &nbsp; &nbsp;对了，这里还有一个可能需要注意一下的，就是<span>3rd party、Snapshots、Releases这三个，<span>分别用来保存第三方jar（典型的oracle数据库的j驱动包），项目组内部的快照、项目组内部的发布版.</span></span></p>
+<p><span><span>&nbsp; &nbsp; &nbsp;我目前只是用3rd party这个第三方的功能，将maven仓库中没有构件的jar包上传到服务器。如何将第三方的jar上传到nexus上面呢?如下：举例上传oracle的驱动包</span></span></p>
+<p><span><span>&nbsp; &nbsp;&nbsp;<img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/24125456-317095c12a074b26a4d964a29941ec99.png" alt=""></span></span></p>
+<p>&nbsp;</p>
+<p><span><span><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/24125512-773d8e9553114e999353ee4644c5dbda.png" alt=""></span></span></p>
+<p>&nbsp;</p>
+<p><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/24125531-7a749cdbf0e947d1b812865d238e37c8.png" alt=""></p>
+<p><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/24125540-dd9faa9d2a7444bf8494da043d47c213.png" alt=""></p>
+<p>&nbsp;</p>
+<p>那么现在nexus已经安装好，怎么使用上传的jar包吧，很简单的，前提是你已经建立了一个maven的项目。含有pom.xml这个文件,在这个文件中添加如下：</p>
+<p>先去服务器看看jar的maven构件</p>
+<p><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/24130313-9e9ce18374ab47f08832b17f4b23e49a.png" alt=""></p>
+<p>然后在pom.xml中添加如下的本地仓库地址：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #008080;"> 1</span>     <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">repositories</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;"> 2</span>         <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">repository</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;"> 3</span>             <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">id</span><span style="color: #0000ff;">&gt;</span>nexus<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">id</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;"> 4</span>             <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">name</span><span style="color: #0000ff;">&gt;</span>Team Nexus Repository<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">name</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;"> 5</span>             <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">url</span><span style="color: #0000ff;">&gt;</span>http://localhost:8081/nexus/content/groups/public<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">url</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;"> 6</span>         <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">repository</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;"> 7</span>     <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">repositories</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;"> 8</span>     <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">pluginRepositories</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;"> 9</span>         <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">pluginRepository</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">10</span>             <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">id</span><span style="color: #0000ff;">&gt;</span>nexus<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">id</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">11</span>             <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">name</span><span style="color: #0000ff;">&gt;</span>Team Nexus Repository<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">name</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">12</span>             <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">url</span><span style="color: #0000ff;">&gt;</span>http://localhost:8081/nexus/content/groups/public<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">url</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">13</span>         <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">pluginRepository</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">14</span>     <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">pluginRepositories</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">15</span>     <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">dependencies</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">16</span>         <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">dependency</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">17</span>             <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">groupId</span><span style="color: #0000ff;">&gt;</span>com.oracle<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">groupId</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">18</span>             <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">artifactId</span><span style="color: #0000ff;">&gt;</span>ojdbc<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">artifactId</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">19</span>             <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">version</span><span style="color: #0000ff;">&gt;</span>10.1.0.2.0<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">version</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">20</span>         <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">dependency</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #008080;">21</span>     <span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">dependencies</span><span style="color: #0000ff;">&gt;</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/24131458-d6accaabba8d4323afd38b8ad71599de.png" alt=""></p>
+<p>&nbsp;</p>
+<p>到此，完成了nexus私服的搭建，项目组开发人员开发时，只要在项目的pom.xml文件中，添加如下pom.xml信息即可获取私服的jar.</p>
+<p>如果添加其他的构件时，会先在nexus私服下载好，以后才会下载到本地。以后，如果发现私服已经存在某一jar包，则会直接从私服下载，如果没有再去网络上下载。这就是搭建私服的好处。哈哈........</p>
+<p>所以很有必要搭建maven私服。</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/quanyongan/category/471332.html" target="_blank">Maven</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(3037589,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;aa4db78f-048c-de11-be36-001cf0cd104b&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/quanyongan/" target="_blank"><img src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/20130416205720.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/quanyongan/">QuantSeven</a><br>
+            <a href="http://home.cnblogs.com/u/quanyongan/followees">关注 - 9</a><br>
+            <a href="http://home.cnblogs.com/u/quanyongan/followers">粉丝 - 65</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;aa4db78f-048c-de11-be36-001cf0cd104b&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(3037589,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">14</span>
+    </div>
+    <div class="buryit" onclick="votePost(3037589,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/21/3033838.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/21/3033838.html" title="发布于2013-04-21 13:35">Maven学习 (三) 使用m2eclipse创建web项目</a><br><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/26/3044618.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/26/3044618.html" title="发布于2013-04-26 13:06">Maven学习 (五)  Elipse中发布一个Maven项目到Tomcat</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2013-04-24 13:20</span> <a href="http://www.cnblogs.com/quanyongan/">QuantSeven</a> 阅读(<span id="post_view_count">116569</span>) 评论(<span id="post_comment_count">17</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=3037589" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#" onclick="AddToWz(3037589);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=59903,cb_entryId=3037589,cb_blogApp=currentBlogApp,cb_blogUserGuid='aa4db78f-048c-de11-be36-001cf0cd104b',cb_entryCreatedDate='2013/4/24 13:20:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<br>
+<div class="feedback_area_title">评论列表</div>
+<div class="feedbackNoItems"></div>	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2667158" class="layer">#1楼</a><a name="2667158" id="comment_anchor_2667158"></a>  <span class="comment_date">2013-04-26 15:53</span> <a id="a_comment_author_2667158" href="http://home.cnblogs.com/u/294209/" target="_blank">早起的忧伤</a> <a href="http://msg.cnblogs.com/send/%E6%97%A9%E8%B5%B7%E7%9A%84%E5%BF%A7%E4%BC%A4" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2667158" class="blog_comment_body">maven 的资料实在不多，学习啦。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2667158,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2667158,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2667161" class="layer">#2楼</a><a name="2667161" id="comment_anchor_2667161"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2013-04-26 15:56</span> <a id="a_comment_author_2667161" href="http://www.cnblogs.com/quanyongan/" target="_blank">QuantSeven</a> <a href="http://msg.cnblogs.com/send/QuantSeven" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2667161" class="blog_comment_body"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2667158" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2667158);">@</a>
+早起的忧伤<br>确实不多。祝你学习愉快</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2667161,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2667161,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2667161_avatar" style="display:none;">http://pic.cnblogs.com/face/82753/20130416205720.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2819663" class="layer">#3楼</a><a name="2819663" id="comment_anchor_2819663"></a>  <span class="comment_date">2013-11-19 17:25</span> <a id="a_comment_author_2819663" href="http://home.cnblogs.com/u/421890/" target="_blank">凉只千纸鹤</a> <a href="http://msg.cnblogs.com/send/%E5%87%89%E5%8F%AA%E5%8D%83%E7%BA%B8%E9%B9%A4" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2819663" class="blog_comment_body">博主，那个oracle的我照着你的配置，提示没有匹配的，但是文件下确实已经有了jar包啊</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2819663,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2819663,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2819671" class="layer">#4楼</a><a name="2819671" id="comment_anchor_2819671"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2013-11-19 17:31</span> <a id="a_comment_author_2819671" href="http://www.cnblogs.com/quanyongan/" target="_blank">QuantSeven</a> <a href="http://msg.cnblogs.com/send/QuantSeven" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2819671" class="blog_comment_body"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2819663" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2819663);">@</a>
+凉只千纸鹤<br>Oracle的Jar 包，他的官方是没有提供maven依赖的，需要自己下载一个上传到自己的私服就可以下载，你应该再细看一下这篇文章，呵呵/.//</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2819671,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2819671,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2819671_avatar" style="display:none;">http://pic.cnblogs.com/face/82753/20130416205720.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2819678" class="layer">#5楼</a><a name="2819678" id="comment_anchor_2819678"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2013-11-19 17:34</span> <a id="a_comment_author_2819678" href="http://www.cnblogs.com/quanyongan/" target="_blank">QuantSeven</a> <a href="http://msg.cnblogs.com/send/QuantSeven" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2819678" class="blog_comment_body"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2819663" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2819663);">@</a>
+凉只千纸鹤<br>在Eclipse下是可以看到依赖的包状态是有的，但是实际上是没有下载到你本地的jar包目录，所以显示没有匹配。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2819678,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2819678,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2819678_avatar" style="display:none;">http://pic.cnblogs.com/face/82753/20130416205720.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2819976" class="layer">#6楼</a><a name="2819976" id="comment_anchor_2819976"></a>  <span class="comment_date">2013-11-20 09:26</span> <a id="a_comment_author_2819976" href="http://home.cnblogs.com/u/421890/" target="_blank">凉只千纸鹤</a> <a href="http://msg.cnblogs.com/send/%E5%87%89%E5%8F%AA%E5%8D%83%E7%BA%B8%E9%B9%A4" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2819976" class="blog_comment_body">后面有重新在oracle下载了jar包 再上传到私服，再引用就没问题了，不知道是不是之前的jar有问题？两个jar包上传方式一样</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2819976,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2819976,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2819983" class="layer">#7楼</a><a name="2819983" id="comment_anchor_2819983"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2013-11-20 09:28</span> <a id="a_comment_author_2819983" href="http://www.cnblogs.com/quanyongan/" target="_blank">QuantSeven</a> <a href="http://msg.cnblogs.com/send/QuantSeven" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2819983" class="blog_comment_body"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#2819976" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2819976);">@</a>
+凉只千纸鹤<br>OK</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2819983,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2819983,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2819983_avatar" style="display:none;">http://pic.cnblogs.com/face/82753/20130416205720.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3092667" class="layer">#8楼</a><a name="3092667" id="comment_anchor_3092667"></a>  <span class="comment_date">2014-12-24 09:48</span> <a id="a_comment_author_3092667" href="http://www.cnblogs.com/onewarden/" target="_blank">浮忆之窨</a> <a href="http://msg.cnblogs.com/send/%E6%B5%AE%E5%BF%86%E4%B9%8B%E7%AA%A8" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3092667" class="blog_comment_body">Maven私服下载的jar包是下载到Maven的本地仓库中了吗？<br>还有，不知道楼主的索引是怎么解决的？在线下载好像很慢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3092667,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3092667,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3092667_avatar" style="display:none;">http://pic.cnblogs.com/face/472567/20130722205825.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3097471" class="layer">#9楼</a><a name="3097471" id="comment_anchor_3097471"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2014-12-31 13:04</span> <a id="a_comment_author_3097471" href="http://www.cnblogs.com/quanyongan/" target="_blank">QuantSeven</a> <a href="http://msg.cnblogs.com/send/QuantSeven" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3097471" class="blog_comment_body"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3092667" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3092667);">@</a>
+huguangju<br>是的，先从网上下载到你的私有仓库，然后再从私仓下载到你本地！<br>在线下载慢，网络问题，还有一种就是国外的一下私仓地址，你最好去找国内的一下仓库</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3097471,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3097471,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3097471_avatar" style="display:none;">http://pic.cnblogs.com/face/82753/20130416205720.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3222531" class="layer">#10楼</a><a name="3222531" id="comment_anchor_3222531"></a>  <span class="comment_date">2015-07-06 17:25</span> <a id="a_comment_author_3222531" href="http://www.cnblogs.com/LUCKYZHOUSTAR/" target="_blank">LUCKYZHOUSTAR</a> <a href="http://msg.cnblogs.com/send/LUCKYZHOUSTAR" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3222531" class="blog_comment_body">大神，如果自己创建一个代理仓库的话，地址如何写呢 就像你上面写的地址 Http://localhost:8081/nexus/content……这是如何确定的呢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3222531,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3222531,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3244866" class="layer">#11楼</a><a name="3244866" id="comment_anchor_3244866"></a>  <span class="comment_date">2015-08-10 15:14</span> <a id="a_comment_author_3244866" href="http://home.cnblogs.com/u/796450/" target="_blank">蓝小龙</a> <a href="http://msg.cnblogs.com/send/%E8%93%9D%E5%B0%8F%E9%BE%99" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3244866" class="blog_comment_body">博主，我安装的时候没有安装maven，只有jdk，貌似搭建私服也没问题。<br>不过我是在内网机器上安装的</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3244866,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3244866,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3244870" class="layer">#12楼</a><a name="3244870" id="comment_anchor_3244870"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2015-08-10 15:21</span> <a id="a_comment_author_3244870" href="http://www.cnblogs.com/quanyongan/" target="_blank">QuantSeven</a> <a href="http://msg.cnblogs.com/send/QuantSeven" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3244870" class="blog_comment_body"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3244866" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3244866);">@</a>
+蓝小龙<br>安装私服，不一定要安装maven的啊。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3244870,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3244870,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3244870_avatar" style="display:none;">http://pic.cnblogs.com/face/82753/20130416205720.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3290886" class="layer">#13楼</a><a name="3290886" id="comment_anchor_3290886"></a>  <span class="comment_date">2015-10-23 16:33</span> <a id="a_comment_author_3290886" href="http://www.cnblogs.com/live365wang/" target="_blank">Pale Life</a> <a href="http://msg.cnblogs.com/send/Pale%20Life" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3290886" class="blog_comment_body">博主你好：你的文章写的很好，但我有个问题，我先在本地上有已经下载好的.m2文件夹下所有的jar，如何一次性全部放上去哪，一个项目至少有几个个jar包，一个一个上传会奔溃的啊</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3290886,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3290886,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3290886_avatar" style="display:none;">http://pic.cnblogs.com/face/u285507.jpg?id=09170213</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3291456" class="layer">#14楼</a><a name="3291456" id="comment_anchor_3291456"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2015-10-24 21:53</span> <a id="a_comment_author_3291456" href="http://www.cnblogs.com/quanyongan/" target="_blank">QuantSeven</a> <a href="http://msg.cnblogs.com/send/QuantSeven" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3291456" class="blog_comment_body"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3290886" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3290886);">@</a>
+Pale Life<br>一般是先建立私服才下jar包，这样才是完成的步骤。你现在是下载了jar包，后来才想到私服；有点倒过来，笨一点的办法就是删除.m2文件夹咯，然后让他再下载一遍就直接部署到私服了</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3291456,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3291456,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3291456_avatar" style="display:none;">http://pic.cnblogs.com/face/82753/20130416205720.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3418893" class="layer">#15楼</a><a name="3418893" id="comment_anchor_3418893"></a>  <span class="comment_date">2016-04-27 18:20</span> <a id="a_comment_author_3418893" href="http://www.cnblogs.com/newsea/" target="_blank">NewSea</a> <a href="http://msg.cnblogs.com/send/NewSea" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3418893" class="blog_comment_body">Mark.</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3418893,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3418893,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3418893_avatar" style="display:none;">http://pic.cnblogs.com/face/u18191.jpg</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3431587" class="layer">#16楼</a><a name="3431587" id="comment_anchor_3431587"></a>  <span class="comment_date">2016-05-15 19:28</span> <a id="a_comment_author_3431587" href="http://www.cnblogs.com/puyangsky/" target="_blank">puyangsky</a> <a href="http://msg.cnblogs.com/send/puyangsky" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3431587" class="blog_comment_body">可以支持mvn install吗</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3431587,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3431587,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3431587_avatar" style="display:none;">http://pic.cnblogs.com/face/756310/20160325122650.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#3471385" class="layer">#17楼</a><a name="3471385" id="comment_anchor_3471385"></a><span id="comment-maxId" style="display:none;">3471385</span><span id="comment-maxDate" style="display:none;">2016/7/17 10:47:21</span>  <span class="comment_date">2016-07-17 10:47</span> <a id="a_comment_author_3471385" href="http://www.cnblogs.com/newsea/" target="_blank">NewSea</a> <a href="http://msg.cnblogs.com/send/NewSea" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3471385" class="blog_comment_body">学习。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3471385,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3471385,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3471385_avatar" style="display:none;">http://pic.cnblogs.com/face/u18191.jpg</span>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://rongcloud.cn/reports/journal2" target="_blank">【推荐】融云发布 App 社交化白皮书 IM 提升活跃超 8 倍</a><br><a href="http://arcapp.anruichina.com/arctrac/trac?tid=smb_azure_1212_CNBlog" target="_blank">【福利】Microsoft Azure给博客园的你专属三重大礼</a><br><a href="http://bbs.h3bpm.com/read.php?tid=861&amp;fid=11?utm_source=cnblogs&amp;utm_medium=pic&amp;utm_campaign=show&amp;utm_content=v10&amp;utm_term=%E5%85%8D%E8%B4%B9%E4%B8%8B%E8%BD%BD" target="_blank">【推荐】BPM免费下载</a><br></div>
+<div id="opt_under_post"></div>
+<div id="ad_c1" class="c_ad_block"><a href="http://www.gcpowertools.com.cn/products/spreadjs/?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=SpreadJS&amp;utm_campaign=community" target="_blank"><img width="300" height="250" src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/24442-20161031104652361-1905759806.gif" alt=""></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/559263/" target="_blank">3D打印的口香糖，来嚼吗？</a><br> ·  <a href="http://news.cnblogs.com/n/559262/" target="_blank">移动直播洗牌前夜，创业者如何杀出血路？｜直播行业大变局</a><br> ·  <a href="http://news.cnblogs.com/n/559261/" target="_blank">23亿“赌局”难容差评 乐视影业为《长城》撕影评人</a><br> ·  <a href="http://news.cnblogs.com/n/559260/" target="_blank">印度发明“可食用”塑料袋：热水中15秒分解</a><br> ·  <a href="http://news.cnblogs.com/n/559259/" target="_blank">女儿学会走路 扎克伯格用360度摄影机纪录上传</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="ad_c2" class="c_ad_block"><a href="http://bbs.h3bpm.com/read.php?tid=861&amp;fid=11?utm_source=cnblogs&amp;utm_medium=pic&amp;utm_campaign=show&amp;utm_content=v10&amp;utm_term=%E5%85%8D%E8%B4%B9%E4%B8%8B%E8%BD%BD" target="_blank"><img width="468" height="60" src="./Maven学习 (四) 使用Nexus搭建Maven私服 - QuantSeven - 博客园_files/35695-20161213142353073-1602158633.jpg" alt=""></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/556770/" target="_blank">写给未来的程序媛</a><br> ·  <a href="http://kb.cnblogs.com/page/558087/" target="_blank">高质量的工程代码为什么难写</a><br> ·  <a href="http://kb.cnblogs.com/page/555750/" target="_blank">循序渐进地代码重构</a><br> ·  <a href="http://kb.cnblogs.com/page/554496/" target="_blank">技术的正宗与野路子</a><br> ·  <a href="http://kb.cnblogs.com/page/553682/" target="_blank">陈皓：什么是工程师文化？</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2013/03/01&#39;);return false;">&lt;</a></td><td align="center">2013年4月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2013/05/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">31</td><td align="center">1</td><td align="center">2</td><td align="center">3</td><td align="center">4</td><td align="center">5</td><td class="CalWeekendDay" align="center">6</td></tr><tr><td class="CalWeekendDay" align="center">7</td><td align="center">8</td><td align="center">9</td><td align="center">10</td><td align="center">11</td><td align="center">12</td><td class="CalWeekendDay" align="center">13</td></tr><tr><td class="CalWeekendDay" align="center">14</td><td align="center">15</td><td align="center"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/16.html"><u>16</u></a></td><td align="center"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/17.html"><u>17</u></a></td><td align="center"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/18.html"><u>18</u></a></td><td align="center">19</td><td class="CalWeekendDay" align="center">20</td></tr><tr><td class="CalWeekendDay" align="center"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/21.html"><u>21</u></a></td><td align="center">22</td><td align="center">23</td><td align="center"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24.html"><u>24</u></a></td><td align="center">25</td><td align="center"><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/26.html"><u>26</u></a></td><td class="CalWeekendDay" align="center">27</td></tr><tr><td class="CalWeekendDay" align="center">28</td><td align="center">29</td><td align="center">30</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td></tr><tr><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td><td class="CalOtherMonthDay" align="center">8</td><td class="CalOtherMonthDay" align="center">9</td><td class="CalOtherMonthDay" align="center">10</td><td class="CalOtherMonthDay" align="center">11</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block"></div><div id="sidebar_toptags" class="sidebar-block"></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle">随笔分类</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/quanyongan/category/473273.html">Eclipse(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/quanyongan/category/483915.html">Hibernate(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/quanyongan/category/471273.html">Java(3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/quanyongan/category/482631.html">Jquery(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/quanyongan/category/471272.html">Json(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/quanyongan/category/636174.html">Linux(3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/quanyongan/category/471332.html">Maven(6)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="http://www.cnblogs.com/quanyongan/category/471275.html">MyBatis</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="http://www.cnblogs.com/quanyongan/category/636173.html">Nginx(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_9" href="http://www.cnblogs.com/quanyongan/category/636158.html">Spring(4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_10" href="http://www.cnblogs.com/quanyongan/category/471271.html">SpringMVC(1)</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/17/3025971.html">1. Maven学习 (一) 搭建Maven环境(124154)</a></li><li><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/16/3024741.html">2. SpringMVC @RequestBody接收Json对象字符串(119927)</a></li><li><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/24/3037589.html">3. Maven学习 (四) 使用Nexus搭建Maven私服(116569)</a></li><li><a href="http://www.cnblogs.com/quanyongan/archive/2013/05/28/3103243.html">4. Maven学习 (六) 搭建多模块企业级项目(44268)</a></li><li><a href="http://www.cnblogs.com/quanyongan/archive/2013/04/16/3024993.html">5. Jackson将json字符串转换成泛型List(32220)</a></li></ul></div>
+</div>
+</div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2016 QuantSeven
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+</body></html>
